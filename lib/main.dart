@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_app/api/web_socket_client.dart';
+import 'package:web_socket_channel/io.dart';
+
+// TODO: Find a solution for configuration data like the WebSocket url.
+final channel = IOWebSocketChannel.connect('wss://echo.websocket.org');
+final webSocketClient = WebSocketClient(channel);
 
 void main() {
   runApp(MyApp());
@@ -22,13 +28,19 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Go Skeleton'),
+      home: MyHomePage(
+        title: 'Go Skeleton',
+        webSocketClient: webSocketClient,
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
+  final WebSocketClient webSocketClient;
+
+  MyHomePage({Key key, this.title, this.webSocketClient}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -39,25 +51,12 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -93,21 +92,35 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            Form(
+              child: TextFormField(
+                controller: _controller,
+                decoration: InputDecoration(labelText: 'Send a message'),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            StreamBuilder(
+              stream: widget.webSocketClient.stream,
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
+                );
+              },
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: () => widget.webSocketClient.send(_controller.text),
+        tooltip: 'Send message',
+        child: Icon(Icons.send),
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.webSocketClient.close();
+    super.dispose();
   }
 }
