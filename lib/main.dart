@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_app/api/web_socket_client.dart';
+import 'package:go_app/api/web_socket/web_socket_client.dart';
+import 'package:go_app/configuration/configuration.dart';
 import 'package:web_socket_channel/io.dart';
 
-// TODO: Find a solution for configuration data like the WebSocket url.
-final channel = IOWebSocketChannel.connect('wss://echo.websocket.org');
+final channel = IOWebSocketChannel.connect(Configuration.WEB_SOCKET_URL);
 final webSocketClient = WebSocketClient(channel);
 
 void main() {
@@ -28,10 +28,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
-        title: 'Go Skeleton',
-        webSocketClient: webSocketClient,
-      ),
+      home: MyHomePage(title: 'Go Skeleton', webSocketClient: webSocketClient),
     );
   }
 }
@@ -40,7 +37,7 @@ class MyHomePage extends StatefulWidget {
   final String title;
   final WebSocketClient webSocketClient;
 
-  MyHomePage({Key key, this.title, this.webSocketClient}) : super(key: key);
+  MyHomePage({required this.title, required this.webSocketClient}) : super();
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect

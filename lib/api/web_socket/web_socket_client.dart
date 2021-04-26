@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:web_socket_channel/io.dart';
 
 class WebSocketClient {
@@ -11,6 +12,10 @@ class WebSocketClient {
     if (message.isNotEmpty) {
       _channel.sink.add(message);
     }
+  }
+
+  void sendJson(Object object) {
+    send(jsonEncode(object));
   }
 
   void close() {
