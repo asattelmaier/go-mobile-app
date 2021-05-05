@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:async';
+
 import 'package:web_socket_channel/io.dart';
 
 class WebSocketClient {
@@ -6,7 +8,7 @@ class WebSocketClient {
 
   WebSocketClient(this._channel);
 
-  Stream<dynamic> get stream => _channel.stream;
+  Stream<Map<String, dynamic>> get messages => _channel.stream.map(_decodeData);
 
   void send(String message) {
     if (message.isNotEmpty) {
@@ -20,5 +22,9 @@ class WebSocketClient {
 
   void close() {
     _channel.sink.close();
+  }
+
+  Map<String, dynamic> _decodeData(dynamic data) {
+    return jsonDecode(data);
   }
 }

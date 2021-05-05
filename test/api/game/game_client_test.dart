@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/api/game/game_client.dart';
+import 'package:go_app/api/game/input/game_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:mockito/annotations.dart';
@@ -18,6 +21,22 @@ void main() {
       client.createGame(5);
 
       verify(webSocketClient.sendJson(argThat(isSizeFive))).called(1);
+    });
+  });
+
+  group('gameMessages', () {
+    test('returns the Game DTO', () async {
+      final webSocketClient = MockWebSocketClient();
+      final client = GameClient(webSocketClient);
+      final parsedJson = {"activePlayer": "Black", "passivePlayer": "White"};
+      final returnStream = (_) => Stream.value(parsedJson);
+
+      when(webSocketClient.messages).thenAnswer(returnStream);
+
+      client.messages.listen((gameDto) {
+        expect(gameDto.activePlayer, Player.Black);
+        expect(gameDto.passivePlayer, Player.White);
+      });
     });
   });
 }

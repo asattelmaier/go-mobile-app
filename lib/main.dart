@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             StreamBuilder(
-              stream: widget.webSocketClient.stream,
+              stream: widget.webSocketClient.messages,
               builder: (context, snapshot) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),

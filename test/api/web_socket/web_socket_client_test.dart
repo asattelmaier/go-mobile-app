@@ -14,40 +14,65 @@ void main() {
       final message = 'Some Message';
       final channel = MockIOWebSocketChannel();
       final sink = MockWebSocketSink();
-      final webSocketClient = WebSocketClient(channel);
+      final client = WebSocketClient(channel);
 
       when(channel.sink).thenReturn(sink);
       when(sink.add(message)).thenReturn((data) => null);
-      webSocketClient.send(message);
+      client.send(message);
 
       verify(sink.add(message)).called(1);
     });
 
-    test('will not send a message if the message is empty', () {
+    test('sends not empty messages', () {
       final message = '';
       final channel = MockIOWebSocketChannel();
       final sink = MockWebSocketSink();
-      final webSocketClient = WebSocketClient(channel);
+      final client = WebSocketClient(channel);
 
       when(channel.sink).thenReturn(sink);
-      webSocketClient.send(message);
+      client.send(message);
 
       verifyNever(sink.add(message));
     });
   });
 
   group('sendJson', () {
-    test('sends a JSON as string', () {
-      final sampleClass = CommandDto(Command.CreateGame, 2);
+    test('sends JSON', () {
       final channel = MockIOWebSocketChannel();
       final sink = MockWebSocketSink();
-      final webSocketClient = WebSocketClient(channel);
+      final client = WebSocketClient(channel);
 
       when(channel.sink).thenReturn(sink);
       when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
-      webSocketClient.sendJson(sampleClass);
+      client.sendJson(CommandDto(Command.CreateGame, 2));
 
       verify(sink.add('''{"name":"CreateGame","size":2}''')).called(1);
+    });
+
+    test('sends empty JSON', () {
+      final channel = MockIOWebSocketChannel();
+      final sink = MockWebSocketSink();
+      final client = WebSocketClient(channel);
+
+      when(channel.sink).thenReturn(sink);
+      when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
+      client.sendJson({});
+
+      verify(sink.add('{}')).called(1);
+    });
+  });
+
+  group('jsonMessages', () {
+    test('returns JSON Messages', () {
+      final channel = MockIOWebSocketChannel();
+      final client = WebSocketClient(channel);
+      final returnStream = (_) => Stream.value('''{"some": "data"}''');
+
+      when(channel.stream).thenAnswer(returnStream);
+
+      client.messages.listen((json) {
+        expect(json['some'], 'data');
+      });
     });
   });
 }
