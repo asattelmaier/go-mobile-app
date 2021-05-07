@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'location_dto.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class LocationDto {
   final int x;
   final int y;
@@ -11,4 +11,6 @@ class LocationDto {
 
   factory LocationDto.fromJson(Map<String, dynamic> json) =>
       _$LocationDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LocationDtoToJson(this);
 }

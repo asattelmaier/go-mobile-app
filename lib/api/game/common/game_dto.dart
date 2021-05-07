@@ -1,10 +1,10 @@
-import 'package:go_app/api/game/input/intersection_dto.dart';
-import 'package:go_app/api/game/input/player_dto.dart';
+import 'package:go_app/api/game/common/intersection_dto.dart';
+import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'game_dto.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class GameDto {
   final PlayerDto activePlayer;
   final PlayerDto passivePlayer;
@@ -14,4 +14,6 @@ class GameDto {
 
   factory GameDto.fromJson(Map<String, dynamic> json) =>
       _$GameDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GameDtoToJson(this);
 }
