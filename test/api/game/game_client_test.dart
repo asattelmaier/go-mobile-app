@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/api/game/game_client.dart';
-import 'package:go_app/api/game/input/game_dto.dart';
+import 'package:go_app/api/game/input/player_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:mockito/annotations.dart';
@@ -34,8 +34,8 @@ void main() {
       when(webSocketClient.messages).thenAnswer(returnStream);
 
       client.messages.listen((gameDto) {
-        expect(gameDto.activePlayer, Player.Black);
-        expect(gameDto.passivePlayer, Player.White);
+        expect(gameDto.activePlayer, PlayerDto.Black);
+        expect(gameDto.passivePlayer, PlayerDto.White);
       });
     });
   });

@@ -1,11 +1,11 @@
-import 'package:go_app/api/game/output/command_dto.dart';
+import 'package:go_app/api/game/output/create_game_command_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'create_game_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class CreateGameDto {
-  final CommandDto command;
+  final CreateGameCommandDto command;
 
   CreateGameDto(this.command);
 
