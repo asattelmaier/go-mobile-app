@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/api/game/common/game_dto.dart';
-import 'package:go_app/api/game/common/intersection_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:go_app/api/game/common/state_dto.dart';
 import 'package:go_app/api/game/game_client.dart';
+import 'package:go_app/api/game/output/command_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
+import 'package:go_app/api/game/output/pass_dto.dart';
 import 'package:go_app/api/game/output/play_stone_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:mockito/annotations.dart';
@@ -35,20 +36,32 @@ void main() {
       final webSocketClient = MockWebSocketClient();
       final client = GameClient(webSocketClient);
       final location = LocationDto(0, 0);
-      final positions = [
-        [
-          [IntersectionDto(location, StateDto.Empty)]
-        ]
-      ];
-      final game = GameDto(PlayerDto.Black, PlayerDto.White, positions);
-      final isLocationZeroZero = predicate<PlayStoneDto>((playStone) {
-        final location = playStone.command.location;
-        return location.x == 0 && location.y == 0;
+      final game = createEmptyGame();
+      final hasPlayStoneCommandAndGame = predicate<PlayStoneDto>((playStone) {
+        final name = playStone.command.name;
+        return name == CommandDto.PlayStone && playStone.game == game;
       });
 
       client.playStone(location, game);
 
-      verify(webSocketClient.sendJson(argThat(isLocationZeroZero))).called(1);
+      verify(webSocketClient.sendJson(argThat(hasPlayStoneCommandAndGame)))
+          .called(1);
+    });
+  });
+
+  group('pass', () {
+    test('sends pass command with game', () {
+      final webSocketClient = MockWebSocketClient();
+      final client = GameClient(webSocketClient);
+      final game = createEmptyGame();
+      final hasPassCommandAndGame = predicate<PassDto>((pass) {
+        return pass.command.name == CommandDto.Pass && pass.game == game;
+      });
+
+      client.pass(game);
+
+      verify(webSocketClient.sendJson(argThat(hasPassCommandAndGame)))
+          .called(1);
     });
   });
 
@@ -83,4 +96,10 @@ void main() {
       });
     });
   });
+}
+
+GameDto createEmptyGame() {
+  return GameDto(PlayerDto.Black, PlayerDto.White, [
+    [[]]
+  ]);
 }

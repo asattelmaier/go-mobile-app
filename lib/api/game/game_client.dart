@@ -2,6 +2,8 @@ import 'package:go_app/api/game/common/game_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/output/create_game_command_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
+import 'package:go_app/api/game/output/pass_command_dto.dart';
+import 'package:go_app/api/game/output/pass_dto.dart';
 import 'package:go_app/api/game/output/play_stone_command_dto.dart';
 import 'package:go_app/api/game/output/play_stone_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
@@ -23,6 +25,13 @@ class GameClient {
     final playStone = PlayStoneDto(command, game);
 
     _client.sendJson(playStone);
+  }
+
+  pass(GameDto game) {
+    final command = PassCommandDto();
+    final pass = PassDto(command, game);
+
+    _client.sendJson(pass);
   }
 
   Stream<GameDto> get messages => _client.messages.map(_toGameDto);
