@@ -18,7 +18,7 @@ void main() {
       final location = Location(0, 0);
       final returnGameDto = (_) => Stream.value(createGame());
 
-      when(client.messages).thenAnswer(returnGameDto);
+      when(client.game).thenAnswer(returnGameDto);
       when(client.playStone(any, any)).thenReturn(null);
       await game.playStone(location);
 
@@ -46,7 +46,7 @@ void main() {
       final game = Game(client);
       final returnGameDto = (_) => Stream.value(createGame());
 
-      when(client.messages).thenAnswer(returnGameDto);
+      when(client.game).thenAnswer(returnGameDto);
       when(client.pass(any)).thenReturn(null);
       await game.pass();
 

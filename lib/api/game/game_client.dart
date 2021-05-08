@@ -1,5 +1,6 @@
 import 'package:go_app/api/game/common/game_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
+import 'package:go_app/api/game/input/end_game_dto.dart';
 import 'package:go_app/api/game/output/create_game_command_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
 import 'package:go_app/api/game/output/pass_command_dto.dart';
@@ -34,9 +35,20 @@ class GameClient {
     _client.sendJson(pass);
   }
 
-  Stream<GameDto> get messages => _client.messages.map(_toGameDto);
+  Stream<GameDto> get game => _messages.where(_isGameDto).map(_toGameDto);
 
-  GameDto _toGameDto(Map<String, dynamic> json) {
-    return GameDto.fromJson(json);
-  }
+  Stream<EndGameDto> get endGame =>
+      _messages.where(_isEndGameDto).map(_toEndGameDto);
+
+  Stream<Map<String, dynamic>> get _messages => _client.messages;
+
+  bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);
+
+  GameDto _toGameDto(Map<String, dynamic> json) => GameDto.fromJson(json);
+
+  bool _isEndGameDto(Map<String, dynamic> json) =>
+      EndGameDto.isEndGameDto(json);
+
+  EndGameDto _toEndGameDto(Map<String, dynamic> json) =>
+      EndGameDto.fromJson(json);
 }

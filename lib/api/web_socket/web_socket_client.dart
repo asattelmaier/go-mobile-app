@@ -24,7 +24,5 @@ class WebSocketClient {
     _channel.sink.close();
   }
 
-  Map<String, dynamic> _decodeData(dynamic data) {
-    return jsonDecode(data);
-  }
+  Map<String, dynamic> _decodeData(dynamic data) => jsonDecode(data);
 }

@@ -28,15 +28,15 @@ class Game {
   }
 
   Stream<Player> get activePlayer =>
-      _client.messages.map((dto) => Player.fromDto(dto.activePlayer));
+      _client.game.map((dto) => Player.fromDto(dto.activePlayer));
 
   Stream<Player> get passivePlayer =>
-      _client.messages.map((dto) => Player.fromDto(dto.passivePlayer));
+      _client.game.map((dto) => Player.fromDto(dto.passivePlayer));
 
   Stream<Board> get board => _positions.map((positions) => positions.board);
 
   Stream<Positions> get _positions =>
-      _client.messages.map((dto) => Positions.fromDto(dto.positions));
+      _client.game.map((dto) => Positions.fromDto(dto.positions));
 
   Future<GameDto> _toDto() async {
     Positions positions = await _positions.last;

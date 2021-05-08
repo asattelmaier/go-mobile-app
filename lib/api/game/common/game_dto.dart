@@ -12,6 +12,12 @@ class GameDto {
 
   GameDto(this.activePlayer, this.passivePlayer, this.positions);
 
+  static bool isGameDto(Map<String, dynamic> json) {
+    return json['activePlayer'] is String &&
+        json['passivePlayer'] is String &&
+        json['positions'] is List<dynamic>;
+  }
+
   factory GameDto.fromJson(Map<String, dynamic> json) =>
       _$GameDtoFromJson(json);
 

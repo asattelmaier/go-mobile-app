@@ -3,6 +3,8 @@ import 'package:go_app/game/color.dart';
 import 'package:go_app/game/stone.dart';
 
 class State {
+  // TODO: Add maybe type as soon as it is null safety
+  //  @see: https://github.com/aloisdeniel/dart_maybe/pull/3
   Stone? _stone;
 
   State([this._stone]);

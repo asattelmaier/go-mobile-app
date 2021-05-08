@@ -77,7 +77,7 @@ void main() {
 
       when(webSocketClient.messages).thenAnswer(returnStream);
 
-      client.messages.listen((gameDto) {
+      client.game.listen((gameDto) {
         expect(gameDto.activePlayer, PlayerDto.Black);
         expect(gameDto.passivePlayer, PlayerDto.White);
         expect(gameDto.positions.first.first.first.location.x, 0);
