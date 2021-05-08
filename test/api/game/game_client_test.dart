@@ -1,18 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_app/api/game/common/game_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:go_app/api/game/common/state_dto.dart';
 import 'package:go_app/api/game/game_client.dart';
-import 'package:go_app/api/game/output/command_dto.dart';
 import 'package:go_app/api/game/output/create_game_dto.dart';
 import 'package:go_app/api/game/output/pass_dto.dart';
 import 'package:go_app/api/game/output/play_stone_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import '../../_utils/_utils.dart';
 import 'game_client_test.mocks.dart';
 
 @GenerateMocks([WebSocketClient])
@@ -32,36 +31,27 @@ void main() {
   });
 
   group('playStone', () {
-    test('sends play stone command with game', () {
+    test('sends a PlayStoneDto', () {
       final webSocketClient = MockWebSocketClient();
       final client = GameClient(webSocketClient);
       final location = LocationDto(0, 0);
-      final game = createEmptyGame();
-      final hasPlayStoneCommandAndGame = predicate<PlayStoneDto>((playStone) {
-        final name = playStone.command.name;
-        return name == CommandDto.PlayStone && playStone.game == game;
-      });
+      final game = createGame();
 
       client.playStone(location, game);
 
-      verify(webSocketClient.sendJson(argThat(hasPlayStoneCommandAndGame)))
-          .called(1);
+      verify(webSocketClient.sendJson(argThat(isA<PlayStoneDto>()))).called(1);
     });
   });
 
   group('pass', () {
-    test('sends pass command with game', () {
+    test('sends a PassDto', () {
       final webSocketClient = MockWebSocketClient();
       final client = GameClient(webSocketClient);
-      final game = createEmptyGame();
-      final hasPassCommandAndGame = predicate<PassDto>((pass) {
-        return pass.command.name == CommandDto.Pass && pass.game == game;
-      });
+      final game = createGame();
 
       client.pass(game);
 
-      verify(webSocketClient.sendJson(argThat(hasPassCommandAndGame)))
-          .called(1);
+      verify(webSocketClient.sendJson(argThat(isA<PassDto>()))).called(1);
     });
   });
 
@@ -90,16 +80,10 @@ void main() {
       client.messages.listen((gameDto) {
         expect(gameDto.activePlayer, PlayerDto.Black);
         expect(gameDto.passivePlayer, PlayerDto.White);
-        expect(gameDto.positions[0][0][0].location.x, 0);
-        expect(gameDto.positions[0][0][0].location.y, 0);
-        expect(gameDto.positions[0][0][0].state, StateDto.Empty);
+        expect(gameDto.positions.first.first.first.location.x, 0);
+        expect(gameDto.positions.first.first.first.location.y, 0);
+        expect(gameDto.positions.first.first.first.state, StateDto.Empty);
       });
     });
   });
-}
-
-GameDto createEmptyGame() {
-  return GameDto(PlayerDto.Black, PlayerDto.White, [
-    [[]]
-  ]);
 }
