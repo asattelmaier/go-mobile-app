@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_app/game/board.dart';
 
 class BoardWidget extends StatelessWidget {
+  final Board _board;
+
+  BoardWidget(this._board);
+
   // TODO: Make magic numbers configurable
   @override
   Widget build(BuildContext context) => AspectRatio(
@@ -11,29 +16,34 @@ class BoardWidget extends StatelessWidget {
             color: Colors.grey,
             child: Stack(
               children: <Widget>[
-                _verticalLines,
-                _horizontalLines,
+                _verticalLines(_board.rows),
+                _horizontalLines(_board.rows),
               ],
             )),
       );
 
-  Widget get _verticalLines => Row(
+  Widget _verticalLines(int rows) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: _toList(Container(
-          width: 1,
-          color: Colors.black,
-          height: 400,
-        )),
+        children: _toList(rows)(Flexible(
+            flex: 1,
+            child: Container(
+              width: 1,
+              color: Colors.black,
+              height: 400,
+            ))),
       );
 
-  Widget get _horizontalLines => Column(
+  Widget _horizontalLines(int rows) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: _toList(Container(
-          width: 400,
-          color: Colors.black,
-          height: 1,
-        )),
+        children: _toList(rows)(Flexible(
+            flex: 1,
+            child: Container(
+              width: 400,
+              color: Colors.black,
+              height: 1,
+            ))),
       );
 
-  List<Widget> _toList(Widget widget) => List.generate(19, (_) => widget);
+  Function(Widget) _toList(int rows) =>
+      (Widget widget) => List.generate(rows, (_) => widget);
 }

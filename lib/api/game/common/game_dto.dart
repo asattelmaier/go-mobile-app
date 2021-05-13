@@ -12,6 +12,13 @@ class GameDto {
 
   GameDto(this.activePlayer, this.passivePlayer, this.positions);
 
+  GameDto.empty()
+      : this.activePlayer = PlayerDto.Black,
+        this.passivePlayer = PlayerDto.White,
+        this.positions = [
+          [[]]
+        ];
+
   static bool isGameDto(Map<String, dynamic> json) {
     return json['activePlayer'] is String &&
         json['passivePlayer'] is String &&

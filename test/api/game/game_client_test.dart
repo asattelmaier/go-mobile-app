@@ -19,12 +19,11 @@ void main() {
   group('createGame', () {
     test('sends create game command with size', () {
       final webSocketClient = MockWebSocketClient();
-      final client = GameClient(webSocketClient);
-      final isSizeFive = predicate<CreateGameDto>((createGame) {
-        return createGame.command.size == 5;
-      });
+      final isSizeFive = predicate<CreateGameDto>(
+          (createGame) => createGame.command.size == 5);
 
-      client.createGame(5);
+      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(webSocketClient).createGame(5);
 
       verify(webSocketClient.sendJson(argThat(isSizeFive))).called(1);
     });
@@ -33,11 +32,11 @@ void main() {
   group('playStone', () {
     test('sends a PlayStoneDto', () {
       final webSocketClient = MockWebSocketClient();
-      final client = GameClient(webSocketClient);
       final location = LocationDto(0, 0);
       final game = createGame();
 
-      client.playStone(location, game);
+      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(webSocketClient).playStone(location, game);
 
       verify(webSocketClient.sendJson(argThat(isA<PlayStoneDto>()))).called(1);
     });
@@ -46,10 +45,10 @@ void main() {
   group('pass', () {
     test('sends a PassDto', () {
       final webSocketClient = MockWebSocketClient();
-      final client = GameClient(webSocketClient);
       final game = createGame();
 
-      client.pass(game);
+      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(webSocketClient).pass(game);
 
       verify(webSocketClient.sendJson(argThat(isA<PassDto>()))).called(1);
     });
@@ -58,7 +57,6 @@ void main() {
   group('gameMessages', () {
     test('returns a Game DTO', () async {
       final webSocketClient = MockWebSocketClient();
-      final client = GameClient(webSocketClient);
       final parsedJson = {
         "activePlayer": "Black",
         "passivePlayer": "White",
@@ -73,11 +71,10 @@ void main() {
           ]
         ]
       };
-      final returnStream = (_) => Stream.value(parsedJson);
 
-      when(webSocketClient.messages).thenAnswer(returnStream);
+      when(webSocketClient.messages).thenAnswer((_) => Stream.value(parsedJson));
 
-      client.game.listen((gameDto) {
+      GameClient(webSocketClient).game.listen((gameDto) {
         expect(gameDto.activePlayer, PlayerDto.Black);
         expect(gameDto.passivePlayer, PlayerDto.White);
         expect(gameDto.positions.first.first.first.location.x, 0);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:go_app/api/game/common/game_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/input/end_game_dto.dart';
@@ -8,11 +10,20 @@ import 'package:go_app/api/game/output/pass_dto.dart';
 import 'package:go_app/api/game/output/play_stone_command_dto.dart';
 import 'package:go_app/api/game/output/play_stone_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
+import 'package:rxdart/rxdart.dart';
 
 class GameClient {
+  final BehaviorSubject<Map<String, dynamic>> _messages;
   final WebSocketClient _client;
 
-  GameClient(this._client);
+  factory GameClient(WebSocketClient webSocketClient) {
+    // ignore: close_sinks
+    BehaviorSubject<Map<String, dynamic>> messages = BehaviorSubject();
+
+    messages.addStream(webSocketClient.messages);
+
+    return GameClient._(webSocketClient, messages);
+  }
 
   createGame(int size) {
     final command = CreateGameCommandDto(size);
@@ -35,12 +46,17 @@ class GameClient {
     _client.sendJson(pass);
   }
 
+  close() {
+    _client.close();
+    _messages.close();
+  }
+
   Stream<GameDto> get game => _messages.where(_isGameDto).map(_toGameDto);
 
   Stream<EndGameDto> get endGame =>
       _messages.where(_isEndGameDto).map(_toEndGameDto);
 
-  Stream<Map<String, dynamic>> get _messages => _client.messages;
+  GameClient._(this._client, this._messages);
 
   bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);
 
