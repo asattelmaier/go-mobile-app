@@ -1,4 +1,4 @@
-enum Color {
+enum PlayerColor {
   Black,
   White
 }

@@ -1,22 +1,22 @@
 import 'package:go_app/api/game/common/state_dto.dart';
-import 'package:go_app/game/color.dart';
-import 'package:go_app/game/stone.dart';
+import 'package:go_app/game/player/player_color.dart';
+import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
 
-class State {
+class StateModel {
   // TODO: Add maybe type as soon as it is null safety
   //  @see: https://github.com/aloisdeniel/dart_maybe/pull/3
-  Stone? _stone;
+  StoneModel? _stone;
 
-  State([this._stone]);
+  StateModel([this._stone]);
 
   bool get _isEmpty => _stone == null;
 
-  factory State.fromDto(StateDto dto) {
+  factory StateModel.fromDto(StateDto dto) {
     if (dto == StateDto.Empty) {
-      return State();
+      return StateModel();
     }
 
-    return State(Stone(dto as Color));
+    return StateModel(StoneModel(dto as PlayerColor));
   }
 
   StateDto toDto() {

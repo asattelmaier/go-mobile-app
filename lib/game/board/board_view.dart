@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_app/game/board.dart';
+import 'package:go_app/game/board/board_controller.dart';
 
-class BoardWidget extends StatelessWidget {
-  final Board _board;
+class BoardView extends StatelessWidget {
+  final BoardController _controller;
 
-  BoardWidget(this._board);
+  BoardView(this._controller);
 
   // TODO: Make magic numbers configurable
   @override
@@ -16,8 +16,8 @@ class BoardWidget extends StatelessWidget {
             color: Colors.grey,
             child: Stack(
               children: <Widget>[
-                _verticalLines(_board.rows),
-                _horizontalLines(_board.rows),
+                _verticalLines(_controller.board.rows),
+                _horizontalLines(_controller.board.rows),
               ],
             )),
       );

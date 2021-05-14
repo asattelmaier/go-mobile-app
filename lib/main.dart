@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:go_app/api/game/game_client.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
-import 'package:go_app/game/game.dart';
-import 'package:go_app/pages/home_page.dart';
+import 'package:go_app/game/game_controller.dart';
+import 'package:go_app/game/game_view.dart';
 import 'package:web_socket_channel/io.dart';
 
 void main() {
   final channel = IOWebSocketChannel.connect(Configuration.WEB_SOCKET_URL);
-  final game = Game(GameClient(WebSocketClient(channel)));
+  final controller = GameController(GameClient(WebSocketClient(channel)));
 
-  runApp(GoApp(game));
+  runApp(GoApp(controller));
 }
 
 class GoApp extends StatelessWidget {
-  final Game game;
+  final GameController _controller;
 
-  GoApp(this.game);
+  GoApp(this._controller);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(_) {
     return MaterialApp(
       title: 'Go',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(game),
+      home: GameView(_controller),
     );
   }
 }
