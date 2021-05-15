@@ -20,7 +20,7 @@ class BoardView extends StatelessWidget {
       height: _width,
       decoration: BoxDecoration(color: Colors.green),
       child: Stack(children: [
-        if (_controller.board.size > 0) _board,
+        if (!_controller.isBoardEmpty) _board,
         _intersections,
       ]),
     );
@@ -35,7 +35,7 @@ class BoardView extends StatelessWidget {
       ));
 
   Widget get _intersections => Row(
-        children: _controller.board.intersections
+        children: _controller.intersections
             .map((intersections) => Flexible(
                 child: Column(
                     children: intersections
@@ -71,7 +71,7 @@ class BoardView extends StatelessWidget {
       );
 
   List<Widget> _createLines(Widget widget) =>
-      List.generate(_controller.board.size, (_) => widget);
+      List.generate(_controller.size, (_) => widget);
 
-  double get _boardWidth => _width - (_width / _controller.board.size);
+  double get _boardWidth => _width - (_width / _controller.size);
 }

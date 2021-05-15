@@ -21,4 +21,22 @@ void main() {
       expect(size, 0);
     });
   });
+
+  group('isEmpty', () {
+    test('is true if size is zero', () {
+      final board = BoardModel.empty();
+
+      final isEmpty = board.isEmpty;
+
+      expect(isEmpty, true);
+    });
+
+    test('is false if size > zero', () {
+      final board = BoardModel([[]]);
+
+      final isEmpty = board.isEmpty;
+
+      expect(isEmpty, false);
+    });
+  });
 }

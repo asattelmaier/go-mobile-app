@@ -1,4 +1,5 @@
 enum PlayerColor {
   Black,
-  White
+  White,
+  Empty
 }

@@ -16,4 +16,6 @@ class BoardModel {
       intersections.map((e) => e.map((e) => e.toDto()).toList()).toList();
 
   int get size => intersections.length;
+
+  bool get isEmpty => size == 0;
 }

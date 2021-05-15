@@ -1,5 +1,6 @@
 import 'package:go_app/game/board/board_controller.dart';
 import 'package:go_app/game/board/intersection/intersection_model.dart';
+import 'package:go_app/game/board/intersection/state/state_model.dart';
 
 class IntersectionController {
   final BoardController _boardController;
@@ -10,4 +11,6 @@ class IntersectionController {
   void play() {
     _boardController.play(_intersection.location);
   }
+
+  StateModel get state => _intersection.state;
 }

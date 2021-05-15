@@ -6,4 +6,6 @@ class StoneModel {
   StoneModel(this.color);
 
   bool get isBlack => color == PlayerColor.Black;
+
+  bool get isWhite => color == PlayerColor.White;
 }

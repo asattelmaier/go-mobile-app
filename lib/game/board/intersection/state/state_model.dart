@@ -5,11 +5,11 @@ import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
 class StateModel {
   // TODO: Add maybe type as soon as it is null safety
   //  @see: https://github.com/aloisdeniel/dart_maybe/pull/3
-  StoneModel? _stone;
+  final StoneModel stone;
 
-  StateModel([this._stone]);
+  StateModel(this.stone);
 
-  bool get _isEmpty => _stone == null;
+  bool get isEmpty => !stone.isBlack && !stone.isWhite;
 
   factory StateModel.fromDto(StateDto dto) {
     switch (dto) {
@@ -20,19 +20,19 @@ class StateModel {
         return StateModel(StoneModel(PlayerColor.White));
 
       default:
-        return StateModel();
+        return StateModel(StoneModel(PlayerColor.Empty));
     }
   }
 
   StateDto toDto() {
-    if (_isEmpty) {
-      return StateDto.Empty;
+    if (stone.isWhite) {
+      return StateDto.White;
     }
 
-    if (_stone!.isBlack) {
+    if (stone.isBlack) {
       return StateDto.Black;
     }
 
-    return StateDto.White;
+    return StateDto.Empty;
   }
 }
