@@ -12,11 +12,16 @@ class StateModel {
   bool get _isEmpty => _stone == null;
 
   factory StateModel.fromDto(StateDto dto) {
-    if (dto == StateDto.Empty) {
-      return StateModel();
-    }
+    switch (dto) {
+      case StateDto.Black:
+        return StateModel(StoneModel(PlayerColor.Black));
 
-    return StateModel(StoneModel(dto as PlayerColor));
+      case StateDto.White:
+        return StateModel(StoneModel(PlayerColor.White));
+
+      default:
+        return StateModel();
+    }
   }
 
   StateDto toDto() {
@@ -24,6 +29,10 @@ class StateModel {
       return StateDto.Empty;
     }
 
-    return _stone!.color as StateDto;
+    if (_stone!.isBlack) {
+      return StateDto.Black;
+    }
+
+    return StateDto.White;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:go_app/api/game/output/create_game_command_dto.dart';
+import 'package:go_app/api/game/output/create_command_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -44,9 +44,9 @@ void main() {
 
       when(channel.sink).thenReturn(sink);
       when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
-      client.sendJson(CreateGameCommandDto(2));
+      client.sendJson(CreateCommandDto(2));
 
-      verify(sink.add('''{"name":"CreateGame","size":2}''')).called(1);
+      verify(sink.add('''{"name":"Create","size":2}''')).called(1);
     });
 
     test('sends empty JSON', () {

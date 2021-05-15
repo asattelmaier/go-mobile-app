@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:go_app/api/game/common/game_dto.dart';
 import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/input/end_game_dto.dart';
-import 'package:go_app/api/game/output/create_game_command_dto.dart';
-import 'package:go_app/api/game/output/create_game_dto.dart';
+import 'package:go_app/api/game/output/create_command_dto.dart';
+import 'package:go_app/api/game/output/create_dto.dart';
 import 'package:go_app/api/game/output/pass_command_dto.dart';
 import 'package:go_app/api/game/output/pass_dto.dart';
-import 'package:go_app/api/game/output/play_stone_command_dto.dart';
-import 'package:go_app/api/game/output/play_stone_dto.dart';
+import 'package:go_app/api/game/output/play_command_dto.dart';
+import 'package:go_app/api/game/output/play_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -25,18 +25,18 @@ class GameClient {
     return GameClient._(webSocketClient, messages);
   }
 
-  createGame(int size) {
-    final command = CreateGameCommandDto(size);
-    final createGame = CreateGameDto(command);
+  create(int size) {
+    final command = CreateCommandDto(size);
+    final create = CreateDto(command);
 
-    _client.sendJson(createGame);
+    _client.sendJson(create);
   }
 
-  playStone(LocationDto location, GameDto game) {
-    final command = PlayStoneCommandDto(location);
-    final playStone = PlayStoneDto(command, game);
+  play(LocationDto location, GameDto game) {
+    final command = PlayCommandDto(location);
+    final play = PlayDto(command, game);
 
-    _client.sendJson(playStone);
+    _client.sendJson(play);
   }
 
   pass(GameDto game) {

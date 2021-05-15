@@ -22,11 +22,11 @@ class GameController {
   Stream<GameModel> get game => _game.stream;
 
   create(int size) {
-    _client.createGame(size);
+    _client.create(size);
   }
 
   play(LocationModel location) {
-    _client.playStone(location.toDto(), _gameDto);
+    _client.play(location.toDto(), _gameDto);
   }
 
   pass() {

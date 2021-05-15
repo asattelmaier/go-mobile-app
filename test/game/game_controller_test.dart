@@ -29,10 +29,10 @@ void main() {
       final location = LocationModel(0, 0);
 
       when(client.game).thenAnswer((_) => Stream.value(createGame()));
-      when(client.playStone(any, any)).thenReturn(null);
+      when(client.play(any, any)).thenReturn(null);
       GameController(client).play(location);
 
-      verify(client.playStone(
+      verify(client.play(
               argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
           .called(1);
     });
@@ -42,10 +42,10 @@ void main() {
       final location = LocationModel(0, 0);
 
       when(client.game).thenAnswer((_) => Stream.empty());
-      when(client.playStone(any, any)).thenReturn(null);
+      when(client.play(any, any)).thenReturn(null);
       GameController(client).play(location);
 
-      verify(client.playStone(
+      verify(client.play(
               argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
           .called(1);
     });
@@ -56,10 +56,10 @@ void main() {
       final client = MockGameClient();
 
       when(client.game).thenAnswer((_) => Stream.empty());
-      when(client.createGame(any)).thenReturn(null);
+      when(client.create(any)).thenReturn(null);
       GameController(client).create(5);
 
-      verify(client.createGame(argThat(equals(5)))).called(1);
+      verify(client.create(argThat(equals(5)))).called(1);
     });
   });
 

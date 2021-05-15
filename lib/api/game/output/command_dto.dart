@@ -1,5 +1,5 @@
 enum CommandDto {
-  CreateGame,
-  PlayStone,
+  Create,
+  Play,
   Pass
 }

@@ -5,7 +5,7 @@ part 'pass_command_dto.g.dart';
 
 @JsonSerializable(createFactory: false)
 class PassCommandDto {
-  CommandDto name = CommandDto.Pass;
+  final CommandDto name = CommandDto.Pass;
 
   PassCommandDto();
 

@@ -27,8 +27,8 @@ class GameView extends StatelessWidget {
               ),
               StreamBuilder<GameModel>(
                 stream: _controller.game,
-                builder: (_, board) => BoardView(board.hasData
-                    ? BoardController(board.data!.board)
+                builder: (_, game) => BoardView(game.hasData
+                    ? BoardController(game.data!.board)
                     : BoardController(BoardModel.empty())),
               )
             ],

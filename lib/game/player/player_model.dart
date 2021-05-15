@@ -1,17 +1,17 @@
 import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:go_app/game/player/player_color.dart';
 
-class Player {
+class PlayerModel {
   PlayerColor _color;
 
-  Player(this._color);
+  PlayerModel(this._color);
 
-  factory Player.fromDto(PlayerDto dto) {
+  factory PlayerModel.fromDto(PlayerDto dto) {
     if (dto == PlayerDto.Black) {
-      return Player(PlayerColor.Black);
+      return PlayerModel(PlayerColor.Black);
     }
 
-    return Player(PlayerColor.White);
+    return PlayerModel(PlayerColor.White);
   }
 
   PlayerDto toDto() {

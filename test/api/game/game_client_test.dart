@@ -5,9 +5,9 @@ import 'package:go_app/api/game/common/location_dto.dart';
 import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:go_app/api/game/common/state_dto.dart';
 import 'package:go_app/api/game/game_client.dart';
-import 'package:go_app/api/game/output/create_game_dto.dart';
+import 'package:go_app/api/game/output/create_dto.dart';
 import 'package:go_app/api/game/output/pass_dto.dart';
-import 'package:go_app/api/game/output/play_stone_dto.dart';
+import 'package:go_app/api/game/output/play_dto.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -19,11 +19,11 @@ void main() {
   group('createGame', () {
     test('sends create game command with size', () {
       final webSocketClient = MockWebSocketClient();
-      final isSizeFive = predicate<CreateGameDto>(
+      final isSizeFive = predicate<CreateDto>(
           (createGame) => createGame.command.size == 5);
 
       when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).createGame(5);
+      GameClient(webSocketClient).create(5);
 
       verify(webSocketClient.sendJson(argThat(isSizeFive))).called(1);
     });
@@ -36,9 +36,9 @@ void main() {
       final game = createGame();
 
       when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).playStone(location, game);
+      GameClient(webSocketClient).play(location, game);
 
-      verify(webSocketClient.sendJson(argThat(isA<PlayStoneDto>()))).called(1);
+      verify(webSocketClient.sendJson(argThat(isA<PlayDto>()))).called(1);
     });
   });
 
