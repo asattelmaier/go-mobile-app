@@ -2,9 +2,9 @@ import 'package:go_app/api/game/common/player_dto.dart';
 import 'package:go_app/game/player/player_color.dart';
 
 class PlayerModel {
-  PlayerColor _color;
+  final PlayerColor color;
 
-  PlayerModel(this._color);
+  PlayerModel(this.color);
 
   factory PlayerModel.fromDto(PlayerDto dto) {
     if (dto == PlayerDto.Black) {
@@ -15,10 +15,21 @@ class PlayerModel {
   }
 
   PlayerDto toDto() {
-    if (_color == PlayerColor.Black) {
+    if (color == PlayerColor.Black) {
       return PlayerDto.Black;
     }
 
     return PlayerDto.White;
   }
+
+  @override
+  String toString() {
+    if (_isBlack) {
+      return 'Black';
+    }
+
+    return 'White';
+  }
+
+  bool get _isBlack => color == PlayerColor.Black;
 }

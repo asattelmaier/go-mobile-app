@@ -1,49 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:go_app/game/board/board_controller.dart';
+import 'package:go_app/game/board/intersection/intersection_controller.dart';
+import 'package:go_app/game/board/intersection/intersection_view.dart';
 
 class BoardView extends StatelessWidget {
+  // TODO: Create Theme for border with and colors
+  static const double BORDER_WIDTH = 1;
+  static const Color BORDER_COLOR = Colors.black;
+  static const Color BOARD_COLOR = Colors.grey;
   final BoardController _controller;
+  final double _width;
 
-  BoardView(this._controller);
+  BoardView(this._controller, this._width);
 
-  // TODO: Make magic numbers configurable
   @override
-  Widget build(BuildContext context) => AspectRatio(
-        aspectRatio: 1.0,
-        child: AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            margin: EdgeInsets.all(8.0),
-            color: Colors.grey,
-            child: Stack(
-              children: <Widget>[
-                _verticalLines(_controller.board.rows),
-                _horizontalLines(_controller.board.rows),
-              ],
-            )),
+  Widget build(BuildContext context) {
+    return Container(
+      width: _width,
+      height: _width,
+      decoration: BoxDecoration(color: Colors.green),
+      child: Stack(children: [
+        if (_controller.board.size > 0) _board,
+        _intersections,
+      ]),
+    );
+  }
+
+  Widget get _board => Center(
+          child: Container(
+        width: _boardWidth,
+        height: _boardWidth,
+        child: _lines,
+        decoration: BoxDecoration(color: BOARD_COLOR),
+      ));
+
+  Widget get _intersections => Row(
+        children: _controller.board.intersections
+            .map((intersections) => Flexible(
+                child: Column(
+                    children: intersections
+                        .map((intersection) => IntersectionView(
+                            IntersectionController(intersection)))
+                        .toList())))
+            .toList(),
       );
 
-  Widget _verticalLines(int rows) => Row(
+  Widget get _lines => Stack(
+        children: [
+          _verticalLines,
+          _horizontalLines,
+        ],
+      );
+
+  Widget get _verticalLines => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: _toList(rows)(Flexible(
-            flex: 1,
+        children: _createLines(Flexible(
             child: Container(
-              width: 1,
-              color: Colors.black,
-              height: 400,
-            ))),
+          width: BORDER_WIDTH,
+          color: BORDER_COLOR,
+        ))),
       );
 
-  Widget _horizontalLines(int rows) => Column(
+  Widget get _horizontalLines => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: _toList(rows)(Flexible(
-            flex: 1,
+        children: _createLines(Flexible(
             child: Container(
-              width: 400,
-              color: Colors.black,
-              height: 1,
-            ))),
+          color: BORDER_COLOR,
+          height: BORDER_WIDTH,
+        ))),
       );
 
-  Function(Widget) _toList(int rows) =>
-      (Widget widget) => List.generate(rows, (_) => widget);
+  List<Widget> _createLines(Widget widget) =>
+      List.generate(_controller.board.size, (_) => widget);
+
+  double get _boardWidth => _width - (_width / _controller.board.size);
 }

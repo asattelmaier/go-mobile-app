@@ -9,7 +9,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:go_app/api/game/game_client.dart';
 import '../_utils/_utils.dart';
-import 'game_test.mocks.dart';
+import 'game_controller_test.mocks.dart';
 
 @GenerateMocks([GameClient])
 void main() {
@@ -19,7 +19,7 @@ void main() {
 
       when(client.game).thenAnswer((_) => Stream.value(createGame(2)));
 
-      GameController(client).game.listen((game) => expect(game.board.rows, 2));
+      GameController(client).game.listen((game) => expect(game.board.size, 2));
     });
   });
 
@@ -32,8 +32,7 @@ void main() {
       when(client.play(any, any)).thenReturn(null);
       GameController(client).play(location);
 
-      verify(client.play(
-              argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
+      verify(client.play(argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
           .called(1);
     });
 
@@ -45,8 +44,7 @@ void main() {
       when(client.play(any, any)).thenReturn(null);
       GameController(client).play(location);
 
-      verify(client.play(
-              argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
+      verify(client.play(argThat(isA<LocationDto>()), argThat(isA<GameDto>())))
           .called(1);
     });
   });

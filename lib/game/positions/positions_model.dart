@@ -6,6 +6,8 @@ class PositionsModel {
 
   PositionsModel(this._boards);
 
+  PositionsModel.empty() : this._boards = [BoardModel.empty()];
+
   BoardModel get board => _boards.first;
 
   factory PositionsModel.fromDto(List<List<List<IntersectionDto>>> dto) =>

@@ -39,10 +39,10 @@ class GameController {
   }
 
   GameDto get _gameDto {
-    if (!_game.hasValue) {
-      return GameDto.empty();
+    if (_game.hasValue) {
+      return _game.value.toDto();
     }
 
-    return _game.value.toDto();
+    return GameDto.empty();
   }
 }

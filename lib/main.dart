@@ -19,13 +19,11 @@ class GoApp extends StatelessWidget {
   GoApp(this._controller);
 
   @override
-  Widget build(_) {
-    return MaterialApp(
-      title: 'Go',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: GameView(_controller),
-    );
-  }
+  Widget build(_) => MaterialApp(
+        title: 'Go',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: GameView(_controller),
+      );
 }

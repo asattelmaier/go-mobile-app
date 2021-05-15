@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_app/game/board/board_controller.dart';
-import 'package:go_app/game/board/board_model.dart';
 import 'package:go_app/game/board/board_view.dart';
 import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/game/game_model.dart';
@@ -11,7 +10,7 @@ class GameView extends StatelessWidget {
   GameView(this._controller);
 
   @override
-  Widget build(_) => Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text('Go'),
         ),
@@ -27,12 +26,22 @@ class GameView extends StatelessWidget {
               ),
               StreamBuilder<GameModel>(
                 stream: _controller.game,
-                builder: (_, game) => BoardView(game.hasData
-                    ? BoardController(game.data!.board)
-                    : BoardController(BoardModel.empty())),
+                builder: (_, snapshot) {
+                  final game = GameModel.fromNullable(snapshot.data);
+                  final controller = BoardController(game.board);
+                  final width = getBoardWidth(context);
+
+                  return Column(children: [
+                    BoardView(controller, width),
+                    Text('${game.activePlayer.toString()}s turn')
+                  ]);
+                },
               )
             ],
           ),
         ),
       );
+
+  double getBoardWidth(BuildContext context) =>
+      MediaQuery.of(context).size.width;
 }
