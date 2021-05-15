@@ -22,14 +22,16 @@ class PlayerModel {
     return PlayerDto.White;
   }
 
+  bool get isBlack => color == PlayerColor.Black;
+
+  bool get isWhite => color == PlayerColor.White;
+
   @override
   String toString() {
-    if (_isBlack) {
+    if (isBlack) {
       return 'Black';
     }
 
     return 'White';
   }
-
-  bool get _isBlack => color == PlayerColor.Black;
 }

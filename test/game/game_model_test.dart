@@ -1,29 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_app/game/board/board_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/positions/positions_model.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'game_model_test.mocks.dart';
 
-@GenerateMocks([PlayerModel, PositionsModel])
+@GenerateMocks([PlayerModel, PositionsModel, BoardModel])
 void main() {
-  group('fromNullable', () {
-    test('returns given instance if it is not null', () {
-      final game =
-          GameModel(MockPlayerModel(), MockPlayerModel(), MockPositionsModel());
+  group('board', () {
+    test('returns positions board', () {
+      final positions = MockPositionsModel();
+      final board = MockBoardModel();
+      final game = GameModel(MockPlayerModel(), MockPlayerModel(), positions);
 
-      final gameFromNullable = GameModel.fromNullable(game);
+      when(positions.board).thenReturn(board);
 
-      expect(gameFromNullable, game);
-    });
-
-
-    test('returns empty game if given instance is null', () {
-      final game = null;
-
-      final gameFromNullable = GameModel.fromNullable(game);
-
-      expect(gameFromNullable.positions.board.size, 0);
+      expect(game.board, board);
     });
   });
 }
