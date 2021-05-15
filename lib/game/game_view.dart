@@ -28,7 +28,7 @@ class GameView extends StatelessWidget {
                 stream: _controller.game,
                 builder: (_, snapshot) {
                   final game = GameModel.fromNullable(snapshot.data);
-                  final controller = BoardController(game.board);
+                  final controller = BoardController(_controller, game.board);
                   final width = getBoardWidth(context);
 
                   return Column(children: [

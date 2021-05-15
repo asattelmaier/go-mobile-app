@@ -4,7 +4,7 @@ import 'package:go_app/game/board/intersection/intersection_controller.dart';
 import 'package:go_app/game/board/intersection/intersection_view.dart';
 
 class BoardView extends StatelessWidget {
-  // TODO: Create Theme for border with and colors
+  // TODO: Create Theme for border width and colors
   static const double BORDER_WIDTH = 1;
   static const Color BORDER_COLOR = Colors.black;
   static const Color BOARD_COLOR = Colors.grey;
@@ -40,7 +40,7 @@ class BoardView extends StatelessWidget {
                 child: Column(
                     children: intersections
                         .map((intersection) => IntersectionView(
-                            IntersectionController(intersection)))
+                            IntersectionController(_controller, intersection)))
                         .toList())))
             .toList(),
       );

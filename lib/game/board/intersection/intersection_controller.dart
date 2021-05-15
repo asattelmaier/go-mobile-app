@@ -1,7 +1,13 @@
+import 'package:go_app/game/board/board_controller.dart';
 import 'package:go_app/game/board/intersection/intersection_model.dart';
 
 class IntersectionController {
-  IntersectionModel intersection;
+  final BoardController _boardController;
+  final IntersectionModel _intersection;
 
-  IntersectionController(this.intersection);
+  IntersectionController(this._boardController, this._intersection);
+
+  void play() {
+    _boardController.play(_intersection.location);
+  }
 }

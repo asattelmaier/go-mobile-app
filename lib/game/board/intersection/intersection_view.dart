@@ -10,10 +10,14 @@ class IntersectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Flexible(
-        child: Container(
-            decoration: BoxDecoration(
-          border: Border.all(
-              color: Colors.red, width: IntersectionView.BORDER_WIDTH),
-        )),
+        child: GestureDetector(
+            onTap: () {
+              _controller.play();
+            },
+            child: Container(
+                decoration: BoxDecoration(
+              border: Border.all(
+                  color: Colors.red, width: IntersectionView.BORDER_WIDTH),
+            ))),
       );
 }
