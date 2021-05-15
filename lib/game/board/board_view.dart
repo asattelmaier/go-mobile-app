@@ -5,9 +5,8 @@ import 'package:go_app/game/board/intersection/intersection_view.dart';
 
 class BoardView extends StatelessWidget {
   // TODO: Create Theme for border width and colors
-  static const double BORDER_WIDTH = 1;
-  static const Color BORDER_COLOR = Colors.black;
-  static const Color BOARD_COLOR = Colors.grey;
+  static const double BORDER_WIDTH = 2;
+  static const Color BORDER_COLOR = Colors.white;
   final BoardController _controller;
   final double _width;
 
@@ -15,24 +14,33 @@ class BoardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isBoardEmpty) {
+      return Container();
+    }
+
     return Container(
       width: _width,
       height: _width,
-      decoration: BoxDecoration(color: Colors.green),
-      child: Stack(children: [
-        if (!_controller.isBoardEmpty) _board,
-        _intersections,
-      ]),
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage("lib/game/board/assets/board_bg.jpg"),
+        fit: BoxFit.cover,
+      )),
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Container(
+            child: Stack(children: [
+          _grid,
+          _intersections,
+        ])),
+      ),
     );
   }
 
-  Widget get _board => Center(
-          child: Container(
-        width: _boardWidth,
-        height: _boardWidth,
-        child: _lines,
-        decoration: BoxDecoration(color: BOARD_COLOR),
-      ));
+  Widget get _grid => Center(
+      child: Padding(
+          padding: EdgeInsets.all(_width / _controller.size / 2),
+          child: _lines));
 
   Widget get _intersections => Row(
         children: _controller.intersections
@@ -72,6 +80,4 @@ class BoardView extends StatelessWidget {
 
   List<Widget> _createLines(Widget widget) =>
       List.generate(_controller.size, (_) => widget);
-
-  double get _boardWidth => _width - (_width / _controller.size);
 }

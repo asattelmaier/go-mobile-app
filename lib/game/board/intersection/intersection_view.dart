@@ -18,9 +18,6 @@ class IntersectionView extends StatelessWidget {
             },
             child: Container(
                 child: StateView(StateController(_controller.state)),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Colors.red, width: IntersectionView.BORDER_WIDTH),
-                ))),
+                decoration: BoxDecoration())),
       );
 }

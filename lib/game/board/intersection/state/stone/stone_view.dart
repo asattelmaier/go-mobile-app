@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_app/game/board/intersection/state/stone/stone_controller.dart';
 
 class StoneView extends StatelessWidget {
+  static const String BLACK_STONE_IMG =
+      "lib/game/board/intersection/state/stone/assets/black_stone.png";
+
+  static const String WHITE_STONE_IMG =
+      "lib/game/board/intersection/state/stone/assets/white_stone.png";
+
   final StoneController _controller;
 
   StoneView(this._controller);
@@ -10,9 +16,10 @@ class StoneView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
           decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _color,
-      ));
+              image: DecorationImage(
+        image: AssetImage(_img),
+        fit: BoxFit.cover,
+      )));
 
-  Color get _color => _controller.isBlack ? Colors.black : Colors.white;
+  String get _img => _controller.isBlack ? BLACK_STONE_IMG : WHITE_STONE_IMG;
 }
