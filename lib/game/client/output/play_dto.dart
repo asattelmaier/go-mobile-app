@@ -1,5 +1,5 @@
-import 'package:go_app/api/game/common/game_dto.dart';
-import 'package:go_app/api/game/output/play_command_dto.dart';
+import 'package:go_app/game/client/common/game_dto.dart';
+import 'package:go_app/game/client/output/play_command_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'play_dto.g.dart';

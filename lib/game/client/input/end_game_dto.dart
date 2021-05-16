@@ -1,4 +1,4 @@
-import 'package:go_app/api/game/common/player_dto.dart';
+import 'package:go_app/game/client/common/player_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'end_game_dto.g.dart';

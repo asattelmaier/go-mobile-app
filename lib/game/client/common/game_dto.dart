@@ -1,5 +1,5 @@
-import 'package:go_app/api/game/common/intersection_dto.dart';
-import 'package:go_app/api/game/common/player_dto.dart';
+import 'package:go_app/game/client/common/intersection_dto.dart';
+import 'package:go_app/game/client/common/player_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'game_dto.g.dart';

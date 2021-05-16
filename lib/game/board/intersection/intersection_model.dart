@@ -1,6 +1,6 @@
-import 'package:go_app/api/game/common/intersection_dto.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/board/intersection/state/state_model.dart';
+import 'package:go_app/game/client/common/intersection_dto.dart';
 
 class IntersectionModel {
   final LocationModel location;

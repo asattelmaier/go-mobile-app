@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_app/api/game/common/game_dto.dart';
+import 'package:go_app/game/client/common/game_dto.dart';
 
 void main() {
   group('isGameDto', () {

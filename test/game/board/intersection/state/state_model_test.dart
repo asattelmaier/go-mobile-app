@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_app/api/game/common/state_dto.dart';
 import 'package:go_app/game/board/intersection/state/state_model.dart';
 import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
+import 'package:go_app/game/client/common/state_dto.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'state_model_test.mocks.dart';

@@ -1,4 +1,4 @@
-import 'package:go_app/api/game/common/player_dto.dart';
+import 'package:go_app/game/client/common/player_dto.dart';
 import 'package:go_app/game/player/player_model.dart';
 
 class WinnerModel {
@@ -6,11 +6,15 @@ class WinnerModel {
 
   WinnerModel(this._players);
 
+  WinnerModel.empty() : this._players = [];
+
   bool get isDrawn => hasWhiteWon && hasBlackWon;
 
   bool get hasWhiteWon => _players.any((player) => player.isWhite);
 
   bool get hasBlackWon => _players.any((player) => player.isBlack);
+
+  bool get hasWinner => hasWhiteWon || hasBlackWon;
 
   @override
   String toString() {

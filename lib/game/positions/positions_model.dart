@@ -1,5 +1,5 @@
-import 'package:go_app/api/game/common/intersection_dto.dart';
 import 'package:go_app/game/board/board_model.dart';
+import 'package:go_app/game/client/common/intersection_dto.dart';
 
 class PositionsModel {
   List<BoardModel> _boards;

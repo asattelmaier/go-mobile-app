@@ -1,4 +1,4 @@
-import 'package:go_app/api/game/common/state_dto.dart';
+import 'package:go_app/game/client/common/state_dto.dart';
 import 'package:go_app/game/player/player_color.dart';
 import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
 

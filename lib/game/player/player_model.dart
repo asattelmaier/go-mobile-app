@@ -1,4 +1,4 @@
-import 'package:go_app/api/game/common/player_dto.dart';
+import 'package:go_app/game/client/common/player_dto.dart';
 import 'package:go_app/game/player/player_color.dart';
 
 class PlayerModel {

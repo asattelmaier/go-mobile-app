@@ -1,4 +1,4 @@
-import 'package:go_app/api/game/output/create_command_dto.dart';
+import 'package:go_app/game/client/output/create_command_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'create_dto.g.dart';
