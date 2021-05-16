@@ -18,6 +18,7 @@ class GameController {
     // ignore: close_sinks
     StreamController<EndGameModel> endGame = StreamController();
 
+    game.add(GameModel.empty());
     client.game.listen((dto) => game.add(GameModel.fromDto(dto)));
     client.endGame.listen((dto) => endGame.add(EndGameModel.fromDto(dto)));
 
@@ -29,6 +30,8 @@ class GameController {
   Stream<GameModel> get game => _game.stream;
 
   Stream<EndGameModel> get endGame => _endGame.stream;
+
+  bool get isPlaying => _game.value.isPlaying;
 
   create(int size) {
     _client.create(size);

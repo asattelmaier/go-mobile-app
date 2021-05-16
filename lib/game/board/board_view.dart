@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_app/game/board/board_controller.dart';
 import 'package:go_app/game/board/intersection/intersection_controller.dart';
 import 'package:go_app/game/board/intersection/intersection_view.dart';
+import 'package:go_app/theme/go_theme.dart';
 
 class BoardView extends StatelessWidget {
   // TODO: Create Theme for border width and colors
-  static const double BORDER_WIDTH = 2;
-  static const Color BORDER_COLOR = Colors.white;
   final BoardController _controller;
   final double _width;
+  final GoTheme _theme;
 
-  BoardView(this._controller, this._width);
+  BoardView(this._controller, this._theme, this._width);
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +21,10 @@ class BoardView extends StatelessWidget {
     return Container(
       width: _width,
       height: _width,
-      decoration: BoxDecoration(
-          image: DecorationImage(
-        image: AssetImage("lib/game/board/assets/board_bg.jpg"),
-        fit: BoxFit.cover,
-      )),
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: Container(
+          color: _theme.secondaryLight,
             child: Stack(children: [
           _grid,
           _intersections,
@@ -48,7 +44,8 @@ class BoardView extends StatelessWidget {
                 child: Column(
                     children: intersections
                         .map((intersection) => IntersectionView(
-                            IntersectionController(_controller, intersection)))
+                            IntersectionController(_controller, intersection),
+                            _theme))
                         .toList())))
             .toList(),
       );
@@ -64,8 +61,8 @@ class BoardView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          width: BORDER_WIDTH,
-          color: BORDER_COLOR,
+          width: _theme.borderWidth,
+          color: _theme.primaryLight,
         ))),
       );
 
@@ -73,8 +70,8 @@ class BoardView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          color: BORDER_COLOR,
-          height: BORDER_WIDTH,
+          color: _theme.primaryLight,
+          height: _theme.borderWidth,
         ))),
       );
 

@@ -4,6 +4,7 @@ import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/game/game_view.dart';
+import 'package:go_app/theme/go_theme.dart';
 import 'package:web_socket_channel/io.dart';
 
 void main() {
@@ -24,6 +25,6 @@ class GoApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: GameView(_controller),
+        home: GameView(_controller, GoTheme()),
       );
 }

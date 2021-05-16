@@ -50,11 +50,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-    - lib/game/board/assets/board_bg.jpg
-    - lib/game/board/intersection/state/stone/assets/black_stone.png
-    - lib/game/board/intersection/state/stone/assets/white_stone.png
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
