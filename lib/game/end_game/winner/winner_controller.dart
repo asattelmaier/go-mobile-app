@@ -5,5 +5,5 @@ class WinnerController {
 
   WinnerController(this._winner);
 
-  String get winner => _winner.toString();
+  WinnerModel get winner => _winner;
 }

@@ -14,7 +14,7 @@ class GameController {
 
   bool get isPlaying => _game.isPlaying;
 
-  bool get isGameOver => endGame.isGameOver;
+  bool get isGameOver => endGame.created > _game.created;
 
   BoardModel get board => _game.board;
 
@@ -25,7 +25,9 @@ class GameController {
   }
 
   play(LocationModel location) {
-    _client.play(location, _game);
+    if (!isGameOver) {
+      _client.play(location, _game);
+    }
   }
 
   pass() {

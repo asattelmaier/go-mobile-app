@@ -13,7 +13,7 @@ class GoTheme {
 
   double borderWidth = 2;
 
-  double gutter = 2;
+  double gutter = 4;
 
   GoTheme();
 }

@@ -11,16 +11,60 @@ import 'game_controller_test.mocks.dart';
 @GenerateMocks([GameClient, GameModel, EndGameModel, LocationModel])
 void main() {
   group('play', () {
-    test('plays with a location and the current game', () async {
+    test('plays if the game is not over', () async {
       final client = MockGameClient();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
       final location = MockLocationModel();
 
-      when(client.play(any, any)).thenReturn(null);
+      when(client.play(location, game)).thenReturn(null);
+      when(game.created).thenReturn(2);
+      when(endGame.created).thenReturn(1);
       GameController(client, game, endGame).play(location);
 
       verify(client.play(location, game)).called(1);
+    });
+
+    test('play is only possible if the game is not over', () {
+      final client = MockGameClient();
+      final game = MockGameModel();
+      final endGame = MockEndGameModel();
+      final location = MockLocationModel();
+      final controller = GameController(client, game, endGame);
+
+      when(game.created).thenReturn(1);
+      when(endGame.created).thenReturn(2);
+      controller.play(location);
+
+      verifyNever(client.play(location, game));
+    });
+  });
+
+  group('isGameOver', () {
+    test('game is over if the end game is created after the game', () {
+      final client = MockGameClient();
+      final game = MockGameModel();
+      final endGame = MockEndGameModel();
+      final controller = GameController(client, game, endGame);
+
+      when(game.created).thenReturn(1);
+      when(endGame.created).thenReturn(2);
+      final isGameOver = controller.isGameOver;
+
+      expect(isGameOver, true);
+    });
+
+    test('game is running if the game is created after the end game', () {
+      final client = MockGameClient();
+      final game = MockGameModel();
+      final endGame = MockEndGameModel();
+      final controller = GameController(client, game, endGame);
+
+      when(game.created).thenReturn(2);
+      when(endGame.created).thenReturn(1);
+      final isGameOver = controller.isGameOver;
+
+      expect(isGameOver, false);
     });
   });
 

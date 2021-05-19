@@ -21,14 +21,14 @@ class BoardView extends StatelessWidget {
     return Container(
       width: _width,
       height: _width,
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Container(
-          color: _theme.secondaryLight,
+      child: Container(
+        color: _theme.secondaryLight,
+        child: Padding(
+            padding: EdgeInsets.all(_theme.gutter * 2),
             child: Stack(children: [
-          _grid,
-          _intersections,
-        ])),
+              _grid,
+              _intersections,
+            ])),
       ),
     );
   }

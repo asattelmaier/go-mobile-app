@@ -14,55 +14,42 @@ class GameView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: _theme.primaryLight,
-        appBar: AppBar(
-          title: Text(
-            'Go',
-            style: TextStyle(color: _theme.primaryLight),
-          ),
-          backgroundColor: _theme.primaryDark,
+        body: Column(
+          children: [
+            if (_controller.isPlaying) _board(context),
+            if (_controller.isPlaying && !_controller.isGameOver)
+              Text('${_controller.activePlayer}s turn'),
+            if (_controller.isGameOver) _endGame,
+          ],
         ),
-        body: Center(
-          child: Column(
-            children: [
-              if (_controller.isGameOver) _endGame,
-              if (_controller.isPlaying) _board(context),
-            ],
-          ),
-        ),
-        floatingActionButton: Visibility(
-          child: FloatingActionButton.extended(
-            elevation: 4.0,
-            icon: Icon(Icons.add, color: _theme.primaryLight),
-            label: Text(
-              'New Game',
-              style: TextStyle(color: _theme.primaryLight),
-            ),
-            backgroundColor: _theme.accent,
-            onPressed: () {
-              // TODO: Make magic numbers and strings configurable
-              _controller.create(9);
-            },
-          ),
-          visible: !_controller.isPlaying,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: PreferredSize(
           preferredSize: Size.fromHeight(300),
           child: BottomAppBar(
             color: _theme.primaryDark,
-            child: new Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 TextButton.icon(
-                  label: Text('Pass'),
-                  icon: Icon(Icons.block),
+                  label: Text('New'),
+                  icon: Icon(Icons.add),
                   style: TextButton.styleFrom(primary: _theme.accent),
                   onPressed: () {
-                    _controller.pass();
+                    // TODO: Make magic numbers and strings configurable
+                    _controller.create(9);
                   },
                 ),
+                Visibility(
+                  visible: _controller.isPlaying && !_controller.isGameOver,
+                  child: TextButton.icon(
+                    label: Text('Pass'),
+                    icon: Icon(Icons.block),
+                    style: TextButton.styleFrom(primary: _theme.accent),
+                    onPressed: () {
+                      _controller.pass();
+                    },
+                  ),
+                )
               ],
             ),
           ),
@@ -73,11 +60,12 @@ class GameView extends StatelessWidget {
     final controller = BoardController(_controller, _controller.board);
     final width = getBoardWidth(context);
 
-    return Column(children: [
-      BoardView(controller, _theme, width),
-      Text('${_controller.activePlayer.toString()}s turn',
-          style: TextStyle(color: _theme.primaryDark)),
-    ]);
+    return Padding(
+        padding: EdgeInsets.all(_theme.gutter * 2),
+        child: Container(
+          margin: EdgeInsets.only(top: _theme.gutter * 15),
+          child: BoardView(controller, _theme, width),
+        ));
   }
 
   Widget get _endGame {

@@ -17,7 +17,7 @@ class StateView extends StatelessWidget {
     }
 
     return Padding(
-        padding: EdgeInsets.all(2.0),
+        padding: EdgeInsets.all(_theme.gutter),
         child: StoneView(StoneController(_controller.stone), _theme));
   }
 }

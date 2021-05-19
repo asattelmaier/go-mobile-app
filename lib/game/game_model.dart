@@ -8,16 +8,19 @@ class GameModel {
   final PlayerModel activePlayer;
   final PlayerModel passivePlayer;
   final PositionsModel positions;
-  bool isPlaying;
+  final bool isPlaying;
+  final int created;
 
   GameModel(this.activePlayer, this.passivePlayer, this.positions)
-      : this.isPlaying = true;
+      : this.isPlaying = true,
+        this.created = DateTime.now().millisecondsSinceEpoch;
 
   GameModel.empty()
       : this.activePlayer = PlayerModel(PlayerColor.Black),
         this.passivePlayer = PlayerModel(PlayerColor.White),
         this.positions = PositionsModel.empty(),
-        this.isPlaying = false;
+        this.isPlaying = false,
+        this.created = 0;
 
   factory GameModel.fromNullable(GameModel? game) {
     if (game == null) {

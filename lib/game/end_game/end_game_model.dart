@@ -4,14 +4,15 @@ import 'package:go_app/game/end_game/winner/winner_model.dart';
 class EndGameModel {
   final WinnerModel winner;
   final int score;
+  final int created;
 
-  EndGameModel(this.score, this.winner);
+  EndGameModel(this.score, this.winner)
+      : this.created = DateTime.now().millisecondsSinceEpoch;
 
   EndGameModel.empty()
       : this.score = 0,
-        this.winner = WinnerModel.empty();
-
-  bool get isGameOver => score != 0 || winner.hasWinner;
+        this.winner = WinnerModel.empty(),
+        this.created = 0;
 
   factory EndGameModel.fromNullable(EndGameModel? endGame) {
     if (endGame == null) {

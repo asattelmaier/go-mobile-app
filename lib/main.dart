@@ -12,14 +12,16 @@ import 'package:web_socket_channel/io.dart';
 void main() {
   final channel = IOWebSocketChannel.connect(Configuration.WEB_SOCKET_URL);
   final client = GameClient(WebSocketClient(channel));
+  final theme = GoTheme();
 
-  runApp(GoApp(client));
+  runApp(GoApp(client, theme));
 }
 
 class GoApp extends StatelessWidget {
   final GameClient _client;
+  final GoTheme _theme;
 
-  GoApp(this._client);
+  GoApp(this._client, this._theme);
 
   @override
   Widget build(_) => MaterialApp(
@@ -27,16 +29,20 @@ class GoApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: StreamBuilder<EndGameModel>(
-        stream: _client.endGame,
-        builder: (_, endGameSnapshot) => StreamBuilder<GameModel>(
-          stream: _client.game,
-          builder: (_, gameSnapshot) {
-            final game = GameModel.fromNullable(gameSnapshot.data);
-            final endGame = EndGameModel.fromNullable(endGameSnapshot.data);
+      home: Container(
+        color: _theme.primaryLight,
+        child: SafeArea(
+            child: StreamBuilder<EndGameModel>(
+          stream: _client.endGame,
+          builder: (_, endGameSnapshot) => StreamBuilder<GameModel>(
+            stream: _client.game,
+            builder: (_, gameSnapshot) {
+              final game = GameModel.fromNullable(gameSnapshot.data);
+              final endGame = EndGameModel.fromNullable(endGameSnapshot.data);
 
-            return GameView(GameController(_client, game, endGame), GoTheme());
-          },
-        ),
+              return GameView(GameController(_client, game, endGame), _theme);
+            },
+          ),
+        )),
       ));
 }
