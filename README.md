@@ -20,3 +20,12 @@ Run Flutter.
 ```bash
 flutter run
 ```
+
+## Configuration
+
+To target a specific environment provide a `ENV` via `--dart-define`.
+Currently only `development` is supported.
+
+```bash
+flutter run --dart-define=ENV=development
+```

@@ -1,3 +1,16 @@
+import 'package:go_app/configuration/configurations/android_dev.dart';
+import 'package:go_app/environment/environment.dart';
+
 class Configuration {
-  static const String WEB_SOCKET_URL = 'ws://10.0.2.2:9000';
+  final String webSocketUrl = 'ws://localhost:8000';
+
+  Configuration();
+
+  factory Configuration.create(Environment environment) {
+    if (environment.isAndroid && environment.isDevelopment) {
+      return new AndroidDevConfiguration();
+    }
+
+    return new Configuration();
+  }
 }
