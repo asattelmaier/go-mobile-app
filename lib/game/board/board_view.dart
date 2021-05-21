@@ -8,12 +8,13 @@ class BoardView extends StatelessWidget {
   // TODO: Create Theme for border width and colors
   final BoardController _controller;
   final double _width;
-  final GoTheme _theme;
 
-  BoardView(this._controller, this._theme, this._width);
+  BoardView(this._controller, this._width);
 
   @override
   Widget build(BuildContext context) {
+    final theme = GoTheme.of(context);
+
     if (_controller.isBoardEmpty) {
       return Container();
     }
@@ -22,21 +23,26 @@ class BoardView extends StatelessWidget {
       width: _width,
       height: _width,
       child: Container(
-        color: _theme.secondaryLight,
+        color: theme.boardColor,
         child: Padding(
-            padding: EdgeInsets.all(_theme.gutter * 2),
+            padding: EdgeInsets.all(theme.gutter * 2),
             child: Stack(children: [
-              _grid,
+              _createGrid(theme),
               _intersections,
             ])),
       ),
     );
   }
 
-  Widget get _grid => Center(
+  Widget _createGrid(GoTheme theme) => Center(
       child: Padding(
           padding: EdgeInsets.all(_width / _controller.size / 2),
-          child: _lines));
+          child: Stack(
+            children: [
+              _createVerticalLines(theme),
+              _createHorizontalLines(theme),
+            ],
+          )));
 
   Widget get _intersections => Row(
         children: _controller.intersections
@@ -44,34 +50,27 @@ class BoardView extends StatelessWidget {
                 child: Column(
                     children: intersections
                         .map((intersection) => IntersectionView(
-                            IntersectionController(_controller, intersection),
-                            _theme))
+                              IntersectionController(_controller, intersection),
+                            ))
                         .toList())))
             .toList(),
       );
 
-  Widget get _lines => Stack(
-        children: [
-          _verticalLines,
-          _horizontalLines,
-        ],
-      );
-
-  Widget get _verticalLines => Row(
+  Widget _createVerticalLines(GoTheme theme) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          width: _theme.borderWidth,
-          color: _theme.primaryLight,
+          width: theme.borderWidth,
+          color: theme.colorScheme.background,
         ))),
       );
 
-  Widget get _horizontalLines => Column(
+  Widget _createHorizontalLines(GoTheme theme) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          color: _theme.primaryLight,
-          height: _theme.borderWidth,
+          color: theme.colorScheme.background,
+          height: theme.borderWidth,
         ))),
       );
 

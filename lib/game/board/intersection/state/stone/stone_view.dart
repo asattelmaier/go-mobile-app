@@ -8,18 +8,17 @@ class StoneView extends StatelessWidget {
       "lib/game/board/intersection/state/stone/assets/stone_bg.png";
 
   final StoneController _controller;
-  final GoTheme _theme;
 
-  StoneView(this._controller, this._theme);
+  StoneView(this._controller);
 
   @override
   Widget build(BuildContext context) => Container(
       decoration: BoxDecoration(
-          color: _color,
+          color: _color(GoTheme.of(context)),
           shape: BoxShape.circle,
           image:
               DecorationImage(image: AssetImage(_BG_IMG), fit: BoxFit.cover)));
 
-  Color get _color =>
-      _controller.isBlack ? _theme.primaryDark : _theme.primaryLight;
+  Color _color(GoTheme theme) =>
+      _controller.isBlack ? theme.blackStoneColor : theme.whiteStoneColor;
 }

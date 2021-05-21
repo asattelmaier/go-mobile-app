@@ -10,42 +10,47 @@ import 'package:go_app/game/game_view.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:web_socket_channel/io.dart';
 
-main() async {
+main() {
   final environment = Environment();
   final configuration = Configuration.create(environment);
   final channel = IOWebSocketChannel.connect(configuration.webSocketUrl);
   final client = GameClient(WebSocketClient(channel));
-  final theme = GoTheme();
 
-  runApp(GoApp(client, theme));
+  runApp(GoApp(client));
 }
 
 class GoApp extends StatelessWidget {
   final GameClient _client;
-  final GoTheme _theme;
 
-  GoApp(this._client, this._theme);
+  GoApp(this._client);
 
   @override
-  Widget build(_) => MaterialApp(
-      title: 'Go',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Container(
-        color: _theme.primaryLight,
-        child: SafeArea(
-            child: StreamBuilder<EndGameModel>(
-          stream: _client.endGame,
-          builder: (_, endGameSnapshot) => StreamBuilder<GameModel>(
-            stream: _client.game,
-            builder: (_, gameSnapshot) {
-              final game = GameModel.fromNullable(gameSnapshot.data);
-              final endGame = EndGameModel.fromNullable(endGameSnapshot.data);
+  Widget build(_) {
+    return GoTheme(child: Builder(
+      builder: (BuildContext context) {
+        final theme = GoTheme.of(context);
 
-              return GameView(GameController(_client, game, endGame), _theme);
-            },
-          ),
-        )),
-      ));
+        return MaterialApp(
+            title: 'Go',
+            theme: theme.themeData,
+            home: Container(
+              color: theme.colorScheme.background,
+              child: SafeArea(
+                  child: StreamBuilder<EndGameModel>(
+                stream: _client.endGame,
+                builder: (_, endGameSnapshot) => StreamBuilder<GameModel>(
+                  stream: _client.game,
+                  builder: (_, gameSnapshot) {
+                    final game = GameModel.fromNullable(gameSnapshot.data);
+                    final endGame =
+                        EndGameModel.fromNullable(endGameSnapshot.data);
+
+                    return GameView(GameController(_client, game, endGame));
+                  },
+                ),
+              )),
+            ));
+      },
+    ));
+  }
 }

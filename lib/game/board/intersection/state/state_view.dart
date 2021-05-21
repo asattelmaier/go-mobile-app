@@ -6,9 +6,8 @@ import 'package:go_app/theme/go_theme.dart';
 
 class StateView extends StatelessWidget {
   final StateController _controller;
-  final GoTheme _theme;
 
-  StateView(this._controller, this._theme);
+  StateView(this._controller);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class StateView extends StatelessWidget {
     }
 
     return Padding(
-        padding: EdgeInsets.all(_theme.gutter),
-        child: StoneView(StoneController(_controller.stone), _theme));
+        padding: EdgeInsets.all(GoTheme.of(context).gutter),
+        child: StoneView(StoneController(_controller.stone)));
   }
 }
