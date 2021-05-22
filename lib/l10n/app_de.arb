@@ -1,0 +1,25 @@
+{
+  "newGame": "Neues Spiel",
+  "pass": "Passen",
+  "black": "Schwarz",
+  "white": "Weiß",
+  "drawn": "Unentschieden",
+  "playersTurn": "{player} ist am Zug",
+  "@playersTurn": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "winner": "Gewinner: {winner}",
+  "@winner": {
+    "placeholders": {
+      "winner": {}
+    }
+  },
+  "score": "Punkte: {score}",
+  "@score": {
+    "placeholders": {
+      "score": {}
+    }
+  }
+}

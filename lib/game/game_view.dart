@@ -5,6 +5,7 @@ import 'package:go_app/game/end_game/end_game_controller.dart';
 import 'package:go_app/game/end_game/end_game_view.dart';
 import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/theme/go_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GameView extends StatelessWidget {
   final GameController _controller;
@@ -23,7 +24,7 @@ class GameView extends StatelessWidget {
         children: [
           if (_controller.isPlaying) _createBoard(width, gutter),
           if (_controller.isPlaying && !_controller.isGameOver)
-            Text('${_controller.activePlayer}s turn'),
+            _activePlayerInformation(context),
           if (_controller.isGameOver) _endGame,
         ],
       ),
@@ -36,7 +37,7 @@ class GameView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             TextButton.icon(
-              label: Text('New'),
+              label: Text(AppLocalizations.of(context)!.newGame),
               icon: Icon(Icons.add),
               onPressed: () {
                 // TODO: Make magic numbers and strings configurable
@@ -46,7 +47,7 @@ class GameView extends StatelessWidget {
             Visibility(
               visible: _controller.isPlaying && !_controller.isGameOver,
               child: TextButton.icon(
-                label: Text('Pass'),
+                label: Text(AppLocalizations.of(context)!.pass),
                 icon: Icon(Icons.block),
                 onPressed: () {
                   _controller.pass();
@@ -72,5 +73,13 @@ class GameView extends StatelessWidget {
 
   Widget get _endGame {
     return EndGameView(EndGameController(_controller.endGame));
+  }
+
+  Widget _activePlayerInformation(BuildContext context) {
+    final player = _controller.activePlayer.isBlack
+        ? AppLocalizations.of(context)!.black
+        : AppLocalizations.of(context)!.white;
+
+    return Text(AppLocalizations.of(context)!.playersTurn(player));
   }
 }

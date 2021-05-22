@@ -16,19 +16,6 @@ class WinnerModel {
 
   bool get hasWinner => hasWhiteWon || hasBlackWon;
 
-  @override
-  String toString() {
-    if (isDrawn) {
-      return 'Drawn';
-    }
-
-    if (hasWhiteWon) {
-      return 'White';
-    }
-
-    return 'Black';
-  }
-
   factory WinnerModel.fromDto(List<PlayerDto> dto) =>
       WinnerModel(dto.map((player) => PlayerModel.fromDto(player)).toList());
 }

@@ -25,13 +25,4 @@ class PlayerModel {
   bool get isBlack => color == PlayerColor.Black;
 
   bool get isWhite => color == PlayerColor.White;
-
-  @override
-  String toString() {
-    if (isBlack) {
-      return 'Black';
-    }
-
-    return 'White';
-  }
 }

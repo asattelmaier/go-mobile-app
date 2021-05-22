@@ -1,0 +1,25 @@
+{
+  "newGame": "New Game",
+  "pass": "Pass",
+  "black": "Black",
+  "white": "White",
+  "drawn": "Drawn",
+  "playersTurn": "{player}s turn",
+  "@playersTurn": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "winner": "Winner: {winner}",
+  "@winner": {
+    "placeholders": {
+      "winner": {}
+    }
+  },
+  "score": "Score: {score}",
+  "@score": {
+    "placeholders": {
+      "score": {}
+    }
+  }
+}

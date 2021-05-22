@@ -7,6 +7,7 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/game_view.dart';
+import 'package:go_app/l10n/l10n.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -15,14 +16,16 @@ main() {
   final configuration = Configuration.create(environment);
   final channel = IOWebSocketChannel.connect(configuration.webSocketUrl);
   final client = GameClient(WebSocketClient(channel));
+  final l10n = L10n();
 
-  runApp(GoApp(client));
+  runApp(GoApp(client, l10n));
 }
 
 class GoApp extends StatelessWidget {
   final GameClient _client;
+  final L10n _l10n;
 
-  GoApp(this._client);
+  GoApp(this._client, this._l10n);
 
   @override
   Widget build(_) {
@@ -31,8 +34,9 @@ class GoApp extends StatelessWidget {
         final theme = GoTheme.of(context);
 
         return MaterialApp(
-            title: 'Go',
             theme: theme.themeData,
+            localizationsDelegates: _l10n.localizationDelegates,
+            supportedLocales: _l10n.supportedLocales,
             home: Container(
               color: theme.colorScheme.background,
               child: SafeArea(
