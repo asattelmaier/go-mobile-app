@@ -5,7 +5,7 @@ class Environment {
   static const String _DEVELOPMENT = 'development';
   static const String _PRODUCTION = 'production';
 
-  Environment();
+  const Environment();
 
   bool get isAndroid => Platform.isAndroid;
 

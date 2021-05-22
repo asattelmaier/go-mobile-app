@@ -6,7 +6,7 @@ import 'package:web_socket_channel/io.dart';
 class WebSocketClient {
   final IOWebSocketChannel _channel;
 
-  WebSocketClient(this._channel);
+  const WebSocketClient(this._channel);
 
   Stream<Map<String, dynamic>> get messages => _channel.stream.map(_decodeData);
 

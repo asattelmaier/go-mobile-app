@@ -2,11 +2,11 @@ import 'package:go_app/game/board/board_model.dart';
 import 'package:go_app/game/client/common/intersection_dto.dart';
 
 class PositionsModel {
-  List<BoardModel> _boards;
+  final List<BoardModel> _boards;
 
-  PositionsModel(this._boards);
+  const PositionsModel(this._boards);
 
-  PositionsModel.empty() : this._boards = [BoardModel.empty()];
+  const PositionsModel.empty() : this._boards = const [BoardModel.empty()];
 
   BoardModel get board => _boards.first;
 

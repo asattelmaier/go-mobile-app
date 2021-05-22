@@ -4,7 +4,7 @@ class LocationModel {
   final int x;
   final int y;
 
-  LocationModel(this.x, this.y);
+  const LocationModel(this.x, this.y);
 
   factory LocationModel.fromDto(LocationDto dto) => LocationModel(dto.x, dto.y);
 

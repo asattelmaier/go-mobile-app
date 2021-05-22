@@ -9,7 +9,7 @@ class PlayDto {
   final PlayCommandDto command;
   final GameDto game;
 
-  PlayDto(this.command, this.game);
+  const PlayDto(this.command, this.game);
 
   Map<String, dynamic> toJson() => _$PlayDtoToJson(this);
 }

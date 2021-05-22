@@ -9,7 +9,7 @@ class PlayCommandDto {
   final CommandDto name = CommandDto.Play;
   final LocationDto location;
 
-  PlayCommandDto(this.location);
+  const PlayCommandDto(this.location);
 
   Map<String, dynamic> toJson() => _$PlayCommandDtoToJson(this);
 }

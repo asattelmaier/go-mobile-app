@@ -9,9 +9,9 @@ class EndGameModel {
   EndGameModel(this.score, this.winner)
       : this.created = DateTime.now().millisecondsSinceEpoch;
 
-  EndGameModel.empty()
+  const EndGameModel.empty()
       : this.score = 0,
-        this.winner = WinnerModel.empty(),
+        this.winner = const WinnerModel.empty(),
         this.created = 0;
 
   factory EndGameModel.fromNullable(EndGameModel? endGame) {

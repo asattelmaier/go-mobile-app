@@ -4,7 +4,7 @@ import 'package:go_app/game/end_game/winner/winner_model.dart';
 class EndGameController {
   final EndGameModel _endGame;
 
-  EndGameController(this._endGame);
+  const EndGameController(this._endGame);
 
   WinnerModel get winner => _endGame.winner;
 

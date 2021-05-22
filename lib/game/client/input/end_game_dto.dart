@@ -8,7 +8,7 @@ class EndGameDto {
   final int score;
   final List<PlayerDto> winner;
 
-  EndGameDto(this.score, this.winner);
+  const EndGameDto(this.score, this.winner);
 
   static bool isEndGameDto(Map<String, dynamic> json) {
     return json['score'] is int && json['winner'] is List<dynamic>;

@@ -7,7 +7,7 @@ class StateModel {
   //  @see: https://github.com/aloisdeniel/dart_maybe/pull/3
   final StoneModel stone;
 
-  StateModel(this.stone);
+  const StateModel(this.stone);
 
   bool get isEmpty => !stone.isBlack && !stone.isWhite;
 

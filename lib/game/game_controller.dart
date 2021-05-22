@@ -10,7 +10,7 @@ class GameController {
   final GameModel _game;
   final EndGameModel endGame;
 
-  GameController(this._client, this._game, this.endGame);
+  const GameController(this._client, this._game, this.endGame);
 
   bool get isPlaying => _game.isPlaying;
 

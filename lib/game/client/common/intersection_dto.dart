@@ -9,7 +9,7 @@ class IntersectionDto {
   final LocationDto location;
   final StateDto state;
 
-  IntersectionDto(this.location, this.state);
+  const IntersectionDto(this.location, this.state);
 
   factory IntersectionDto.fromJson(Map<String, dynamic> json) =>
       _$IntersectionDtoFromJson(json);

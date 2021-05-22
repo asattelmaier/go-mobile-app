@@ -2,11 +2,11 @@ import 'package:go_app/game/board/intersection/intersection_model.dart';
 import 'package:go_app/game/client/common/intersection_dto.dart';
 
 class BoardModel {
-  List<List<IntersectionModel>> intersections;
+  final List<List<IntersectionModel>> intersections;
 
-  BoardModel(this.intersections);
+  const BoardModel(this.intersections);
 
-  BoardModel.empty() : this.intersections = [];
+  const BoardModel.empty() : this.intersections = const [];
 
   factory BoardModel.fromDto(List<List<IntersectionDto>> dto) => BoardModel(dto
       .map((e) => e.map((e) => IntersectionModel.fromDto(e)).toList())

@@ -6,7 +6,7 @@ class IntersectionModel {
   final LocationModel location;
   final StateModel state;
 
-  IntersectionModel(this.location, this.state);
+  const IntersectionModel(this.location, this.state);
 
   factory IntersectionModel.fromDto(IntersectionDto dto) => IntersectionModel(
       LocationModel.fromDto(dto.location), StateModel.fromDto(dto.state));

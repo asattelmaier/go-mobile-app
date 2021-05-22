@@ -5,7 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class WinnerView extends StatelessWidget {
   final WinnerController _controller;
 
-  WinnerView(this._controller);
+  const WinnerView(this._controller);
 
   @override
   Widget build(BuildContext context) {

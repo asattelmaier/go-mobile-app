@@ -7,7 +7,7 @@ import 'package:go_app/theme/go_theme.dart';
 class StateView extends StatelessWidget {
   final StateController _controller;
 
-  StateView(this._controller);
+  const StateView(this._controller);
 
   @override
   Widget build(BuildContext context) {

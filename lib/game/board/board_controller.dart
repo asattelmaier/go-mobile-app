@@ -7,7 +7,7 @@ class BoardController {
   final GameController _gameController;
   final BoardModel _board;
 
-  BoardController(this._gameController, this._board);
+  const BoardController(this._gameController, this._board);
 
   void play(LocationModel location) {
     _gameController.play(location);

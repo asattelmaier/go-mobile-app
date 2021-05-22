@@ -15,10 +15,10 @@ class GameModel {
       : this.isPlaying = true,
         this.created = DateTime.now().millisecondsSinceEpoch;
 
-  GameModel.empty()
-      : this.activePlayer = PlayerModel(PlayerColor.Black),
-        this.passivePlayer = PlayerModel(PlayerColor.White),
-        this.positions = PositionsModel.empty(),
+  const GameModel.empty()
+      : this.activePlayer = const PlayerModel(PlayerColor.Black),
+        this.passivePlayer = const PlayerModel(PlayerColor.White),
+        this.positions = const PositionsModel.empty(),
         this.isPlaying = false,
         this.created = 0;
 

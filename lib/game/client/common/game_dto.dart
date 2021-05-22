@@ -10,12 +10,12 @@ class GameDto {
   final PlayerDto passivePlayer;
   final List<List<List<IntersectionDto>>> positions;
 
-  GameDto(this.activePlayer, this.passivePlayer, this.positions);
+  const GameDto(this.activePlayer, this.passivePlayer, this.positions);
 
-  GameDto.empty()
+  const GameDto.empty()
       : this.activePlayer = PlayerDto.Black,
         this.passivePlayer = PlayerDto.White,
-        this.positions = [
+        this.positions = const [
           [[]]
         ];
 

@@ -7,7 +7,7 @@ part 'pass_command_dto.g.dart';
 class PassCommandDto {
   final CommandDto name = CommandDto.Pass;
 
-  PassCommandDto();
+  const PassCommandDto();
 
   Map<String, dynamic> toJson() => _$PassCommandDtoToJson(this);
 }

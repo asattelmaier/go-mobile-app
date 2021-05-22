@@ -9,7 +9,7 @@ class BoardView extends StatelessWidget {
   final BoardController _controller;
   final double _width;
 
-  BoardView(this._controller, this._width);
+  const BoardView(this._controller, this._width);
 
   @override
   Widget build(BuildContext context) {

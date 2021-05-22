@@ -7,7 +7,7 @@ import 'package:go_app/game/board/intersection/state/state_view.dart';
 class IntersectionView extends StatelessWidget {
   final IntersectionController _controller;
 
-  IntersectionView(this._controller);
+  const IntersectionView(this._controller);
 
   @override
   Widget build(_) => Flexible(

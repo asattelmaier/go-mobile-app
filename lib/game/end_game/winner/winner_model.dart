@@ -4,9 +4,9 @@ import 'package:go_app/game/player/player_model.dart';
 class WinnerModel {
   final List<PlayerModel> _players;
 
-  WinnerModel(this._players);
+  const WinnerModel(this._players);
 
-  WinnerModel.empty() : this._players = [];
+  const WinnerModel.empty() : this._players = const [];
 
   bool get isDrawn => hasWhiteWon && hasBlackWon;
 

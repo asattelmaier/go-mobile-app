@@ -9,7 +9,7 @@ class StoneView extends StatelessWidget {
 
   final StoneController _controller;
 
-  StoneView(this._controller);
+  const StoneView(this._controller);
 
   @override
   Widget build(BuildContext context) => Container(

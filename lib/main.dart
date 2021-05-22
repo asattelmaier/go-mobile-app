@@ -25,7 +25,7 @@ class GoApp extends StatelessWidget {
   final GameClient _client;
   final L10n _l10n;
 
-  GoApp(this._client, this._l10n);
+  const GoApp(this._client, this._l10n);
 
   @override
   Widget build(_) {

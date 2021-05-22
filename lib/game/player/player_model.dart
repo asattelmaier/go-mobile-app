@@ -4,7 +4,7 @@ import 'package:go_app/game/player/player_color.dart';
 class PlayerModel {
   final PlayerColor color;
 
-  PlayerModel(this.color);
+  const PlayerModel(this.color);
 
   factory PlayerModel.fromDto(PlayerDto dto) {
     if (dto == PlayerDto.Black) {

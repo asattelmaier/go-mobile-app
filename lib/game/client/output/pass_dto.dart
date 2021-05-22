@@ -9,7 +9,7 @@ class PassDto {
   final PassCommandDto command;
   final GameDto game;
 
-  PassDto(this.command, this.game);
+  const PassDto(this.command, this.game);
 
   Map<String, dynamic> toJson() => _$PassDtoToJson(this);
 }

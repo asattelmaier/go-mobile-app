@@ -8,7 +8,7 @@ class CreateCommandDto {
   final CommandDto name = CommandDto.Create;
   final int size;
 
-  CreateCommandDto(this.size);
+  const CreateCommandDto(this.size);
 
   Map<String, dynamic> toJson() => _$CreateCommandDtoToJson(this);
 }

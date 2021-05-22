@@ -4,7 +4,7 @@ import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
 class StateController {
   final StateModel _state;
 
-  StateController(this._state);
+  const StateController(this._state);
 
   bool get isEmpty => _state.isEmpty;
 

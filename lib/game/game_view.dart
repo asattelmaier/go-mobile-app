@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class GameView extends StatelessWidget {
   final GameController _controller;
 
-  GameView(this._controller);
+  const GameView(this._controller);
 
   @override
   Widget build(BuildContext context) {

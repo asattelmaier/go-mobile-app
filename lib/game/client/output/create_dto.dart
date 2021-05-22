@@ -7,7 +7,7 @@ part 'create_dto.g.dart';
 class CreateDto {
   final CreateCommandDto command;
 
-  CreateDto(this.command);
+  const CreateDto(this.command);
 
   Map<String, dynamic> toJson() => _$CreateDtoToJson(this);
 }

@@ -6,7 +6,7 @@ class IntersectionController {
   final BoardController _boardController;
   final IntersectionModel _intersection;
 
-  IntersectionController(this._boardController, this._intersection);
+  const IntersectionController(this._boardController, this._intersection);
 
   void play() {
     _boardController.play(_intersection.location);
