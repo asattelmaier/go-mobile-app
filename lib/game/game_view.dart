@@ -40,8 +40,10 @@ class GameView extends StatelessWidget {
               label: Text(AppLocalizations.of(context)!.newGame),
               icon: Icon(Icons.add),
               onPressed: () {
-                // TODO: Make magic numbers and strings configurable
-                _controller.create(9);
+                // TODO: Make settings configurable
+                final boardSize = 9;
+                final isSuicideAllowed = false;
+                _controller.create(boardSize, isSuicideAllowed);
               },
             ),
             Visibility(

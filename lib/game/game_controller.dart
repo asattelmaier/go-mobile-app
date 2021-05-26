@@ -4,6 +4,7 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/player/player_model.dart';
+import 'package:go_app/game/settings/settings_model.dart';
 
 class GameController {
   final GameClient _client;
@@ -20,8 +21,9 @@ class GameController {
 
   PlayerModel get activePlayer => _game.activePlayer;
 
-  create(int size) {
-    _client.create(size);
+  create(int boardSize, bool isSuicideAllowed) {
+    final settings = SettingsModel(boardSize, isSuicideAllowed);
+    _client.create(settings);
   }
 
   play(LocationModel location) {

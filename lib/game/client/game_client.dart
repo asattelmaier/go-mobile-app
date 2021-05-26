@@ -12,6 +12,7 @@ import 'package:go_app/game/client/output/play_command_dto.dart';
 import 'package:go_app/game/client/output/play_dto.dart';
 import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
+import 'package:go_app/game/settings/settings_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameClient {
@@ -27,8 +28,8 @@ class GameClient {
     return GameClient._(webSocketClient, messages);
   }
 
-  create(int size) {
-    final command = CreateCommandDto(size);
+  create(SettingsModel settings) {
+    final command = CreateCommandDto(settings.toDto());
     final create = CreateDto(command);
 
     _client.sendJson(create);

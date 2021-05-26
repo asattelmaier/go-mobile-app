@@ -4,6 +4,7 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/game_model.dart';
+import 'package:go_app/game/settings/settings_model.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'game_controller_test.mocks.dart';
@@ -73,11 +74,12 @@ void main() {
       final client = MockGameClient();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
+      final controller = GameController(client, game, endGame);
 
       when(client.create(any)).thenReturn(null);
-      GameController(client, game, endGame).create(5);
+      controller.create(5, false);
 
-      verify(client.create(5)).called(1);
+      verify(client.create(argThat(isA<SettingsModel>()))).called(1);
     });
   });
 

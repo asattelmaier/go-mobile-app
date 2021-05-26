@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_app/game/client/common/settings_dto.dart';
 import 'package:go_app/game/client/output/create_command_dto.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -41,12 +42,13 @@ void main() {
       final channel = MockIOWebSocketChannel();
       final sink = MockWebSocketSink();
       final client = WebSocketClient(channel);
+      final command = CreateCommandDto(SettingsDto(2, false));
 
       when(channel.sink).thenReturn(sink);
       when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
-      client.sendJson(CreateCommandDto(2));
+      client.sendJson(command);
 
-      verify(sink.add('''{"name":"Create","size":2}''')).called(1);
+      verify(sink.add('''{"name":"Create","settings":{"boardSize":2,"isSuicideAllowed":false}}''')).called(1);
     });
 
     test('sends empty JSON', () {

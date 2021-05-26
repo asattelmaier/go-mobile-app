@@ -7,7 +7,7 @@ import 'positions_model_test.mocks.dart';
 @GenerateMocks([BoardModel])
 void main() {
   group('empty', () {
-    test('creates an empty board', () {
+    test('has a empty board', () {
       final positions = PositionsModel.empty();
 
       final board = positions.board;

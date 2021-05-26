@@ -10,6 +10,7 @@ import 'package:go_app/game/client/output/create_dto.dart';
 import 'package:go_app/game/client/output/pass_dto.dart';
 import 'package:go_app/game/client/output/play_dto.dart';
 import 'package:go_app/game/game_model.dart';
+import 'package:go_app/game/settings/settings_model.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'game_client_test.mocks.dart';
@@ -18,13 +19,14 @@ import 'game_client_test.mocks.dart';
     [WebSocketClient, GameModel, LocationModel, GameDto, LocationDto])
 void main() {
   group('createGame', () {
-    test('sends create game command with size', () {
+    test('sends create game command with board size of 5', () {
       final webSocketClient = MockWebSocketClient();
-      final isSizeFive =
-          predicate<CreateDto>((createGame) => createGame.command.size == 5);
+      final isSizeFive = predicate<CreateDto>(
+          (createGame) => createGame.command.settings.boardSize == 5);
+      final settings = SettingsModel(5, false);
 
       when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).create(5);
+      GameClient(webSocketClient).create(settings);
 
       verify(webSocketClient.sendJson(argThat(isSizeFive))).called(1);
     });
@@ -62,6 +64,7 @@ void main() {
     test('returns a Game Model', () async {
       final webSocketClient = MockWebSocketClient();
       final parsedJson = {
+        "settings": {"boardSize": 4, "isSuicideAllowed": false},
         "activePlayer": "Black",
         "passivePlayer": "White",
         "positions": [
@@ -80,6 +83,8 @@ void main() {
           .thenAnswer((_) => Stream.value(parsedJson));
 
       GameClient(webSocketClient).game.listen((game) {
+        expect(game.settings.boardSize, 4);
+        expect(game.settings.isSuicideAllowed, false);
         expect(game.activePlayer.isBlack, true);
         expect(game.passivePlayer.isWhite, true);
         expect(game.positions.board.intersections.first.first.location.x, 0);
