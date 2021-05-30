@@ -2,7 +2,7 @@ import 'package:go_app/configuration/configurations/android_dev.dart';
 import 'package:go_app/environment/environment.dart';
 
 class Configuration {
-  final String webSocketUrl = 'ws://localhost:8000';
+  final String webSocketUrl = 'ws://localhost:8080';
 
   const Configuration();
 

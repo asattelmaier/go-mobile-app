@@ -4,77 +4,103 @@ import 'package:go_app/game/client/output/create_command_dto.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
 import 'web_socket_client_test.mocks.dart';
 
-@GenerateMocks([IOWebSocketChannel, WebSocketSink])
+@GenerateMocks([StompClient])
 void main() {
   group('send', () {
     test('sends a message', () {
+      final destination = '/some/destination';
       final message = 'Some Message';
-      final channel = MockIOWebSocketChannel();
-      final sink = MockWebSocketSink();
-      final client = WebSocketClient(channel);
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
 
-      when(channel.sink).thenReturn(sink);
-      when(sink.add(message)).thenReturn((data) => null);
-      client.send(message);
+      when(stompClient.send(destination: destination, body: message))
+          .thenReturn(null);
+      webSocketClient.send(destination, message);
 
-      verify(sink.add(message)).called(1);
+      verify(stompClient.send(destination: destination, body: message))
+          .called(1);
     });
 
     test('sends not empty messages', () {
+      final destination = '/some/destination';
       final message = '';
-      final channel = MockIOWebSocketChannel();
-      final sink = MockWebSocketSink();
-      final client = WebSocketClient(channel);
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
 
-      when(channel.sink).thenReturn(sink);
-      client.send(message);
+      when(stompClient.send(destination: destination, body: message))
+          .thenReturn(null);
+      webSocketClient.send(destination, message);
 
-      verifyNever(sink.add(message));
+      verifyNever(stompClient.send(destination: destination, body: message));
+    });
+
+    test('sends without a message', () {
+      final destination = '/some/destination';
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
+
+      when(stompClient.send(destination: destination)).thenReturn(null);
+      webSocketClient.send(destination);
+
+      verify(stompClient.send(destination: destination)).called(1);
     });
   });
 
   group('sendJson', () {
     test('sends JSON', () {
-      final channel = MockIOWebSocketChannel();
-      final sink = MockWebSocketSink();
-      final client = WebSocketClient(channel);
+      final destination = '/some/destination';
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
       final command = CreateCommandDto(SettingsDto(2, false));
+      final expectedMessage =
+          '''{"name":"Create","settings":{"boardSize":2,"isSuicideAllowed":false}}''';
 
-      when(channel.sink).thenReturn(sink);
-      when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
-      client.sendJson(command);
+      when(stompClient.send(destination: destination, body: expectedMessage))
+          .thenReturn(null);
+      webSocketClient.sendJson(destination, command);
 
-      verify(sink.add('''{"name":"Create","settings":{"boardSize":2,"isSuicideAllowed":false}}''')).called(1);
+      verify(stompClient.send(destination: destination, body: expectedMessage))
+          .called(1);
     });
 
     test('sends empty JSON', () {
-      final channel = MockIOWebSocketChannel();
-      final sink = MockWebSocketSink();
-      final client = WebSocketClient(channel);
+      final destination = '/some/destination';
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
 
-      when(channel.sink).thenReturn(sink);
-      when(sink.add(argThat(isA<String>()))).thenReturn((data) => null);
-      client.sendJson({});
+      when(stompClient.activate()).thenReturn(null);
+      when(stompClient.send(destination: destination, body: "{}"))
+          .thenReturn(null);
+      webSocketClient.sendJson(destination, {});
 
-      verify(sink.add('{}')).called(1);
+      verify(stompClient.send(destination: destination, body: "{}")).called(1);
     });
   });
 
-  group('jsonMessages', () {
-    test('returns JSON Messages', () {
-      final channel = MockIOWebSocketChannel();
-      final client = WebSocketClient(channel);
-      final returnStream = (_) => Stream.value('''{"some": "data"}''');
+  group('subscribe', () {
+    test('returns JSON Messages', () async {
+      final destination = '/some/destination';
+      final stompClient = MockStompClient();
+      final webSocketClient = WebSocketClient(stompClient);
+      final returnCallback = (Invocation invocation) {
+        final namedArgs = invocation.namedArguments;
+        final callback = namedArgs[Symbol('callback')] as Function(StompFrame);
+        callback(StompFrame(command: "test", body: '''{"some": "data"}'''));
+        return ({Map<String, String>? unsubscribeHeaders}) {};
+      };
 
-      when(channel.stream).thenAnswer(returnStream);
+      when(stompClient.activate()).thenReturn(null);
+      when(stompClient.subscribe(
+              destination: anyNamed('destination'),
+              callback: anyNamed('callback')))
+          .thenAnswer(returnCallback);
+      final value = await webSocketClient.subscribe(destination).first;
 
-      client.messages.listen((json) {
-        expect(json['some'], 'data');
-      });
+      expect(value['some'], 'data');
     });
   });
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_app/api/web_socket/web_socket_client.dart';
+import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/client/common/game_dto.dart';
 import 'package:go_app/game/client/common/location_dto.dart';
@@ -13,56 +13,57 @@ import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+
 import 'game_client_test.mocks.dart';
 
 @GenerateMocks(
-    [WebSocketClient, GameModel, LocationModel, GameDto, LocationDto])
+    [GameSessionClient, GameModel, LocationModel, GameDto, LocationDto])
 void main() {
   group('createGame', () {
     test('sends create game command with board size of 5', () {
-      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = MockGameSessionClient();
       final isSizeFive = predicate<CreateDto>(
           (createGame) => createGame.command.settings.boardSize == 5);
       final settings = SettingsModel(5, false);
 
-      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).create(settings);
+      when(gameSessionClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(gameSessionClient).create(settings);
 
-      verify(webSocketClient.sendJson(argThat(isSizeFive))).called(1);
+      verify(gameSessionClient.update(argThat(isSizeFive))).called(1);
     });
   });
 
   group('playStone', () {
     test('sends a PlayStoneDto', () {
-      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = MockGameSessionClient();
       final game = MockGameModel();
       final location = MockLocationModel();
 
       when(game.toDto()).thenReturn(MockGameDto());
       when(location.toDto()).thenReturn(MockLocationDto());
-      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).play(location, game);
+      when(gameSessionClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(gameSessionClient).play(location, game);
 
-      verify(webSocketClient.sendJson(argThat(isA<PlayDto>()))).called(1);
+      verify(gameSessionClient.update(argThat(isA<PlayDto>()))).called(1);
     });
   });
 
   group('pass', () {
     test('sends a PassDto', () {
-      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = MockGameSessionClient();
       final game = MockGameModel();
 
       when(game.toDto()).thenReturn(MockGameDto());
-      when(webSocketClient.messages).thenAnswer((_) => Stream.empty());
-      GameClient(webSocketClient).pass(game);
+      when(gameSessionClient.messages).thenAnswer((_) => Stream.empty());
+      GameClient(gameSessionClient).pass(game);
 
-      verify(webSocketClient.sendJson(argThat(isA<PassDto>()))).called(1);
+      verify(gameSessionClient.update(argThat(isA<PassDto>()))).called(1);
     });
   });
 
   group('gameMessages', () {
     test('returns a Game Model', () async {
-      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = MockGameSessionClient();
       final parsedJson = {
         "settings": {"boardSize": 4, "isSuicideAllowed": false},
         "activePlayer": "Black",
@@ -79,10 +80,10 @@ void main() {
         ]
       };
 
-      when(webSocketClient.messages)
+      when(gameSessionClient.messages)
           .thenAnswer((_) => Stream.value(parsedJson));
 
-      GameClient(webSocketClient).game.listen((game) {
+      GameClient(gameSessionClient).game.listen((game) {
         expect(game.settings.boardSize, 4);
         expect(game.settings.isSuicideAllowed, false);
         expect(game.activePlayer.isBlack, true);
@@ -95,16 +96,16 @@ void main() {
     });
 
     test('returns a End Game Model', () async {
-      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = MockGameSessionClient();
       final parsedJson = {
         "score": 5,
         "winner": ["White"]
       };
 
-      when(webSocketClient.messages)
+      when(gameSessionClient.messages)
           .thenAnswer((_) => Stream.value(parsedJson));
 
-      GameClient(webSocketClient).endGame.listen((endGame) {
+      GameClient(gameSessionClient).endGame.listen((endGame) {
         expect(endGame.score, 5);
         expect(endGame.winner.hasWhiteWon, true);
       });

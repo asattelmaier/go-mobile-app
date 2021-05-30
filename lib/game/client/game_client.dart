@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:go_app/api/web_socket/web_socket_client.dart';
+import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/client/common/game_dto.dart';
 import 'package:go_app/game/client/input/end_game_dto.dart';
@@ -17,40 +17,40 @@ import 'package:rxdart/rxdart.dart';
 
 class GameClient {
   final BehaviorSubject<Map<String, dynamic>> _messages;
-  final WebSocketClient _client;
+  final GameSessionClient _gameSessionClient;
 
-  factory GameClient(WebSocketClient webSocketClient) {
+  factory GameClient(GameSessionClient gameSessionClient) {
     // ignore: close_sinks
     BehaviorSubject<Map<String, dynamic>> messages = BehaviorSubject();
 
-    messages.addStream(webSocketClient.messages);
+    messages.addStream(gameSessionClient.messages);
 
-    return GameClient._(webSocketClient, messages);
+    return GameClient._(gameSessionClient, messages);
   }
 
   create(SettingsModel settings) {
     final command = CreateCommandDto(settings.toDto());
     final create = CreateDto(command);
 
-    _client.sendJson(create);
+    _gameSessionClient.update(create);
   }
 
   play(LocationModel location, GameModel game) {
     final command = PlayCommandDto(location.toDto());
     final play = PlayDto(command, game.toDto());
 
-    _client.sendJson(play);
+    _gameSessionClient.update(play);
   }
 
   pass(GameModel game) {
     final command = PassCommandDto();
     final pass = PassDto(command, game.toDto());
 
-    _client.sendJson(pass);
+    _gameSessionClient.update(pass);
   }
 
   close() {
-    _client.close();
+    _gameSessionClient.close();
     _messages.close();
   }
 
@@ -60,7 +60,7 @@ class GameClient {
   Stream<EndGameModel> get endGame =>
       _messages.where(_isEndGameDto).map(_toEndGameDto).map(_toEndGame);
 
-  GameClient._(this._client, this._messages);
+  GameClient._(this._gameSessionClient, this._messages);
 
   bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);
 

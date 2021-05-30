@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/environment/environment.dart';
+import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/client/game_client.dart';
 import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_controller.dart';
@@ -9,16 +10,17 @@ import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/game_view.dart';
 import 'package:go_app/l10n/l10n.dart';
 import 'package:go_app/theme/go_theme.dart';
-import 'package:web_socket_channel/io.dart';
 
-main() {
+main() async {
   final environment = Environment();
   final configuration = Configuration.create(environment);
-  final channel = IOWebSocketChannel.connect(configuration.webSocketUrl);
-  final client = GameClient(WebSocketClient(channel));
+  final url = configuration.webSocketUrl;
+  final webSocketClient = await WebSocketClient.connect(url);
+  final gameSessionClient = GameSessionClient(webSocketClient);
+  final gameClient = GameClient(gameSessionClient);
   final l10n = L10n();
 
-  runApp(GoApp(client, l10n));
+  runApp(GoApp(gameClient, l10n));
 }
 
 class GoApp extends StatelessWidget {

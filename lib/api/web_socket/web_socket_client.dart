@@ -1,28 +1,51 @@
 import 'dart:convert';
 import 'dart:async';
-
-import 'package:web_socket_channel/io.dart';
+import 'package:stomp_dart_client/stomp.dart';
+import 'package:stomp_dart_client/stomp_config.dart';
 
 class WebSocketClient {
-  final IOWebSocketChannel _channel;
+  final StompClient _stompClient;
+  final List<StreamController> _subscriptions = [];
 
-  const WebSocketClient(this._channel);
+  WebSocketClient(this._stompClient);
 
-  Stream<Map<String, dynamic>> get messages => _channel.stream.map(_decodeData);
+  static Future<WebSocketClient> connect(String url) async {
+    final connection = Completer();
+    final onConnect = connection.complete;
+    final stompClientConfig = StompConfig(url: url, onConnect: onConnect);
+    final stompClient = StompClient(config: stompClientConfig);
 
-  void send(String message) {
-    if (message.isNotEmpty) {
-      _channel.sink.add(message);
-    }
+    stompClient.activate();
+
+    return connection.future.then((value) => new WebSocketClient(stompClient));
   }
 
-  void sendJson(Object object) {
-    send(jsonEncode(object));
+  void send(String destination, [String message = '']) {
+    if (message.isEmpty) {
+      _stompClient.send(destination: destination);
+      return;
+    }
+
+    _stompClient.send(destination: destination, body: message);
+  }
+
+  void sendJson(String destination, Object object) {
+    send(destination, jsonEncode(object));
+  }
+
+  Stream<Map<String, dynamic>> subscribe(String destination) {
+    final subscription = new StreamController<Map<String, dynamic>>();
+    _subscriptions.add(subscription);
+
+    _stompClient.subscribe(
+      destination: destination,
+      callback: (frame) => subscription.add(jsonDecode(frame.body!)),
+    );
+
+    return subscription.stream;
   }
 
   void close() {
-    _channel.sink.close();
+    _subscriptions.forEach((subscription) => subscription.close());
   }
-
-  Map<String, dynamic> _decodeData(dynamic data) => jsonDecode(data);
 }
