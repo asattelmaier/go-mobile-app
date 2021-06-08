@@ -2,9 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/game_session_model.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:rxdart/rxdart.dart';
-import 'game_session_client_destination_test.mocks.dart';
 
 @GenerateMocks([GameSessionModel])
 void main() {
@@ -26,64 +23,43 @@ void main() {
 
   group('playerJoined', () {
     test('returns /user/game/session/player-joined', () {
-      final destination = GameSessionClientDestination.playerJoined;
+      final destination = GameSessionClientDestination();
 
-      expect(destination, "/user/game/session/player-joined");
+      final playerJoined = destination.playerJoined("some-id");
+
+      expect(playerJoined, "/game/session/some-id/player-joined");
     });
   });
 
   group('create', () {
     test('returns /game/session/create', () {
-      final subject = BehaviorSubject<MockGameSessionModel>();
-      final gameSession = MockGameSessionModel();
-      final destination = GameSessionClientDestination(subject);
-
-      subject.add(gameSession);
+      final destination = GameSessionClientDestination();
 
       expect(destination.create, "/game/session/create");
-      subject.close();
     });
   });
 
   group('join', () {
     test('returns /game/session/{gameSessionId}/join', () {
-      final subject = BehaviorSubject<MockGameSessionModel>();
-      final gameSession = MockGameSessionModel();
-      final destination = GameSessionClientDestination(subject);
+      final destination = GameSessionClientDestination();
 
-      subject.add(gameSession);
-      when(gameSession.id).thenReturn("some-id");
-
-      expect(destination.join, "/game/session/some-id/join");
-      subject.close();
+      expect(destination.join("some-id"), "/game/session/some-id/join");
     });
   });
 
   group('update', () {
     test('returns /game/session/{gameSessionId}/update', () {
-      final subject = BehaviorSubject<MockGameSessionModel>();
-      final gameSession = MockGameSessionModel();
-      final destination = GameSessionClientDestination(subject);
+      final destination = GameSessionClientDestination();
 
-      subject.add(gameSession);
-      when(gameSession.id).thenReturn("some-id");
-
-      expect(destination.update, "/game/session/some-id/update");
-      subject.close();
+      expect(destination.update("some-id"), "/game/session/some-id/update");
     });
   });
 
   group('updated', () {
     test('returns /game/session/{gameSessionId}/updated', () {
-      final subject = BehaviorSubject<MockGameSessionModel>();
-      final gameSession = MockGameSessionModel();
-      final destination = GameSessionClientDestination(subject);
+      final destination = GameSessionClientDestination();
 
-      subject.add(gameSession);
-      when(gameSession.id).thenReturn("some-id");
-
-      expect(destination.updated, "/game/session/some-id/updated");
-      subject.close();
+      expect(destination.updated("some-id"), "/game/session/some-id/updated");
     });
   });
 }

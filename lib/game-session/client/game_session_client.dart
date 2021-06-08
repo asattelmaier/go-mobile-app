@@ -2,54 +2,52 @@ import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
 import 'package:go_app/game-session/game_session_model.dart';
-import 'package:rxdart/rxdart.dart';
 
 class GameSessionClient {
-  final WebSocketClient _client;
-  final BehaviorSubject<GameSessionModel> _gameSession;
-  final GameSessionClientDestination _destination;
+  final WebSocketClient _webSocketClient;
+  final _destination = const GameSessionClientDestination();
 
-  factory GameSessionClient(WebSocketClient webSocketClient) {
-    // ignore: close_sinks
-    BehaviorSubject<GameSessionModel> gameSession = BehaviorSubject();
-    final destination = GameSessionClientDestination(gameSession);
-    final createdDestination = GameSessionClientDestination.created;
-    final joinedDestination = GameSessionClientDestination.joined;
-    final playerJoinedDestination = GameSessionClientDestination.playerJoined;
+  const GameSessionClient(this._webSocketClient);
 
-    gameSession.mergeWith([
-      webSocketClient.subscribe(createdDestination).map(_toGameSession),
-      webSocketClient.subscribe(joinedDestination).map(_toGameSession),
-      webSocketClient.subscribe(playerJoinedDestination).map(_toGameSession)
-    ]);
+  Stream<GameSessionModel> get created {
+    return _webSocketClient
+        .subscribe(GameSessionClientDestination.created)
+        .map(_toGameSession);
+  }
 
-    return GameSessionClient._(webSocketClient, gameSession, destination);
+  Stream<GameSessionModel> get joined {
+    return _webSocketClient
+        .subscribe(GameSessionClientDestination.joined)
+        .map(_toGameSession);
+  }
+
+  Stream<GameSessionModel> playerJoined(String gameSessionId) {
+    return _webSocketClient
+        .subscribe(_destination.playerJoined(gameSessionId))
+        .map(_toGameSession);
   }
 
   void create() {
-    _client.send(_destination.create);
+    _webSocketClient.send(_destination.create);
   }
 
   void join(String gameSessionId) {
-    _client.send(_destination.join);
+    _webSocketClient.send(_destination.join(gameSessionId));
   }
 
-  void update(Object message) {
-    _client.sendJson(_destination.update, message);
+  void update(String gameSessionId, Object message) {
+    _webSocketClient.sendJson(_destination.update(gameSessionId), message);
   }
 
-  Stream<Map<String, dynamic>> get messages {
-    return _client.subscribe(_destination.updated);
+  Stream<Map<String, dynamic>> messages(String gameSessionId) {
+    return _webSocketClient.subscribe(_destination.updated(gameSessionId));
   }
 
   void close() {
-    _client.close();
-    _gameSession.close();
+    _webSocketClient.close();
   }
 
   static GameSessionModel _toGameSession(Map<String, dynamic> json) {
     return GameSessionModel.fromDto(GameSessionDto.fromJson(json));
   }
-
-  GameSessionClient._(this._client, this._gameSession, this._destination);
 }

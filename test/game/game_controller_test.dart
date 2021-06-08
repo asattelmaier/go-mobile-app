@@ -7,34 +7,54 @@ import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:rxdart/rxdart.dart';
 import 'game_controller_test.mocks.dart';
 
-@GenerateMocks([GameClient, GameModel, EndGameModel, LocationModel])
+@GenerateMocks([
+  GameClient,
+  GameModel,
+  EndGameModel,
+  LocationModel
+], customMocks: [
+  MockSpec<ValueStream<GameModel>>(as: #MockGameStream),
+  MockSpec<ValueStream<EndGameModel>>(as: #MockEndGameStream),
+])
 void main() {
   group('play', () {
     test('plays if the game is not over', () async {
       final client = MockGameClient();
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
-      final endGame = MockEndGameModel();
       final location = MockLocationModel();
+      final controller = createController(client, gameStream, endGameStream);
 
-      when(client.play(location, game)).thenReturn(null);
+      when(gameStream.hasValue).thenReturn(true);
+      when(gameStream.value).thenReturn(game);
+      when(endGameStream.hasValue).thenReturn(false);
       when(game.created).thenReturn(2);
-      when(endGame.created).thenReturn(1);
-      GameController(client, game, endGame).play(location);
+      when(client.play(location, game)).thenReturn(null);
+      controller.play(location);
 
       verify(client.play(location, game)).called(1);
     });
 
     test('play is only possible if the game is not over', () {
       final client = MockGameClient();
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
       final location = MockLocationModel();
-      final controller = GameController(client, game, endGame);
+      final controller = createController(client, gameStream, endGameStream);
 
+      when(gameStream.hasValue).thenReturn(true);
+      when(gameStream.value).thenReturn(game);
+      when(endGameStream.hasValue).thenReturn(true);
+      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(1);
       when(endGame.created).thenReturn(2);
+      when(client.play(location, game)).thenReturn(null);
       controller.play(location);
 
       verifyNever(client.play(location, game));
@@ -44,10 +64,16 @@ void main() {
   group('isGameOver', () {
     test('game is over if the end game is created after the game', () {
       final client = MockGameClient();
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
-      final controller = GameController(client, game, endGame);
+      final controller = createController(client, gameStream, endGameStream);
 
+      when(gameStream.hasValue).thenReturn(true);
+      when(gameStream.value).thenReturn(game);
+      when(endGameStream.hasValue).thenReturn(true);
+      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(1);
       when(endGame.created).thenReturn(2);
       final isGameOver = controller.isGameOver;
@@ -57,10 +83,16 @@ void main() {
 
     test('game is running if the game is created after the end game', () {
       final client = MockGameClient();
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
-      final controller = GameController(client, game, endGame);
+      final controller = createController(client, gameStream, endGameStream);
 
+      when(gameStream.hasValue).thenReturn(true);
+      when(gameStream.value).thenReturn(game);
+      when(endGameStream.hasValue).thenReturn(true);
+      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(2);
       when(endGame.created).thenReturn(1);
       final isGameOver = controller.isGameOver;
@@ -72,9 +104,9 @@ void main() {
   group('create', () {
     test('creates a game with provided size', () {
       final client = MockGameClient();
-      final game = MockGameModel();
-      final endGame = MockEndGameModel();
-      final controller = GameController(client, game, endGame);
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
+      final controller = createController(client, gameStream, endGameStream);
 
       when(client.create(any)).thenReturn(null);
       controller.create(5, false);
@@ -87,12 +119,23 @@ void main() {
     test('passes the game with the current game', () {
       final client = MockGameClient();
       final game = MockGameModel();
-      final endGame = MockEndGameModel();
+      final gameStream = MockGameStream();
+      final endGameStream = MockEndGameStream();
+      final controller = createController(client, gameStream, endGameStream);
 
+      when(gameStream.hasValue).thenReturn(true);
+      when(gameStream.value).thenReturn(game);
       when(client.pass(any)).thenReturn(null);
-      GameController(client, game, endGame).pass();
+      controller.pass();
 
       verify(client.pass(game)).called(1);
     });
   });
+}
+
+createController(GameClient client, MockGameStream gameStream,
+    MockEndGameStream endGameStream) {
+  when(client.game).thenAnswer((_) => gameStream);
+  when(client.endGame).thenAnswer((_) => endGameStream);
+  return GameController(client);
 }

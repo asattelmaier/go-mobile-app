@@ -1,5 +1,9 @@
 {
   "newGame": "Neues Spiel",
+  "joinGame": "Spiel beitreten",
+  "join": "Beitreten",
+  "waitingForPlayer": "Auf Spieler warten",
+  "enterGameSessionId": "Spiel-Session-ID eingeben",
   "pass": "Passen",
   "black": "Schwarz",
   "white": "Weiß",

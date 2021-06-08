@@ -1,5 +1,9 @@
 {
   "newGame": "New Game",
+  "joinGame": "Join Game",
+  "join": "Join",
+  "waitingForPlayer": "Waiting for Player",
+  "enterGameSessionId": "Enter Game Session ID",
   "pass": "Pass",
   "black": "Black",
   "white": "White",

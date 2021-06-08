@@ -8,4 +8,6 @@ class GameSessionModel {
   factory GameSessionModel.fromDto(GameSessionDto dto) {
     return GameSessionModel(dto.id);
   }
+
+  const GameSessionModel.empty() : this.id = "";
 }

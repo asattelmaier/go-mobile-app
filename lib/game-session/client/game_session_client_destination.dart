@@ -1,6 +1,3 @@
-import 'package:go_app/game-session/game_session_model.dart';
-import 'package:rxdart/rxdart.dart';
-
 class GameSessionClientDestination {
   static const _USER_PREFIX = "/user";
   static const _PREFIX = "/game/session";
@@ -11,9 +8,8 @@ class GameSessionClientDestination {
   static const _JOINED = "/joined";
   static const _PLAYER_JOINED = "/player-joined";
   static const _UPDATED = "/updated";
-  BehaviorSubject<GameSessionModel> _gameSession;
 
-  GameSessionClientDestination(this._gameSession);
+  const GameSessionClientDestination();
 
   static String get created {
     return _createUserDestination(_CREATED);
@@ -23,32 +19,24 @@ class GameSessionClientDestination {
     return _createUserDestination(_JOINED);
   }
 
-  static String get playerJoined {
-    return _createUserDestination(_PLAYER_JOINED);
+  String playerJoined(String gameSessionId) {
+    return _createDestination(_PLAYER_JOINED, gameSessionId);
   }
 
   String get create {
     return _createDestination(_CREATE);
   }
 
-  String get join {
-    return _createDestination(_JOIN, _gameSessionId);
+  String join(String gameSessionId) {
+    return _createDestination(_JOIN, gameSessionId);
   }
 
-  String get update {
-    return _createDestination(_UPDATE, _gameSessionId);
+  String update(String gameSessionId) {
+    return _createDestination(_UPDATE, gameSessionId);
   }
 
-  String get updated {
-    return _createDestination(_UPDATED, _gameSessionId);
-  }
-
-  String get _gameSessionId {
-    if (_gameSession.hasValue) {
-      return _gameSession.value.id;
-    }
-
-    return "";
+  String updated(String gameSessionId) {
+    return _createDestination(_UPDATED, gameSessionId);
   }
 
   static String _createUserDestination(String destination) {
