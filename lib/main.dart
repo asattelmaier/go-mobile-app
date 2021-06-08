@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
@@ -9,11 +7,9 @@ import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
 import 'package:go_app/game/client/game_client.dart';
 import 'package:go_app/game/game_controller.dart';
-import 'package:go_app/game/game_view.dart';
 import 'package:go_app/l10n/l10n.dart';
+import 'package:go_app/pages/home/home_view.dart';
 import 'package:go_app/theme/go_theme.dart';
-import 'package:go_app/widgets/bottom_action_bar/bottom_action_bar_controller.dart';
-import 'package:go_app/widgets/bottom_action_bar/bottom_action_bar_view.dart';
 
 main() async {
   final environment = Environment();
@@ -55,22 +51,11 @@ class GoApp extends StatelessWidget {
                 _gameSessionController.updateStream,
                 _gameController.updateStream
               ]),
-              builder: (BuildContext context, _) => Container(
+              builder: (_, __) => Container(
                   color: theme.colorScheme.background,
-                  child: SafeArea(
-                      child: Scaffold(
-                    backgroundColor: theme.colorScheme.background,
-                    body: GameView(_gameController),
-                    bottomNavigationBar:
-                        BottomActionBarView(_bottomActionBarController),
-                  ))),
+                  child: HomeView(_gameSessionController, _gameController)),
             ));
       },
     ));
-  }
-
-  BottomActionBarController get _bottomActionBarController {
-    log('Session ID: ${_gameSessionController.gameSessionId}');
-    return BottomActionBarController(_gameSessionController, _gameController);
   }
 }

@@ -18,6 +18,10 @@ class BottomActionBarController {
     _gameController.pass();
   }
 
+  bool get isJoinGameButtonVisible {
+    return !_gameController.isPlaying;
+  }
+
   bool get isPassButtonVisible {
     return _gameController.isPlaying && !_gameController.isGameOver;
   }

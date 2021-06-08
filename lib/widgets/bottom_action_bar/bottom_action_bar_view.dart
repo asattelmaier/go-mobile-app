@@ -11,8 +11,7 @@ class BottomActionBarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = GoTheme.of(context);
-    final gutter = theme.gutter;
+    final gutter = GoTheme.of(context).gutter;
 
     return BottomAppBar(
         child: Padding(
@@ -22,36 +21,51 @@ class BottomActionBarView extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          TextButton.icon(
-            label: Text(AppLocalizations.of(context)!.newGame),
-            icon: Icon(Icons.add),
-            onPressed: () {
-              _controller.createGameSession();
-            },
-          ),
-          TextButton.icon(
-            label: Text(AppLocalizations.of(context)!.joinGame),
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          JoinGameView(_controller.gameSessionController)));
-            },
+          _createNewGameButton(context),
+          Visibility(
+            visible: _controller.isJoinGameButtonVisible,
+            child: _createJoinGameButton(context),
           ),
           Visibility(
             visible: _controller.isPassButtonVisible,
-            child: TextButton.icon(
-              label: Text(AppLocalizations.of(context)!.pass),
-              icon: Icon(Icons.block),
-              onPressed: () {
-                _controller.pass();
-              },
-            ),
+            child: _createPassButton(context),
           )
         ],
       ),
     ));
+  }
+
+  Widget _createNewGameButton(BuildContext context) {
+    return TextButton.icon(
+      label: Text(AppLocalizations.of(context)!.newGame),
+      icon: Icon(Icons.add),
+      onPressed: () {
+        _controller.createGameSession();
+      },
+    );
+  }
+
+  Widget _createJoinGameButton(BuildContext context) {
+    return TextButton.icon(
+      label: Text(AppLocalizations.of(context)!.joinGame),
+      icon: Icon(Icons.add),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    JoinGameView(_controller.gameSessionController)));
+      },
+    );
+  }
+
+  Widget _createPassButton(BuildContext context) {
+    return TextButton.icon(
+      label: Text(AppLocalizations.of(context)!.pass),
+      icon: Icon(Icons.block),
+      onPressed: () {
+        _controller.pass();
+      },
+    );
   }
 }
