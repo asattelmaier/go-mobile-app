@@ -25,7 +25,8 @@ class GameClient {
         .where(_isGameDto)
         .map(_toGameDto)
         .map(_toGame)
-        .shareValue();
+        .publishValue()
+          ..connect();
   }
 
   ValueStream<EndGameModel> get endGame {
@@ -33,7 +34,8 @@ class GameClient {
         .where(_isEndGameDto)
         .map(_toEndGameDto)
         .map(_toEndGame)
-        .shareValue();
+        .publishValue()
+          ..connect();
   }
 
   create(SettingsModel settings) {

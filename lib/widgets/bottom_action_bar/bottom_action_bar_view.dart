@@ -21,7 +21,10 @@ class BottomActionBarView extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _createNewGameButton(context),
+          Visibility(
+            visible: _controller.isNewGameButtonVisible,
+            child: _createNewGameButton(context),
+          ),
           Visibility(
             visible: _controller.isJoinGameButtonVisible,
             child: _createJoinGameButton(context),

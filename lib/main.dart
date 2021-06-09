@@ -1,4 +1,3 @@
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
@@ -47,10 +46,7 @@ class GoApp extends StatelessWidget {
             localizationsDelegates: _l10n.localizationDelegates,
             supportedLocales: _l10n.supportedLocales,
             home: StreamBuilder(
-              stream: StreamGroup.merge([
-                _gameSessionController.updateStream,
-                _gameController.updateStream
-              ]),
+              stream: _gameSessionController.updateStream,
               builder: (_, __) => Container(
                   color: theme.colorScheme.background,
                   child: HomeView(_gameSessionController, _gameController)),

@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'package:async/async.dart';
 
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameSessionController {
-  final _gameSession = BehaviorSubject<GameSessionModel>();
+  final _gameSessionSubject = BehaviorSubject<GameSessionModel>();
   final _messages = BehaviorSubject<Map<String, dynamic>>();
   final _playerJoined = BehaviorSubject();
   final GameSessionClient _gameSessionClient;
@@ -18,16 +19,19 @@ class GameSessionController {
     return controller;
   }
 
-  Stream get updateStream => _gameSession.stream;
+  Stream get updateStream =>
+      StreamGroup.merge([_messages, _gameSessionSubject.stream]);
 
   Stream get playerJoined => _playerJoined.stream;
 
-  String get gameSessionId {
-    if (_gameSession.hasValue) {
-      return _gameSession.value.id;
+  bool get isPending => _gameSession.isPending;
+
+  GameSessionModel get _gameSession {
+    if (_gameSessionSubject.hasValue) {
+      return _gameSessionSubject.value;
     }
 
-    return GameSessionModel.empty().id;
+    return GameSessionModel.empty();
   }
 
   ValueStream<Map<String, dynamic>> get messages {
@@ -39,7 +43,7 @@ class GameSessionController {
   }
 
   void update(Object message) {
-    _gameSessionClient.update(gameSessionId, message);
+    _gameSessionClient.update(_gameSession.id, message);
   }
 
   void createSession() {
@@ -55,12 +59,12 @@ class GameSessionController {
 
   void _onGameSessionCreated(GameSessionModel gameSession) {
     _messages.addStream(_gameSessionClient.messages(gameSession.id));
-    _gameSession.add(gameSession);
+    _gameSessionSubject.add(gameSession);
     _gameSessionClient.playerJoined(gameSession.id).listen(_onPlayerJoined);
   }
 
   void _onPlayerJoined(GameSessionModel gameSession) {
     _playerJoined.add(true);
-    _gameSession.add(gameSession);
+    _gameSessionSubject.add(gameSession);
   }
 }

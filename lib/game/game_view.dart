@@ -15,8 +15,7 @@ class GameView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final theme = GoTheme.of(context);
-    final gutter = theme.gutter;
+    final gutter = GoTheme.of(context).gutter;
 
     return Column(
       children: [

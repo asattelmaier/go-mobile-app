@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
@@ -12,18 +14,21 @@ class GameSessionClient {
   Stream<GameSessionModel> get created {
     return _webSocketClient
         .subscribe(GameSessionClientDestination.created)
+        .map(_logJson("created"))
         .map(_toGameSession);
   }
 
   Stream<GameSessionModel> get joined {
     return _webSocketClient
         .subscribe(GameSessionClientDestination.joined)
+        .map(_logJson("joined"))
         .map(_toGameSession);
   }
 
   Stream<GameSessionModel> playerJoined(String gameSessionId) {
     return _webSocketClient
         .subscribe(_destination.playerJoined(gameSessionId))
+        .map(_logJson("playerJoined"))
         .map(_toGameSession);
   }
 
@@ -40,7 +45,9 @@ class GameSessionClient {
   }
 
   Stream<Map<String, dynamic>> messages(String gameSessionId) {
-    return _webSocketClient.subscribe(_destination.updated(gameSessionId));
+    return _webSocketClient
+        .subscribe(_destination.updated(gameSessionId))
+        .map(_logJson("messages"));
   }
 
   void close() {
@@ -49,5 +56,12 @@ class GameSessionClient {
 
   static GameSessionModel _toGameSession(Map<String, dynamic> json) {
     return GameSessionModel.fromDto(GameSessionDto.fromJson(json));
+  }
+
+  Map<String, dynamic> Function(Map<String, dynamic>) _logJson(String context) {
+    return (Map<String, dynamic> json) {
+      log('$context: ${json.toString()}');
+      return json;
+    };
   }
 }

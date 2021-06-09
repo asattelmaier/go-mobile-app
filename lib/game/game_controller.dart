@@ -1,4 +1,3 @@
-import 'package:async/async.dart';
 import 'package:go_app/game/board/board_model.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/client/game_client.dart';
@@ -16,8 +15,6 @@ class GameController {
   GameController(this._client)
       : this._gameStream = _client.game,
         this._endGameStream = _client.endGame;
-
-  Stream get updateStream => StreamGroup.merge([_gameStream, _endGameStream]);
 
   bool get isPlaying => _game.isPlaying;
 

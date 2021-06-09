@@ -37,13 +37,14 @@ void main() {
   });
 
   group('isJoinGameButtonVisible', () {
-    test('is visible if game is not playing', () {
+    test('is visible if game is not playing and session is not pending', () {
       final gameSessionController = MockGameSessionController();
       final gameController = MockGameController();
       final bottomActionBarController =
           BottomActionBarController(gameSessionController, gameController);
 
       when(gameController.isPlaying).thenReturn(false);
+      when(gameSessionController.isPending).thenReturn(false);
       final isJoinGameButtonVisible =
           bottomActionBarController.isJoinGameButtonVisible;
 
@@ -57,6 +58,21 @@ void main() {
           BottomActionBarController(gameSessionController, gameController);
 
       when(gameController.isPlaying).thenReturn(true);
+      when(gameSessionController.isPending).thenReturn(false);
+      final isJoinGameButtonVisible =
+          bottomActionBarController.isJoinGameButtonVisible;
+
+      expect(isJoinGameButtonVisible, false);
+    });
+
+    test('is not visible if game session is pending', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController =
+          BottomActionBarController(gameSessionController, gameController);
+
+      when(gameController.isPlaying).thenReturn(false);
+      when(gameSessionController.isPending).thenReturn(true);
       final isJoinGameButtonVisible =
           bottomActionBarController.isJoinGameButtonVisible;
 
@@ -102,6 +118,34 @@ void main() {
       final isPassButtonVisible = bottomActionBarController.isPassButtonVisible;
 
       expect(isPassButtonVisible, false);
+    });
+  });
+
+  group('isNewGameButtonVisible', () {
+    test('is visible if the game session is not pending', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController =
+          BottomActionBarController(gameSessionController, gameController);
+
+      when(gameSessionController.isPending).thenReturn(false);
+      final isNewGameButtonVisible =
+          bottomActionBarController.isNewGameButtonVisible;
+
+      expect(isNewGameButtonVisible, true);
+    });
+
+    test('is not visible if the game session is pending', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController =
+          BottomActionBarController(gameSessionController, gameController);
+
+      when(gameSessionController.isPending).thenReturn(true);
+      final isNewGameButtonVisible =
+          bottomActionBarController.isNewGameButtonVisible;
+
+      expect(isNewGameButtonVisible, false);
     });
   });
 }

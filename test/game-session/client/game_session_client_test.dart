@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
+import 'package:go_app/game-session/game_session_model.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'game_session_client_test.mocks.dart';
 
-@GenerateMocks([WebSocketClient])
+@GenerateMocks([WebSocketClient, GameSessionModel])
 void main() {
   group('created', () {
     test('subscribes to /user/game/session/created', () {
@@ -14,10 +15,24 @@ void main() {
       final subscription = "/user/game/session/created";
       final gameSessionClient = GameSessionClient(webSocketClient);
 
-      when(webSocketClient.subscribe(any)).thenAnswer((_) => Stream.empty());
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.empty());
       gameSessionClient.created;
 
       verify(webSocketClient.subscribe(subscription)).called(1);
+    });
+
+    test('returns a game session stream', () async {
+      final webSocketClient = MockWebSocketClient();
+      final subscription = "/user/game/session/created";
+      final json = {"id": "some-id", "players": []};
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.value(json));
+      final gameSession = await gameSessionClient.created.first;
+
+      expect(gameSession.id, "some-id");
     });
   });
 
@@ -27,10 +42,24 @@ void main() {
       final subscription = "/user/game/session/joined";
       final gameSessionClient = GameSessionClient(webSocketClient);
 
-      when(webSocketClient.subscribe(any)).thenAnswer((_) => Stream.empty());
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.empty());
       gameSessionClient.joined;
 
       verify(webSocketClient.subscribe(subscription)).called(1);
+    });
+
+    test('returns a game session stream', () async {
+      final webSocketClient = MockWebSocketClient();
+      final subscription = "/user/game/session/joined";
+      final json = {"id": "some-id", "players": []};
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.value(json));
+      final gameSession = await gameSessionClient.joined.first;
+
+      expect(gameSession.id, "some-id");
     });
   });
 
@@ -40,10 +69,91 @@ void main() {
       final subscription = "/game/session/some-id/player-joined";
       final gameSessionClient = GameSessionClient(webSocketClient);
 
-      when(webSocketClient.subscribe(any)).thenAnswer((_) => Stream.empty());
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.empty());
       gameSessionClient.playerJoined("some-id");
 
       verify(webSocketClient.subscribe(subscription)).called(1);
+    });
+
+    test('returns a game session stream', () async {
+      final webSocketClient = MockWebSocketClient();
+      final subscription = "/game/session/id/player-joined";
+      final json = {"id": "some-id", "players": []};
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.value(json));
+      final gameSession = await gameSessionClient.playerJoined("id").first;
+
+      expect(gameSession.id, "some-id");
+    });
+  });
+
+  group('create', () {
+    test('sends a empty message to /game/session/create', () {
+      final webSocketClient = MockWebSocketClient();
+      final path = "/game/session/create";
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.send(path)).thenReturn(null);
+      gameSessionClient.create();
+
+      verify(webSocketClient.send(path)).called(1);
+    });
+  });
+
+  group('join', () {
+    test('sends a empty message to /game/session/some-id/join', () {
+      final webSocketClient = MockWebSocketClient();
+      final path = "/game/session/some-id/join";
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.send(path)).thenReturn(null);
+      gameSessionClient.join("some-id");
+
+      verify(webSocketClient.send(path)).called(1);
+    });
+  });
+
+  group('update', () {
+    test('sends a message to /game/session/some-id/update', () {
+      final webSocketClient = MockWebSocketClient();
+      final path = "/game/session/some-id/update";
+      final json = {"some": "message"};
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.sendJson(path, json)).thenReturn(null);
+      gameSessionClient.update("some-id", json);
+
+      verify(webSocketClient.sendJson(path, json)).called(1);
+    });
+  });
+
+  group('messages', () {
+    test('returns messages /game/session/some-id/updated', () async {
+      final webSocketClient = MockWebSocketClient();
+      final subscription = "/game/session/some-id/updated";
+      final json = {"some": "message"};
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.subscribe(subscription))
+          .thenAnswer((_) => Stream.value(json));
+      final message = await gameSessionClient.messages("some-id").first;
+
+      expect(message, json);
+    });
+  });
+
+  group('close', () {
+    test('closes the web socket client', () {
+      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.close()).thenReturn(null);
+      gameSessionClient.close();
+
+      verify(webSocketClient.close()).called(1);
     });
   });
 }
