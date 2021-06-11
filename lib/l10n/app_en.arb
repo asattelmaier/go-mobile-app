@@ -9,6 +9,7 @@
   "white": "White",
   "drawn": "Drawn",
   "playersTurn": "{player}s turn",
+  "cancel": "Cancel",
   "@playersTurn": {
     "placeholders": {
       "player": {}

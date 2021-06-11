@@ -13,10 +13,10 @@ void main() {
       final joinGameController = JoinGameController(gameSessionController);
       final gameSessionId = "some-id";
 
-      when(gameSessionController.join(gameSessionId)).thenReturn(null);
+      when(gameSessionController.joinSession(gameSessionId)).thenReturn(null);
       joinGameController.join(gameSessionId);
 
-      verify(gameSessionController.join(gameSessionId)).called(1);
+      verify(gameSessionController.joinSession(gameSessionId)).called(1);
     });
   });
 }

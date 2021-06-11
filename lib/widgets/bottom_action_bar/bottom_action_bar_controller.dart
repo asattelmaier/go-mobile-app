@@ -14,6 +14,10 @@ class BottomActionBarController {
     _gameSessionController.createSession();
   }
 
+  void closeGameSession() {
+    _gameSessionController.terminateSession();
+  }
+
   void pass() {
     _gameController.pass();
   }
@@ -24,6 +28,10 @@ class BottomActionBarController {
 
   bool get isJoinGameButtonVisible {
     return !_gameSessionController.isPending && !_gameController.isPlaying;
+  }
+
+  bool get isCancelButtonVisible {
+    return _gameSessionController.isPending;
   }
 
   bool get isPassButtonVisible {

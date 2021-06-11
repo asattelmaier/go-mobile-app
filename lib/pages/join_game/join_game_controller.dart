@@ -6,6 +6,6 @@ class JoinGameController {
   const JoinGameController(this._gameSessionController);
 
   void join(String gameSessionId) {
-    _gameSessionController.join(gameSessionId);
+    _gameSessionController.joinSession(gameSessionId);
   }
 }

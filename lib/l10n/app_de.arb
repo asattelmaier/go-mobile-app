@@ -9,6 +9,7 @@
   "white": "Weiß",
   "drawn": "Unentschieden",
   "playersTurn": "{player} ist am Zug",
+  "cancel": "Abbrechen",
   "@playersTurn": {
     "placeholders": {
       "player": {}

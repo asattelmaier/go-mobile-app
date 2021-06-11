@@ -35,7 +35,7 @@ void main() {
 
       client.create(settings);
 
-      verify(gameSessionController.update(argThat(isSizeFive))).called(1);
+      verify(gameSessionController.updateSession(argThat(isSizeFive))).called(1);
     });
   });
 
@@ -50,7 +50,7 @@ void main() {
       when(location.toDto()).thenReturn(MockLocationDto());
       client.play(location, game);
 
-      verify(gameSessionController.update(argThat(isA<PlayDto>()))).called(1);
+      verify(gameSessionController.updateSession(argThat(isA<PlayDto>()))).called(1);
     });
   });
 
@@ -63,7 +63,7 @@ void main() {
       when(game.toDto()).thenReturn(MockGameDto());
       client.pass(game);
 
-      verify(gameSessionController.update(argThat(isA<PassDto>()))).called(1);
+      verify(gameSessionController.updateSession(argThat(isA<PassDto>()))).called(1);
     });
   });
 }

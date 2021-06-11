@@ -38,33 +38,40 @@ class GameSessionController {
     return _messages.shareValue();
   }
 
-  void join(String gameSessionId) {
-    _gameSessionClient.join(gameSessionId);
+  void joinSession(String gameSessionId) {
+    _gameSessionClient.joinSession(gameSessionId);
   }
 
-  void update(Object message) {
-    _gameSessionClient.update(_gameSession.id, message);
+  void updateSession(Object message) {
+    _gameSessionClient.updateSession(_gameSession.id, message);
   }
 
   void createSession() {
-    _gameSessionClient.create();
+    _gameSessionClient.createSession();
   }
 
-  void close() {
-    _gameSessionClient.close();
-    _playerJoined.close();
+  void terminateSession() {
+    _gameSessionClient.terminateSession(_gameSession.id);
   }
 
   GameSessionController._(this._gameSessionClient);
 
-  void _onGameSessionCreated(GameSessionModel gameSession) {
-    _messages.addStream(_gameSessionClient.messages(gameSession.id));
+  void _onGameSessionCreated(GameSessionModel gameSession) async {
+    final id = gameSession.id;
+
+    _gameSessionClient.messages(id).listen((message) => _messages.add(message));
     _gameSessionSubject.add(gameSession);
-    _gameSessionClient.playerJoined(gameSession.id).listen(_onPlayerJoined);
+    _gameSessionClient.playerJoined(id).listen(_onPlayerJoined);
+    _gameSessionClient.terminated(id).listen(_onTermination);
   }
 
   void _onPlayerJoined(GameSessionModel gameSession) {
-    _playerJoined.add(true);
+    _playerJoined.add(gameSession);
+    _gameSessionSubject.add(gameSession);
+  }
+
+  void _onTermination(GameSessionModel gameSession) async {
+    // TODO: WebSocket Client subscriptions needs to be disposed
     _gameSessionSubject.add(gameSession);
   }
 }

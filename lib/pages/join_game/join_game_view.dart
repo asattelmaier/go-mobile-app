@@ -25,7 +25,7 @@ class JoinGameView extends StatelessWidget {
             label: Text(AppLocalizations.of(context)!.join),
             icon: Icon(Icons.add),
             onPressed: () {
-              _gameSessionController.join(_textEditingController.text);
+              _gameSessionController.joinSession(_textEditingController.text);
             },
           )
         ])));

@@ -48,10 +48,6 @@ class GameController {
     _client.pass(_game);
   }
 
-  void close() {
-    _client.close();
-  }
-
   GameModel get _game {
     if (_gameStream.hasValue) {
       return _gameStream.value;

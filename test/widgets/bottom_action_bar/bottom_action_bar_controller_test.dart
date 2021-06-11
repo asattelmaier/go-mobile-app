@@ -22,6 +22,19 @@ void main() {
     });
   });
 
+  group('closeGameSession', () {
+    test('closes a game session', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController = BottomActionBarController(gameSessionController, gameController);
+
+      when(gameSessionController.terminateSession()).thenReturn(null);
+      bottomActionBarController.closeGameSession();
+
+      verify(gameSessionController.terminateSession()).called(1);
+    });
+  });
+
   group('pass', () {
     test('passes the game', () {
       final gameSessionController = MockGameSessionController();
@@ -146,6 +159,34 @@ void main() {
           bottomActionBarController.isNewGameButtonVisible;
 
       expect(isNewGameButtonVisible, false);
+    });
+  });
+
+  group('isCancelButtonVisible', () {
+    test('is visible if the game session is pending', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController =
+          BottomActionBarController(gameSessionController, gameController);
+
+      when(gameSessionController.isPending).thenReturn(true);
+      final isCancelButtonVisible =
+          bottomActionBarController.isCancelButtonVisible;
+
+      expect(isCancelButtonVisible, true);
+    });
+
+    test('is not visible if the game session is not pending', () {
+      final gameSessionController = MockGameSessionController();
+      final gameController = MockGameController();
+      final bottomActionBarController =
+          BottomActionBarController(gameSessionController, gameController);
+
+      when(gameSessionController.isPending).thenReturn(false);
+      final isCancelButtonVisible =
+          bottomActionBarController.isCancelButtonVisible;
+
+      expect(isCancelButtonVisible, false);
     });
   });
 }

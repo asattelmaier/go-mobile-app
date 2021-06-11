@@ -18,6 +18,13 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
+  Stream<GameSessionModel> terminated(String gameSessionId) {
+    return _webSocketClient
+        .subscribe(_destination.terminated(gameSessionId))
+        .map(_logJson("terminated"))
+        .map(_toGameSession);
+  }
+
   Stream<GameSessionModel> get joined {
     return _webSocketClient
         .subscribe(GameSessionClientDestination.joined)
@@ -32,26 +39,26 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
-  void create() {
+  void createSession() {
     _webSocketClient.send(_destination.create);
   }
 
-  void join(String gameSessionId) {
+  void joinSession(String gameSessionId) {
     _webSocketClient.send(_destination.join(gameSessionId));
   }
 
-  void update(String gameSessionId, Object message) {
+  void updateSession(String gameSessionId, Object message) {
     _webSocketClient.sendJson(_destination.update(gameSessionId), message);
+  }
+
+  void terminateSession(String gameSessionId) {
+    _webSocketClient.send(_destination.terminate(gameSessionId));
   }
 
   Stream<Map<String, dynamic>> messages(String gameSessionId) {
     return _webSocketClient
         .subscribe(_destination.updated(gameSessionId))
         .map(_logJson("messages"));
-  }
-
-  void close() {
-    _webSocketClient.close();
   }
 
   static GameSessionModel _toGameSession(Map<String, dynamic> json) {

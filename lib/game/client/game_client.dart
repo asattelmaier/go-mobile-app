@@ -42,25 +42,21 @@ class GameClient {
     final command = CreateCommandDto(settings.toDto());
     final create = CreateDto(command);
 
-    _gameSessionController.update(create);
+    _gameSessionController.updateSession(create);
   }
 
   play(LocationModel location, GameModel game) {
     final command = PlayCommandDto(location.toDto());
     final play = PlayDto(command, game.toDto());
 
-    _gameSessionController.update(play);
+    _gameSessionController.updateSession(play);
   }
 
   pass(GameModel game) {
     final command = PassCommandDto();
     final pass = PassDto(command, game.toDto());
 
-    _gameSessionController.update(pass);
-  }
-
-  close() {
-    _gameSessionController.close();
+    _gameSessionController.updateSession(pass);
   }
 
   bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);

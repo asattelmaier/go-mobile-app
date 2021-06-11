@@ -3,8 +3,10 @@ class GameSessionClientDestination {
   static const _PREFIX = "/game/session";
   static const _CREATE = "/create";
   static const _JOIN = "/join";
+  static const _TERMINATE = "/terminate";
   static const _UPDATE = "/update";
   static const _CREATED = "/created";
+  static const _TERMINATED = "/terminated";
   static const _JOINED = "/joined";
   static const _PLAYER_JOINED = "/player-joined";
   static const _UPDATED = "/updated";
@@ -13,6 +15,10 @@ class GameSessionClientDestination {
 
   static String get created {
     return _createUserDestination(_CREATED);
+  }
+
+  String terminated(String gameSessionId) {
+    return _createDestination(_TERMINATED, gameSessionId);
   }
 
   static String get joined {
@@ -25,6 +31,10 @@ class GameSessionClientDestination {
 
   String get create {
     return _createDestination(_CREATE);
+  }
+
+  String terminate(String gameSessionId) {
+    return _createDestination(_TERMINATE, gameSessionId);
   }
 
   String join(String gameSessionId) {
