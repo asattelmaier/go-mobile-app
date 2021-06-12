@@ -77,7 +77,7 @@ class GameSessionController {
   }
 
   void _onTermination(GameSessionModel gameSession) async {
-    // TODO: WebSocket Client subscriptions needs to be disposed
+    await _gameSessionClient.dispose(gameSession.id);
     _gameSessionSubject.add(gameSession);
   }
 

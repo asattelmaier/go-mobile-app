@@ -1,11 +1,15 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:go_app/api/web_socket/subscriptions/web_socket_stomp_subscription.dart';
+import 'package:go_app/api/web_socket/subscriptions/web_socket_stream_subscription.dart';
+import 'package:go_app/api/web_socket/subscriptions/web_socket_subscription.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 
 class WebSocketClient {
   final StompClient _stompClient;
-  final List<StreamController> _subscriptions = [];
+  final List<WebSocketSubscription> _subscriptions = [];
 
   WebSocketClient(this._stompClient);
 
@@ -35,17 +39,23 @@ class WebSocketClient {
 
   Stream<Map<String, dynamic>> subscribe(String destination) {
     final subscription = new StreamController<Map<String, dynamic>>();
-    _subscriptions.add(subscription);
 
-    _stompClient.subscribe(
+    final stompSubscription = _stompClient.subscribe(
       destination: destination,
       callback: (frame) => subscription.add(jsonDecode(frame.body!)),
     );
 
+    _subscriptions.add(WebSocketStreamSubscription(destination, subscription));
+    _subscriptions
+        .add(WebSocketStompSubscription(destination, stompSubscription));
+
     return subscription.stream;
   }
 
-  void close() {
-    _subscriptions.forEach((subscription) => subscription.close());
+  Future<void> dispose(List<String> destinations) {
+    return Future.wait(_subscriptions
+        .where((subscription) =>
+            destinations.any((destination) => subscription.has(destination)))
+        .map((subscription) => subscription.close()));
   }
 }

@@ -171,4 +171,25 @@ void main() {
       expect(message, json);
     });
   });
+
+  group('dispose', () {
+    test('disposes all id dependent subscriptions', () async {
+      final destinations = [
+        "/game/session/some-id/terminate",
+        "/game/session/some-id/terminated",
+        "/game/session/some-id/update",
+        "/game/session/some-id/updated",
+        "/game/session/some-id/join",
+        "/game/session/some-id/player-joined",
+      ];
+      final webSocketClient = MockWebSocketClient();
+      final gameSessionClient = GameSessionClient(webSocketClient);
+
+      when(webSocketClient.dispose(destinations))
+          .thenAnswer((_) => Future.value());
+      await gameSessionClient.dispose("some-id");
+
+      verify(webSocketClient.dispose(destinations)).called(1);
+    });
+  });
 }

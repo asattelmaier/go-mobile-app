@@ -71,4 +71,15 @@ class GameSessionClient {
       return json;
     };
   }
+
+  Future<void> dispose(String gameSessionId) {
+    return _webSocketClient.dispose([
+      _destination.terminate(gameSessionId),
+      _destination.terminated(gameSessionId),
+      _destination.update(gameSessionId),
+      _destination.updated(gameSessionId),
+      _destination.join(gameSessionId),
+      _destination.playerJoined(gameSessionId)
+    ]);
+  }
 }
