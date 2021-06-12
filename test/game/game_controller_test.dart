@@ -23,16 +23,13 @@ void main() {
   group('play', () {
     test('plays if the game is not over', () async {
       final client = MockGameClient();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
+      final endGame = MockEndGameModel();
       final location = MockLocationModel();
-      final controller = createController(client, gameStream, endGameStream);
+      final controller = GameController(client, game, endGame);
 
-      when(gameStream.hasValue).thenReturn(true);
-      when(gameStream.value).thenReturn(game);
-      when(endGameStream.hasValue).thenReturn(false);
       when(game.created).thenReturn(2);
+      when(endGame.created).thenReturn(0);
       when(client.play(location, game)).thenReturn(null);
       controller.play(location);
 
@@ -41,17 +38,11 @@ void main() {
 
     test('play is only possible if the game is not over', () {
       final client = MockGameClient();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
       final location = MockLocationModel();
-      final controller = createController(client, gameStream, endGameStream);
+      final controller = GameController(client, game, endGame);
 
-      when(gameStream.hasValue).thenReturn(true);
-      when(gameStream.value).thenReturn(game);
-      when(endGameStream.hasValue).thenReturn(true);
-      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(1);
       when(endGame.created).thenReturn(2);
       when(client.play(location, game)).thenReturn(null);
@@ -64,16 +55,10 @@ void main() {
   group('isGameOver', () {
     test('game is over if the end game is created after the game', () {
       final client = MockGameClient();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
-      final controller = createController(client, gameStream, endGameStream);
+      final controller = GameController(client, game, endGame);
 
-      when(gameStream.hasValue).thenReturn(true);
-      when(gameStream.value).thenReturn(game);
-      when(endGameStream.hasValue).thenReturn(true);
-      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(1);
       when(endGame.created).thenReturn(2);
       final isGameOver = controller.isGameOver;
@@ -83,16 +68,10 @@ void main() {
 
     test('game is running if the game is created after the end game', () {
       final client = MockGameClient();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
-      final controller = createController(client, gameStream, endGameStream);
+      final controller = GameController(client, game, endGame);
 
-      when(gameStream.hasValue).thenReturn(true);
-      when(gameStream.value).thenReturn(game);
-      when(endGameStream.hasValue).thenReturn(true);
-      when(endGameStream.value).thenReturn(endGame);
       when(game.created).thenReturn(2);
       when(endGame.created).thenReturn(1);
       final isGameOver = controller.isGameOver;
@@ -104,9 +83,9 @@ void main() {
   group('create', () {
     test('creates a game with provided size', () {
       final client = MockGameClient();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
-      final controller = createController(client, gameStream, endGameStream);
+      final game = MockGameModel();
+      final endGame = MockEndGameModel();
+      final controller = GameController(client, game, endGame);
 
       when(client.create(any)).thenReturn(null);
       controller.create(5, false);
@@ -119,23 +98,13 @@ void main() {
     test('passes the game with the current game', () {
       final client = MockGameClient();
       final game = MockGameModel();
-      final gameStream = MockGameStream();
-      final endGameStream = MockEndGameStream();
-      final controller = createController(client, gameStream, endGameStream);
+      final endGame = MockEndGameModel();
+      final controller = GameController(client, game, endGame);
 
-      when(gameStream.hasValue).thenReturn(true);
-      when(gameStream.value).thenReturn(game);
       when(client.pass(any)).thenReturn(null);
       controller.pass();
 
       verify(client.pass(game)).called(1);
     });
   });
-}
-
-createController(GameClient client, MockGameStream gameStream,
-    MockEndGameStream endGameStream) {
-  when(client.game).thenAnswer((_) => gameStream);
-  when(client.endGame).thenAnswer((_) => endGameStream);
-  return GameController(client);
 }

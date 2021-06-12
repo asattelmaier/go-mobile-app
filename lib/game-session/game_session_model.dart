@@ -20,4 +20,6 @@ class GameSessionModel {
         this.players = const [];
 
   bool get isPending => players.length == 1;
+
+  bool get isRunning => players.length == 2;
 }

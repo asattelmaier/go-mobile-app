@@ -10,6 +10,7 @@
   "drawn": "Unentschieden",
   "playersTurn": "{player} ist am Zug",
   "cancel": "Abbrechen",
+  "back": "Zurück",
   "@playersTurn": {
     "placeholders": {
       "player": {}

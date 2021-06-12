@@ -5,28 +5,19 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
-import 'package:rxdart/rxdart.dart';
 
 class GameController {
   final GameClient _client;
-  final ValueStream<GameModel> _gameStream;
-  final ValueStream<EndGameModel> _endGameStream;
+  final GameModel _game;
+  final EndGameModel _endGame;
 
-  GameController(this._client)
-      : this._gameStream = _client.game,
-        this._endGameStream = _client.endGame;
+  GameController(this._client, this._game, this._endGame);
 
   bool get isPlaying => _game.isPlaying;
 
   bool get isGameOver => endGame.created > _game.created;
 
-  EndGameModel get endGame {
-    if (_endGameStream.hasValue) {
-      return _endGameStream.value;
-    }
-
-    return EndGameModel.empty();
-  }
+  EndGameModel get endGame => _endGame;
 
   BoardModel get board => _game.board;
 
@@ -46,13 +37,5 @@ class GameController {
 
   void pass() {
     _client.pass(_game);
-  }
-
-  GameModel get _game {
-    if (_gameStream.hasValue) {
-      return _gameStream.value;
-    }
-
-    return GameModel.empty();
   }
 }

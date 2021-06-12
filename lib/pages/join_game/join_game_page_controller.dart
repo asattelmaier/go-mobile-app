@@ -1,9 +1,9 @@
 import 'package:go_app/game-session/game_session_controller.dart';
 
-class JoinGameController {
+class JoinGamePageController {
   final GameSessionController _gameSessionController;
 
-  const JoinGameController(this._gameSessionController);
+  const JoinGamePageController(this._gameSessionController);
 
   void join(String gameSessionId) {
     _gameSessionController.joinSession(gameSessionId);

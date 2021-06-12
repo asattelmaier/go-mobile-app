@@ -8,8 +8,9 @@ import 'package:rxdart/rxdart.dart';
 class GameSessionController {
   final _gameSessionSubject = BehaviorSubject<GameSessionModel>();
   final _messages = BehaviorSubject<Map<String, dynamic>>();
-  final _playerJoined = BehaviorSubject();
+  final _playerJoined = StreamController.broadcast();
   final GameSessionClient _gameSessionClient;
+  final List<StreamSubscription> _subscriptions = [];
 
   factory GameSessionController(GameSessionClient gameSessionClient) {
     final controller = GameSessionController._(gameSessionClient);
@@ -22,9 +23,13 @@ class GameSessionController {
   Stream get updateStream =>
       StreamGroup.merge([_messages, _gameSessionSubject.stream]);
 
-  Stream get playerJoined => _playerJoined.stream;
-
   bool get isPending => _gameSession.isPending;
+
+  bool get isRunning => _gameSession.isRunning;
+
+  void onPlayerJoined(void Function(dynamic) listener) {
+    _subscriptions.add(_playerJoined.stream.listen(listener));
+  }
 
   GameSessionModel get _gameSession {
     if (_gameSessionSubject.hasValue) {
@@ -50,7 +55,8 @@ class GameSessionController {
     _gameSessionClient.createSession();
   }
 
-  void terminateSession() {
+  void terminateSession() async {
+    _dispose();
     _gameSessionClient.terminateSession(_gameSession.id);
   }
 
@@ -73,5 +79,12 @@ class GameSessionController {
   void _onTermination(GameSessionModel gameSession) async {
     // TODO: WebSocket Client subscriptions needs to be disposed
     _gameSessionSubject.add(gameSession);
+  }
+
+  _dispose() async {
+    await Future.wait(_subscriptions.map((subscription) {
+      return subscription.cancel();
+    }));
+    _subscriptions.clear();
   }
 }

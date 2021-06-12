@@ -10,6 +10,7 @@
   "drawn": "Drawn",
   "playersTurn": "{player}s turn",
   "cancel": "Cancel",
+  "back": "Back",
   "@playersTurn": {
     "placeholders": {
       "player": {}

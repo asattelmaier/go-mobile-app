@@ -33,4 +33,23 @@ void main() {
       expect(isPending, false);
     });
   });
+
+  group('isRunning', () {
+    test('is runnig if session has two players', () {
+      final players = [MockPlayerModel(), MockPlayerModel()];
+      final gameSession = GameSessionModel("", players);
+
+      final isRunning = gameSession.isRunning;
+
+      expect(isRunning, true);
+    });
+
+    test('is not running if session not two players', () {
+      final gameSession = GameSessionModel("", []);
+
+      final isRunning = gameSession.isRunning;
+
+      expect(isRunning, false);
+    });
+  });
 }

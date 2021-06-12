@@ -68,37 +68,4 @@ void main() {
       expect(updateStream, playerJoinedGameSession);
     });
   });
-
-  group('playerJoined', () {
-    test('updates as soon as a player joined', () async {
-      final client = MockGameSessionClient();
-      final gameCreatedStream = MockStream<GameSessionModel>();
-      final playerJoinedStream = MockStream<GameSessionModel>();
-      final createdGameSession = MockGameSessionModel();
-      final playerJoinedGameSession = MockGameSessionModel();
-      final gameSessionId = "some-id";
-
-      when(client.created).thenAnswer((_) => gameCreatedStream);
-      when(createdGameSession.id).thenReturn(gameSessionId);
-      when(client.messages(gameSessionId)).thenAnswer((_) => Stream.empty());
-      when(client.playerJoined(gameSessionId))
-          .thenAnswer((_) => playerJoinedStream);
-      when(client.terminated(gameSessionId))
-          .thenAnswer((_) => Stream.empty());
-      when(gameCreatedStream.listen(any)).thenAnswer((invocation) {
-        final listener = invocation.positionalArguments.single;
-        listener(createdGameSession);
-        return MockStreamSubscription<GameSessionModel>();
-      });
-      when(playerJoinedStream.listen(any)).thenAnswer((invocation) {
-        final listener = invocation.positionalArguments.single;
-        listener(playerJoinedGameSession);
-        return MockStreamSubscription<GameSessionModel>();
-      });
-      final gameSessionController = GameSessionController(client);
-      final playerJoined = await gameSessionController.playerJoined.first;
-
-      expect(playerJoined, playerJoined);
-    });
-  });
 }
