@@ -18,17 +18,17 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
-  Stream<GameSessionModel> terminated(String gameSessionId) {
-    return _webSocketClient
-        .subscribe(_destination.terminated(gameSessionId))
-        .map(_logJson("terminated"))
-        .map(_toGameSession);
-  }
-
   Stream<GameSessionModel> get joined {
     return _webSocketClient
         .subscribe(GameSessionClientDestination.joined)
         .map(_logJson("joined"))
+        .map(_toGameSession);
+  }
+
+  Stream<GameSessionModel> terminated(String gameSessionId) {
+    return _webSocketClient
+        .subscribe(_destination.terminated(gameSessionId))
+        .map(_logJson("terminated"))
         .map(_toGameSession);
   }
 

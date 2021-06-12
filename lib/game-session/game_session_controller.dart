@@ -9,6 +9,7 @@ class GameSessionController {
   final _gameSessionSubject = BehaviorSubject<GameSessionModel>();
   final _messages = BehaviorSubject<Map<String, dynamic>>();
   final _playerJoined = StreamController.broadcast();
+  final _joined = StreamController.broadcast();
   final GameSessionClient _gameSessionClient;
   final List<StreamSubscription> _subscriptions = [];
 
@@ -16,6 +17,7 @@ class GameSessionController {
     final controller = GameSessionController._(gameSessionClient);
 
     gameSessionClient.created.listen(controller._onGameSessionCreated);
+    gameSessionClient.joined.listen(controller._onJoined);
 
     return controller;
   }
@@ -29,6 +31,10 @@ class GameSessionController {
 
   void onPlayerJoined(void Function(dynamic) listener) {
     _subscriptions.add(_playerJoined.stream.listen(listener));
+  }
+
+  void onJoined(void Function(dynamic) listener) {
+    _subscriptions.add(_joined.stream.listen(listener));
   }
 
   GameSessionModel get _gameSession {
@@ -68,6 +74,15 @@ class GameSessionController {
     _gameSessionClient.messages(id).listen((message) => _messages.add(message));
     _gameSessionSubject.add(gameSession);
     _gameSessionClient.playerJoined(id).listen(_onPlayerJoined);
+    _gameSessionClient.terminated(id).listen(_onTermination);
+  }
+
+  void _onJoined(GameSessionModel gameSession) async {
+    final id = gameSession.id;
+
+    _joined.add(gameSession);
+    _gameSessionClient.messages(id).listen((message) => _messages.add(message));
+    _gameSessionSubject.add(gameSession);
     _gameSessionClient.terminated(id).listen(_onTermination);
   }
 

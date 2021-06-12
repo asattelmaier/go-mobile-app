@@ -17,12 +17,12 @@ class GameSessionClientDestination {
     return _createUserDestination(_CREATED);
   }
 
-  String terminated(String gameSessionId) {
-    return _createDestination(_TERMINATED, gameSessionId);
-  }
-
   static String get joined {
     return _createUserDestination(_JOINED);
+  }
+
+  String terminated(String gameSessionId) {
+    return _createDestination(_TERMINATED, gameSessionId);
   }
 
   String playerJoined(String gameSessionId) {

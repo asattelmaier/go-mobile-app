@@ -13,6 +13,14 @@ void main() {
     });
   });
 
+  group('joined', () {
+    test('returns /user/game/session/joined', () {
+      final destination = GameSessionClientDestination.joined;
+
+      expect(destination, "/user/game/session/joined");
+    });
+  });
+
   group('terminated', () {
     test('returns /user/game/session/some-id/terminated', () {
       final destination = GameSessionClientDestination();
@@ -20,14 +28,6 @@ void main() {
       final playerJoined = destination.terminated("some-id");
 
       expect(playerJoined, "/game/session/some-id/terminated");
-    });
-  });
-
-  group('joined', () {
-    test('returns /user/game/session/joined', () {
-      final destination = GameSessionClientDestination.joined;
-
-      expect(destination, "/user/game/session/joined");
     });
   });
 
@@ -53,7 +53,8 @@ void main() {
     test('returns /game/session/some-id/terminate', () {
       final destination = GameSessionClientDestination();
 
-      expect(destination.terminate("some-id"), "/game/session/some-id/terminate");
+      expect(
+          destination.terminate("some-id"), "/game/session/some-id/terminate");
     });
   });
 

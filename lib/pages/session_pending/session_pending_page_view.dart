@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
@@ -20,7 +19,7 @@ class SessionPendingPageView extends StatelessWidget {
     final gutter = GoTheme.of(context).gutter;
     final waitingForPlayer = AppLocalizations.of(context)!.waitingForPlayer;
 
-    _gameSessionController.onPlayerJoined((event) {
+    _gameSessionController.onPlayerJoined((_) {
       Router.push(context, GamePageView(_gameSessionController));
     });
 
