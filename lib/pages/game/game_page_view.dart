@@ -7,8 +7,7 @@ import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/game_view.dart';
 import 'package:go_app/layout/default/default_layout.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
-import 'package:go_app/router/router.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/cancel_button/cancel_button.dart';
+import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/pass_button/pass_button_view.dart';
 
 class GamePageView extends StatelessWidget {
@@ -29,7 +28,8 @@ class GamePageView extends StatelessWidget {
             builder: (_, gameSnapshot) {
               final endGame = EndGameModel.fromNullable(endGameSnapshot.data);
               final game = GameModel.fromNullable(gameSnapshot.data);
-              final gameController = GameController(gameClient, game, endGame);
+              final gameController = GameController(gameClient,
+                  _gameSessionController.currentPlayer, game, endGame);
 
               if (!game.isPlaying) {
                 // TODO: Make this configurable
@@ -37,15 +37,16 @@ class GamePageView extends StatelessWidget {
               }
 
               return DefaultLayout(
-                body: GameView(gameController),
-                bottomActionBar: [
-                  CancelButtonView(() {
-                    _gameSessionController.terminateSession();
-                    Router.push(context, HomePageView(_gameSessionController));
-                  }),
-                  PassButtonView(gameController),
-                ],
-              );
+                  body: GameView(gameController),
+                  bottomActionBar: [
+                    if (gameController.isGameOver)
+                      BackButtonView(HomePageView(_gameSessionController)),
+                    if (!gameController.isGameOver)
+                      PassButtonView(gameController),
+                  ],
+                  bottomActionBarAlignment: gameController.isGameOver
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end);
             }));
   }
 }

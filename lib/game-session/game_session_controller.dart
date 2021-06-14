@@ -3,6 +3,7 @@ import 'package:async/async.dart';
 
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_model.dart';
+import 'package:go_app/game-session/player/session_player_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameSessionController {
@@ -12,6 +13,7 @@ class GameSessionController {
   final _joined = StreamController.broadcast();
   final GameSessionClient _gameSessionClient;
   final List<StreamSubscription> _subscriptions = [];
+  SessionPlayerModel _currentPlayer = SessionPlayerModel.empty();
 
   factory GameSessionController(GameSessionClient gameSessionClient) {
     final controller = GameSessionController._(gameSessionClient);
@@ -28,6 +30,8 @@ class GameSessionController {
   bool get isPending => _gameSession.isPending;
 
   bool get isRunning => _gameSession.isRunning;
+
+  SessionPlayerModel get currentPlayer => _currentPlayer;
 
   void onPlayerJoined(void Function(dynamic) listener) {
     _subscriptions.add(_playerJoined.stream.listen(listener));
@@ -69,18 +73,20 @@ class GameSessionController {
   GameSessionController._(this._gameSessionClient);
 
   void _onGameSessionCreated(GameSessionModel gameSession) async {
-    final id = gameSession.id;
-
-    _gameSessionClient.messages(id).listen((message) => _messages.add(message));
-    _gameSessionSubject.add(gameSession);
-    _gameSessionClient.playerJoined(id).listen(_onPlayerJoined);
-    _gameSessionClient.terminated(id).listen(_onTermination);
+    _currentPlayer = gameSession.players.first;
+    _setupGameSession(gameSession);
+    _gameSessionClient.playerJoined(gameSession.id).listen(_onPlayerJoined);
   }
 
   void _onJoined(GameSessionModel gameSession) async {
+    _currentPlayer = gameSession.players.last;
+    _joined.add(gameSession);
+    _setupGameSession(gameSession);
+  }
+
+  void _setupGameSession(GameSessionModel gameSession) {
     final id = gameSession.id;
 
-    _joined.add(gameSession);
     _gameSessionClient.messages(id).listen((message) => _messages.add(message));
     _gameSessionSubject.add(gameSession);
     _gameSessionClient.terminated(id).listen(_onTermination);

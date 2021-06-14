@@ -3,8 +3,9 @@ import 'package:go_app/theme/go_theme.dart';
 
 class BottomActionBarView extends StatelessWidget {
   final List<Widget> _buttons;
+  final MainAxisAlignment _alignment;
 
-  const BottomActionBarView(this._buttons);
+  const BottomActionBarView(this._buttons, this._alignment);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class BottomActionBarView extends StatelessWidget {
           top: gutter, bottom: gutter, left: gutter * 2, right: gutter * 2),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: _alignment,
         children: _buttons,
       ),
     ));

@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/game-session/game_session_model.dart';
-import 'package:go_app/game-session/player/player_model.dart';
+import 'package:go_app/game-session/player/session_player_model.dart';
 import 'package:mockito/annotations.dart';
 import 'game_session_model_test.mocks.dart';
 
-@GenerateMocks([PlayerModel])
+@GenerateMocks([SessionPlayerModel])
 void main() {
   group('isPending', () {
     test('is pending if session has one players', () {
-      final players = [MockPlayerModel()];
+      final players = [MockSessionPlayerModel()];
       final gameSession = GameSessionModel("", players);
 
       final isPending = gameSession.isPending;
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('is not pending if session has more than one player', () {
-      final players = [MockPlayerModel(), MockPlayerModel()];
+      final players = [MockSessionPlayerModel(), MockSessionPlayerModel()];
       final gameSession = GameSessionModel("", players);
 
       final isPending = gameSession.isPending;
@@ -36,7 +36,7 @@ void main() {
 
   group('isRunning', () {
     test('is runnig if session has two players', () {
-      final players = [MockPlayerModel(), MockPlayerModel()];
+      final players = [MockSessionPlayerModel(), MockSessionPlayerModel()];
       final gameSession = GameSessionModel("", players);
 
       final isRunning = gameSession.isRunning;

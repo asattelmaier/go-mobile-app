@@ -1,15 +1,15 @@
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
-import 'package:go_app/game-session/player/player_model.dart';
+import 'package:go_app/game-session/player/session_player_model.dart';
 
 class GameSessionModel {
   final String id;
-  final List<PlayerModel> players;
+  final List<SessionPlayerModel> players;
 
   const GameSessionModel(this.id, this.players);
 
   factory GameSessionModel.fromDto(GameSessionDto dto) {
     final players = dto.players.map((player) {
-      return PlayerModel.fromDto(player);
+      return SessionPlayerModel.fromDto(player);
     }).toList();
 
     return GameSessionModel(dto.id, players);

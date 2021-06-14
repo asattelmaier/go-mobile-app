@@ -8,7 +8,8 @@
   "black": "Black",
   "white": "White",
   "drawn": "Drawn",
-  "playersTurn": "{player}s turn",
+  "yourTurn": "Your turn",
+  "opponentsTurn": "Opponent's turn",
   "cancel": "Cancel",
   "back": "Back",
   "@playersTurn": {

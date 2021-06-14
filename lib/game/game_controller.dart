@@ -5,15 +5,19 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
+import 'package:go_app/game-session/player/session_player_model.dart' as GameSession;
 
 class GameController {
   final GameClient _client;
+  final GameSession.SessionPlayerModel player;
   final GameModel _game;
   final EndGameModel _endGame;
 
-  GameController(this._client, this._game, this._endGame);
+  GameController(this._client, this.player, this._game, this._endGame);
 
   bool get isPlaying => _game.isPlaying;
+
+  bool get isPlayersTurn => player.color == _game.activePlayer.color;
 
   bool get isGameOver => endGame.created > _game.created;
 
@@ -30,12 +34,14 @@ class GameController {
   }
 
   void play(LocationModel location) {
-    if (!isGameOver) {
+    if (!isGameOver && isPlayersTurn) {
       _client.play(location, _game);
     }
   }
 
   void pass() {
-    _client.pass(_game);
+    if (isPlayersTurn) {
+      _client.pass(_game);
+    }
   }
 }

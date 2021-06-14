@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_app/game-session/player/session_player_model.dart';
 import 'package:go_app/game/board/board_controller.dart';
 import 'package:go_app/game/board/board_model.dart';
 import 'package:go_app/game/board/intersection/location/location_model.dart';
@@ -7,7 +8,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'board_controller_test.mocks.dart';
 
-@GenerateMocks([GameController, BoardModel, LocationModel])
+@GenerateMocks([GameController, BoardModel, LocationModel, SessionPlayerModel])
 void main() {
   group('play', () {
     test('plays with location', () {

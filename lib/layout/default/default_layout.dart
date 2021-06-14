@@ -5,8 +5,12 @@ import 'package:go_app/widgets/bottom_action_bar/bottom_action_bar_view.dart';
 class DefaultLayout extends StatelessWidget {
   final Widget body;
   final List<Widget> bottomActionBar;
+  final MainAxisAlignment bottomActionBarAlignment;
 
-  const DefaultLayout({required this.body, this.bottomActionBar = const []});
+  const DefaultLayout(
+      {required this.body,
+      this.bottomActionBar = const [],
+      this.bottomActionBarAlignment = MainAxisAlignment.spaceBetween});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +24,6 @@ class DefaultLayout extends StatelessWidget {
   }
 
   BottomActionBarView get _bottomActionBar {
-    return BottomActionBarView(bottomActionBar);
+    return BottomActionBarView(bottomActionBar, bottomActionBarAlignment);
   }
 }

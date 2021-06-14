@@ -43,10 +43,8 @@ class GameView extends StatelessWidget {
   }
 
   Widget _activePlayerInformation(BuildContext context) {
-    final player = _controller.activePlayer.isBlack
-        ? AppLocalizations.of(context)!.black
-        : AppLocalizations.of(context)!.white;
-
-    return Text(AppLocalizations.of(context)!.playersTurn(player));
+    return Text(_controller.isPlayersTurn
+        ? AppLocalizations.of(context)!.yourTurn
+        : AppLocalizations.of(context)!.opponentsTurn);
   }
 }

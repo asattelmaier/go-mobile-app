@@ -8,7 +8,8 @@
   "black": "Schwarz",
   "white": "Weiß",
   "drawn": "Unentschieden",
-  "playersTurn": "{player} ist am Zug",
+  "yourTurn": "Du bist am Zug",
+  "opponentsTurn": "Der Gegner ist am Zug",
   "cancel": "Abbrechen",
   "back": "Zurück",
   "@playersTurn": {
