@@ -33,6 +33,8 @@ class GameSessionController {
 
   SessionPlayerModel get currentPlayer => _currentPlayer;
 
+  String get sessionId => _gameSession.id;
+
   void onPlayerJoined(void Function(dynamic) listener) {
     _subscriptions.add(_playerJoined.stream.listen(listener));
   }

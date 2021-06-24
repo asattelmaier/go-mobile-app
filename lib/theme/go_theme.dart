@@ -5,6 +5,8 @@ class GoTheme extends InheritedWidget {
 
   final double gutter = 4;
 
+  final double fontSizeSmall = 12;
+
   Color get boardColor => Color.fromRGBO(217, 145, 82, 1);
 
   Color get blackStoneColor => colorScheme.secondary;

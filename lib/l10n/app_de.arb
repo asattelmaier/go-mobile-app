@@ -3,6 +3,8 @@
   "joinGame": "Spiel beitreten",
   "join": "Beitreten",
   "waitingForPlayer": "Auf Spieler warten",
+  "yourGameId": "Deine Spiel-ID:",
+  "gameIdInformation": "Die Spiel-ID benötigt der andere Spieler um dem Spiel beizutreten. Kopiere die ID und sende Sie dem anderen Spieler.",
   "enterGameSessionId": "Spiel-Session-ID eingeben",
   "pass": "Passen",
   "black": "Schwarz",

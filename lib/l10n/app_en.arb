@@ -3,6 +3,8 @@
   "joinGame": "Join Game",
   "join": "Join",
   "waitingForPlayer": "Waiting for Player",
+  "yourGameId": "Your Game-ID:",
+  "gameIdInformation": "The other player needs the game ID to join the game. Copy the ID and send it to the other player.",
   "enterGameSessionId": "Enter Game Session ID",
   "pass": "Pass",
   "black": "Black",
