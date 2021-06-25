@@ -5,11 +5,11 @@ import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
-import 'package:go_app/game-session/player/session_player_model.dart' as GameSession;
+import 'package:go_app/game-session/player/session_player_model.dart';
 
 class GameController {
   final GameClient _client;
-  final GameSession.SessionPlayerModel player;
+  final SessionPlayerModel player;
   final GameModel _game;
   final EndGameModel _endGame;
 
@@ -27,9 +27,7 @@ class GameController {
 
   PlayerModel get activePlayer => _game.activePlayer;
 
-  void create(int boardSize, bool isSuicideAllowed) {
-    final settings = SettingsModel(boardSize, isSuicideAllowed);
-
+  void create(SettingsModel settings) {
     _client.create(settings);
   }
 

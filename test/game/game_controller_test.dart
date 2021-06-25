@@ -1,16 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_app/game-session/player/session_player_model.dart' as GameSession;
+import 'package:go_app/game-session/player/session_player_model.dart'
+    as GameSession;
+import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/client/game_client.dart';
 import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_controller.dart';
-import 'package:go_app/game/board/intersection/location/location_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_color.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/settings/settings_model.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:rxdart/rxdart.dart';
+
 import 'game_controller_test.mocks.dart';
 
 @GenerateMocks([
@@ -18,7 +20,8 @@ import 'game_controller_test.mocks.dart';
   GameModel,
   EndGameModel,
   LocationModel,
-  PlayerModel
+  PlayerModel,
+  SettingsModel
 ], customMocks: [
   MockSpec<GameSession.SessionPlayerModel>(as: #MockGameSessionPlayerModel),
   MockSpec<ValueStream<GameModel>>(as: #MockGameStream),
@@ -160,9 +163,9 @@ void main() {
       final controller = GameController(client, player, game, endGame);
 
       when(client.create(any)).thenReturn(null);
-      controller.create(5, false);
+      controller.create(MockSettingsModel());
 
-      verify(client.create(argThat(isA<SettingsModel>()))).called(1);
+      verify(client.create(argThat(isA<MockSettingsModel>()))).called(1);
     });
   });
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Router;
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
+import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/layout/default/default_layout.dart';
 import 'package:go_app/pages/game/game_page_view.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
@@ -9,10 +10,11 @@ import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/cancel_button/cancel_button.dart';
 
-class SessionPendingPageView extends StatelessWidget {
+class GamePendingPageView extends StatelessWidget {
   final GameSessionController _gameSessionController;
+  final SettingsModel _settings;
 
-  SessionPendingPageView(this._gameSessionController);
+  const GamePendingPageView(this._gameSessionController, this._settings);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,10 @@ class SessionPendingPageView extends StatelessWidget {
     final waitingForPlayer = AppLocalizations.of(context)!.waitingForPlayer;
     final yourGameId = AppLocalizations.of(context)!.yourGameId;
     final gameIdInformation = AppLocalizations.of(context)!.gameIdInformation;
+    final copiedToClipboard = AppLocalizations.of(context)!.copiedToClipboard;
 
     _gameSessionController.onPlayerJoined((_) {
-      Router.push(context, GamePageView(_gameSessionController));
+      Router.push(context, GamePageView(_gameSessionController, _settings));
     });
 
     return DefaultLayout(
@@ -48,6 +51,8 @@ class SessionPendingPageView extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.copy),
                         onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(copiedToClipboard)));
                           Clipboard.setData(ClipboardData(
                               text: _gameSessionController.sessionId));
                         },
