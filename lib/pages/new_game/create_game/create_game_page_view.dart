@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:go_app/game-session/game_session_controller.dart';
+import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/layout/default/default_layout.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
@@ -8,18 +8,18 @@ import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button
 import 'package:go_app/widgets/bottom_action_bar/buttons/create_game_button/create_game_button_view.dart';
 
 class CreateGamePageView extends StatefulWidget {
-  final GameSessionController _gameSessionController;
+  final GameSessionClient _gameSessionClient;
 
-  const CreateGamePageView(this._gameSessionController);
+  const CreateGamePageView(this._gameSessionClient);
 
   @override
   State<CreateGamePageView> createState() =>
-      _CreateGamePageView(_gameSessionController);
+      _CreateGamePageView(_gameSessionClient);
 }
 
 class _CreateGamePageView extends State<CreateGamePageView> {
   final _formKey = GlobalKey<FormState>();
-  final GameSessionController _gameSessionController;
+  final GameSessionClient _gameSessionClient;
   int _boardSize = 19;
   bool _isSuicideAllowed = false;
   final List<DropdownMenuItem<int>> _boardSizes = [
@@ -37,7 +37,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
     )
   ];
 
-  _CreateGamePageView(this._gameSessionController);
+  _CreateGamePageView(this._gameSessionClient);
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +77,9 @@ class _CreateGamePageView extends State<CreateGamePageView> {
             ),
           ])),
       bottomActionBar: [
-        BackButtonView(HomePageView(_gameSessionController)),
+        BackButtonView(HomePageView(_gameSessionClient)),
         CreateGameButton(
-            _gameSessionController, SettingsModel(_boardSize, _isSuicideAllowed))
+            _gameSessionClient, SettingsModel(_boardSize, _isSuicideAllowed))
       ],
     );
   }

@@ -17,63 +17,57 @@ import 'game_session_controller_test.mocks.dart';
   SessionPlayerModel
 ])
 void main() {
-  group('updateStream', () {
-    test('updates on game creation', () async {
+  group('joinSession', () {
+    test('joins session', () async {
       final client = MockGameSessionClient();
-      final gameCreatedStream = MockStream<GameSessionModel>();
       final gameSession = MockGameSessionModel();
-      final gameSessionId = "some-id";
+      final currentPlayer = MockSessionPlayerModel();
+      final controller = GameSessionController(client, gameSession, currentPlayer);
 
-      when(client.created).thenAnswer((_) => gameCreatedStream);
-      when(client.joined).thenAnswer((_) => Stream.empty());
-      when(gameSession.id).thenReturn(gameSessionId);
-      when(gameSession.players).thenReturn([MockSessionPlayerModel()]);
-      when(client.messages(gameSessionId)).thenAnswer((_) => Stream.empty());
-      when(client.playerJoined(gameSessionId))
-          .thenAnswer((_) => Stream.empty());
-      when(client.terminated(gameSessionId)).thenAnswer((_) => Stream.empty());
-      when(gameCreatedStream.listen(any)).thenAnswer((invocation) {
-        final listener = invocation.positionalArguments.single;
-        listener(gameSession);
-        return MockStreamSubscription<GameSessionModel>();
-      });
-      final gameSessionController = GameSessionController(client);
-      final updateStream = await gameSessionController.updateStream.first;
+      controller.joinSession("some-id");
 
-      expect(updateStream, gameSession);
+      verify(client.joinSession("some-id")).called(1);
     });
+  });
 
-    test('updates on player joined', () async {
+  group('updateSession', () {
+    test('updates session', () async {
       final client = MockGameSessionClient();
-      final gameCreatedStream = MockStream<GameSessionModel>();
-      final playerJoinedStream = MockStream<GameSessionModel>();
-      final createdGameSession = MockGameSessionModel();
-      final playerJoinedGameSession = MockGameSessionModel();
-      final gameSessionId = "some-id";
+      final gameSession = MockGameSessionModel();
+      final currentPlayer = MockSessionPlayerModel();
+      final controller = GameSessionController(client, gameSession, currentPlayer);
 
-      when(client.created).thenAnswer((_) => gameCreatedStream);
-      when(client.joined).thenAnswer((_) => Stream.empty());
-      when(createdGameSession.id).thenReturn(gameSessionId);
-      when(createdGameSession.players).thenReturn([MockSessionPlayerModel()]);
-      when(client.messages(gameSessionId)).thenAnswer((_) => Stream.empty());
-      when(client.playerJoined(gameSessionId))
-          .thenAnswer((_) => playerJoinedStream);
-      when(client.terminated(gameSessionId)).thenAnswer((_) => Stream.empty());
-      when(gameCreatedStream.listen(any)).thenAnswer((invocation) {
-        final listener = invocation.positionalArguments.single;
-        listener(createdGameSession);
-        return MockStreamSubscription<GameSessionModel>();
-      });
-      when(playerJoinedStream.listen(any)).thenAnswer((invocation) {
-        final listener = invocation.positionalArguments.single;
-        listener(playerJoinedGameSession);
-        return MockStreamSubscription<GameSessionModel>();
-      });
-      final gameSessionController = GameSessionController(client);
-      final updateStream = await gameSessionController.updateStream
-          .firstWhere((gameSession) => gameSession == playerJoinedGameSession);
+      when(gameSession.id).thenReturn("some-id");
+      controller.updateSession({"some": "message"});
 
-      expect(updateStream, playerJoinedGameSession);
+      verify(client.updateSession("some-id", {"some": "message"})).called(1);
+    });
+  });
+
+  group('createSession', () {
+    test('creates game session', () async {
+      final client = MockGameSessionClient();
+      final gameSession = MockGameSessionModel();
+      final currentPlayer = MockSessionPlayerModel();
+      final controller = GameSessionController(client, gameSession, currentPlayer);
+
+      controller.createSession();
+
+      verify(client.createSession()).called(1);
+    });
+  });
+
+  group('terminateSession', () {
+    test('terminates session', () async {
+      final client = MockGameSessionClient();
+      final gameSession = MockGameSessionModel();
+      final currentPlayer = MockSessionPlayerModel();
+      final controller = GameSessionController(client, gameSession, currentPlayer);
+
+      when(gameSession.id).thenReturn("some-id");
+      controller.terminateSession();
+
+      verify(client.terminateSession("some-id")).called(1);
     });
   });
 }

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:go_app/api/web_socket/subscriptions/web_socket_stomp_subscription.dart';
 import 'package:go_app/api/web_socket/subscriptions/web_socket_stream_subscription.dart';
 import 'package:go_app/api/web_socket/subscriptions/web_socket_subscription.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
+import 'package:stomp_dart_client/stomp_frame.dart';
 
 class WebSocketClient {
   final StompClient _stompClient;
@@ -16,7 +18,11 @@ class WebSocketClient {
   static Future<WebSocketClient> connect(String url) async {
     final connection = Completer();
     final onConnect = connection.complete;
-    final stompClientConfig = StompConfig(url: url, onConnect: onConnect);
+    final stompClientConfig = StompConfig(
+        url: url,
+        onConnect: onConnect,
+        onWebSocketError: onWebSocketError,
+        onStompError: onStompError);
     final stompClient = StompClient(config: stompClientConfig);
 
     stompClient.activate();
@@ -30,6 +36,7 @@ class WebSocketClient {
       return;
     }
 
+    // TODO: Send binary messages instead of string message
     _stompClient.send(destination: destination, body: message);
   }
 
@@ -38,6 +45,7 @@ class WebSocketClient {
   }
 
   Stream<Map<String, dynamic>> subscribe(String destination) {
+    // ignore: close_sinks
     final subscription = new StreamController<Map<String, dynamic>>();
 
     final stompSubscription = _stompClient.subscribe(
@@ -46,6 +54,9 @@ class WebSocketClient {
     );
 
     _subscriptions.add(WebSocketStreamSubscription(destination, subscription));
+    // Stomp Subscription is not relevant for actual data, the data will be
+    // handled by the Stream Subscription, the Stomp Subscription is only
+    // relevant for the connection itself and should also be unsubscribed.
     _subscriptions
         .add(WebSocketStompSubscription(destination, stompSubscription));
 
@@ -57,5 +68,13 @@ class WebSocketClient {
         .where((subscription) =>
             destinations.any((destination) => subscription.has(destination)))
         .map((subscription) => subscription.close()));
+  }
+
+  static void onWebSocketError(dynamic message) {
+    log("WebSocket Error: ${message.toString()}");
+  }
+
+  static void onStompError(StompFrame stompFrame) {
+    log("Stomp Error: ${stompFrame.toString()}");
   }
 }

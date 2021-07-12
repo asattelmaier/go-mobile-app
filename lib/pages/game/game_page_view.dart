@@ -34,7 +34,7 @@ class GamePageView extends StatelessWidget {
               final gameController = GameController(gameClient,
                   _gameSessionController.currentPlayer, game, endGame);
 
-              if (!game.isPlaying) {
+              if (gameController.shouldCreateGame) {
                 gameController.create(_settings);
               }
 
@@ -42,7 +42,8 @@ class GamePageView extends StatelessWidget {
                   body: GameView(gameController),
                   bottomActionBar: [
                     if (gameController.isGameOver)
-                      BackButtonView(HomePageView(_gameSessionController)),
+                      BackButtonView(
+                          HomePageView(_gameSessionController.client)),
                     if (!gameController.isGameOver)
                       PassButtonView(gameController),
                   ],

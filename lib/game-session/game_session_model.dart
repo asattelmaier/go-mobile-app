@@ -22,4 +22,6 @@ class GameSessionModel {
   bool get isPending => players.length == 1;
 
   bool get isRunning => players.length == 2;
+
+  bool get isEmpty => players.length == 0;
 }

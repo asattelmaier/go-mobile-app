@@ -21,6 +21,8 @@ class GameController {
 
   bool get isGameOver => endGame.created > _game.created;
 
+  bool get shouldCreateGame => !isPlaying && isPlayersTurn;
+
   EndGameModel get endGame => _endGame;
 
   BoardModel get board => _game.board;
