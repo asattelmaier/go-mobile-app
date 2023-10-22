@@ -1,5 +1,6 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 
+import 'package:go_app/api/http/http_client.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
@@ -7,9 +8,10 @@ import 'package:go_app/game-session/game_session_model.dart';
 
 class GameSessionClient {
   final WebSocketClient _webSocketClient;
+  final HttpClient _httpClient;
   final _destination = const GameSessionClientDestination();
 
-  const GameSessionClient(this._webSocketClient);
+  const GameSessionClient(this._webSocketClient, this._httpClient);
 
   Stream<GameSessionModel> get created {
     return _webSocketClient
@@ -55,6 +57,19 @@ class GameSessionClient {
     _webSocketClient.send(_destination.terminate(gameSessionId));
   }
 
+  Future<List<GameSessionModel>> getPendingSessions() async {
+    try {
+      final response = await _httpClient
+          .get<List<dynamic>>(GameSessionClientDestination.pendingSessions);
+
+      return response.map((json) => _toGameSession(json)).toList();
+    } catch (error) {
+      developer.log('Error during pending sessions request: $error',
+          error: error);
+      return [];
+    }
+  }
+
   Stream<Map<String, dynamic>> messages(String gameSessionId) {
     return _webSocketClient
         .subscribe(_destination.updated(gameSessionId))
@@ -67,7 +82,7 @@ class GameSessionClient {
 
   Map<String, dynamic> Function(Map<String, dynamic>) _logJson(String context) {
     return (Map<String, dynamic> json) {
-      log('$context: ${json.toString()}');
+      developer.log('$context: ${json.toString()}');
       return json;
     };
   }

@@ -81,4 +81,12 @@ void main() {
       expect(destination.updated("some-id"), "/game/session/some-id/updated");
     });
   });
+
+  group('pending sessions', () {
+    test('returns /game/session/pending', () {
+      final destination = GameSessionClientDestination.pendingSessions;
+
+      expect(destination, "/game/session/pending");
+    });
+  });
 }

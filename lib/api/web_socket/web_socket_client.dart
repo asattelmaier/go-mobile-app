@@ -15,11 +15,11 @@ class WebSocketClient {
 
   WebSocketClient(this._stompClient);
 
-  static Future<WebSocketClient> connect(String url) async {
+  static Future<WebSocketClient> connect(Uri url) async {
     final connection = Completer();
     final onConnect = connection.complete;
     final stompClientConfig = StompConfig(
-        url: url,
+        url: url.replace(scheme: 'ws').toString(),
         onConnect: onConnect,
         onWebSocketError: onWebSocketError,
         onStompError: onStompError);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Router;
+import 'package:go_app/api/http/http_client.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/environment/environment.dart';
@@ -10,9 +11,10 @@ import 'package:go_app/theme/go_theme.dart';
 main() async {
   final environment = Environment();
   final configuration = Configuration.create(environment);
-  final url = configuration.webSocketUrl;
+  final url = configuration.backendUrl;
+  final httpClient = HttpClient(url);
   final webSocketClient = await WebSocketClient.connect(url);
-  final gameSessionClient = GameSessionClient(webSocketClient);
+  final gameSessionClient = GameSessionClient(webSocketClient, httpClient);
   final l10n = L10n();
 
   runApp(GoApp(gameSessionClient, l10n));

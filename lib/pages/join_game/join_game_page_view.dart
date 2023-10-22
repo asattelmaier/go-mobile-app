@@ -11,11 +11,31 @@ import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/join_button/join_button_view.dart';
 
-class JoinGamePageView extends StatelessWidget {
+class JoinGamePageView extends StatefulWidget {
+  final GameSessionClient _gameSessionClient;
+
+  const JoinGamePageView(this._gameSessionClient);
+
+  @override
+  State<JoinGamePageView> createState() =>
+      _JoinGamePageView(_gameSessionClient);
+}
+
+class _JoinGamePageView extends State<JoinGamePageView> {
   final GameSessionClient _gameSessionClient;
   final _textEditingController = TextEditingController();
+  List<GameSessionModel> _gameSessions = [];
 
-  JoinGamePageView(this._gameSessionClient);
+  _JoinGamePageView(this._gameSessionClient);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _gameSessionClient.getPendingSessions().then((gameSessions) => setState(() {
+          _gameSessions = gameSessions;
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +49,46 @@ class JoinGamePageView extends StatelessWidget {
     return DefaultLayout(
       body: Padding(
           padding: EdgeInsets.all(GoTheme.of(context).gutter * 6),
-          child: TextField(
-            controller: _textEditingController,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: AppLocalizations.of(context)!.enterGameSessionId),
-          )),
+          child: Row(children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(
+                          bottom: GoTheme.of(context).gutter * 6),
+                      child: _sessionIdInputField(context)),
+                  Expanded(child: _gameSessionsListView)
+                ],
+              ),
+            )
+          ])),
       bottomActionBar: [
         BackButtonView(HomePageView(_gameSessionClient)),
         JoinButtonView(_gameSessionClient, _textEditingController),
       ],
+    );
+  }
+
+  Widget _sessionIdInputField(BuildContext context) {
+    return TextField(
+      controller: _textEditingController,
+      decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: AppLocalizations.of(context)!.enterGameSessionId),
+    );
+  }
+
+  Widget get _gameSessionsListView {
+    return ListView.separated(
+      itemCount: _gameSessions.length,
+      separatorBuilder: (BuildContext context, int index) => Divider(
+        thickness: 1.0,
+      ),
+      itemBuilder: (BuildContext context, int index) => ListTile(
+        title: Text(_gameSessions[index].id),
+        onTap: () => _gameSessionClient.joinSession(_gameSessions[index].id),
+      ),
     );
   }
 }

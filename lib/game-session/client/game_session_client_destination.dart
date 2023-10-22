@@ -10,6 +10,7 @@ class GameSessionClientDestination {
   static const _JOINED = "/joined";
   static const _PLAYER_JOINED = "/player-joined";
   static const _UPDATED = "/updated";
+  static const _PENDING_SESSIONS = "/pending";
 
   const GameSessionClientDestination();
 
@@ -19,6 +20,10 @@ class GameSessionClientDestination {
 
   static String get joined {
     return _createUserDestination(_JOINED);
+  }
+
+  static String get pendingSessions {
+    return _createDestination(_PENDING_SESSIONS);
   }
 
   String terminated(String gameSessionId) {
