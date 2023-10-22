@@ -15,9 +15,9 @@ class GoTheme extends InheritedWidget {
 
   ColorScheme get colorScheme => ColorScheme(
       primary: Color.fromRGBO(107, 191, 23, 1),
-      primaryVariant: Color.fromRGBO(79, 135, 28, 1.0),
+      primaryContainer: Color.fromRGBO(79, 135, 28, 1.0),
       secondary: Color.fromRGBO(76, 79, 89, 1),
-      secondaryVariant: Color.fromRGBO(132, 139, 149, 1.0),
+      secondaryContainer: Color.fromRGBO(132, 139, 149, 1.0),
       surface: Color.fromRGBO(76, 79, 89, 1.0),
       background: Color.fromRGBO(242, 242, 240, 1.0),
       error: Colors.red,

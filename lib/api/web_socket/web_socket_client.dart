@@ -50,7 +50,12 @@ class WebSocketClient {
 
     final stompSubscription = _stompClient.subscribe(
       destination: destination,
-      callback: (frame) => subscription.add(jsonDecode(frame.body!)),
+      callback: (frame) {
+        // TODO: The API should send only binary messages
+        final body = frame.body ?? String.fromCharCodes(frame.binaryBody ?? []);
+
+        subscription.add(jsonDecode(body));
+      },
     );
 
     _subscriptions.add(WebSocketStreamSubscription(destination, subscription));
