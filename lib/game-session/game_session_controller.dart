@@ -1,6 +1,7 @@
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_model.dart';
 import 'package:go_app/game-session/player/session_player_model.dart';
+import 'package:go_app/user/user_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameSessionController {
@@ -33,8 +34,8 @@ class GameSessionController {
     _gameSessionClient.updateSession(_gameSession.id, message);
   }
 
-  void createSession() {
-    _gameSessionClient.createSession();
+  void createSession(UserModel user) {
+    _gameSessionClient.createSession(user);
   }
 
   void terminateSession() async {

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/layout/default/default_layout.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/join_game_button/join_game_button_view.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/new_game_button/new_game_button_view.dart';
 
 class HomePageView extends StatelessWidget {
   final GameSessionClient _gameSessionClient;
+  final UserController _userController;
 
-  HomePageView(this._gameSessionClient);
+  HomePageView(this._gameSessionClient, this._userController);
 
   @override
   Widget build(BuildContext context) => DefaultLayout(
@@ -15,8 +17,8 @@ class HomePageView extends StatelessWidget {
           children: [],
         ),
         bottomActionBar: [
-          NewGameButtonView(_gameSessionClient),
-          JoinGameButtonView(_gameSessionClient),
+          NewGameButtonView(_gameSessionClient, _userController),
+          JoinGameButtonView(_gameSessionClient, _userController),
         ],
       );
 }

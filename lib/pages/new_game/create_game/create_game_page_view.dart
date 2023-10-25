@@ -4,40 +4,43 @@ import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/layout/default/default_layout.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/create_game_button/create_game_button_view.dart';
 
 class CreateGamePageView extends StatefulWidget {
   final GameSessionClient _gameSessionClient;
+  final UserController _userController;
 
-  const CreateGamePageView(this._gameSessionClient);
+  const CreateGamePageView(this._gameSessionClient, this._userController);
 
   @override
   State<CreateGamePageView> createState() =>
-      _CreateGamePageView(_gameSessionClient);
+      _CreateGamePageView(_gameSessionClient, _userController);
 }
 
 class _CreateGamePageView extends State<CreateGamePageView> {
+  final UserController _userController;
   final _formKey = GlobalKey<FormState>();
   final GameSessionClient _gameSessionClient;
-  int _boardSize = 19;
+  int _boardSize = 9;
   bool _isSuicideAllowed = false;
   final List<DropdownMenuItem<int>> _boardSizes = [
     DropdownMenuItem<int>(
-      value: 19,
-      child: Text("19x19"),
+      value: 9,
+      child: Text("9x9"),
     ),
     DropdownMenuItem<int>(
       value: 13,
       child: Text("13x13"),
     ),
     DropdownMenuItem<int>(
-      value: 9,
-      child: Text("9x9"),
-    )
+      value: 19,
+      child: Text("19x19"),
+    ),
   ];
 
-  _CreateGamePageView(this._gameSessionClient);
+  _CreateGamePageView(this._gameSessionClient, this._userController);
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +80,9 @@ class _CreateGamePageView extends State<CreateGamePageView> {
             ),
           ])),
       bottomActionBar: [
-        BackButtonView(HomePageView(_gameSessionClient)),
-        CreateGameButton(
-            _gameSessionClient, SettingsModel(_boardSize, _isSuicideAllowed))
+        BackButtonView(HomePageView(_gameSessionClient, _userController)),
+        CreateGameButton(_gameSessionClient, _userController,
+            SettingsModel(_boardSize, _isSuicideAllowed))
       ],
     );
   }

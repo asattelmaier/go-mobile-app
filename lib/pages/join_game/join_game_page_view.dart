@@ -8,25 +8,28 @@ import 'package:go_app/pages/game/game_page_view.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
 import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/join_button/join_button_view.dart';
 
 class JoinGamePageView extends StatefulWidget {
   final GameSessionClient _gameSessionClient;
+  final UserController _userController;
 
-  const JoinGamePageView(this._gameSessionClient);
+  const JoinGamePageView(this._gameSessionClient, this._userController);
 
   @override
   State<JoinGamePageView> createState() =>
-      _JoinGamePageView(_gameSessionClient);
+      _JoinGamePageView(_gameSessionClient, _userController);
 }
 
 class _JoinGamePageView extends State<JoinGamePageView> {
   final GameSessionClient _gameSessionClient;
+  final UserController _userController;
   final _textEditingController = TextEditingController();
   List<GameSessionModel> _gameSessions = [];
 
-  _JoinGamePageView(this._gameSessionClient);
+  _JoinGamePageView(this._gameSessionClient, this._userController);
 
   @override
   void initState() {
@@ -42,8 +45,10 @@ class _JoinGamePageView extends State<JoinGamePageView> {
     _gameSessionClient.joined.listen((GameSessionModel gameSession) {
       Router.push(
           context,
-          GamePageView(GameSessionController(
-              _gameSessionClient, gameSession, gameSession.players.last)));
+          GamePageView(
+              GameSessionController(
+                  _gameSessionClient, gameSession, gameSession.players.last),
+              _userController));
     });
 
     return DefaultLayout(
@@ -64,7 +69,7 @@ class _JoinGamePageView extends State<JoinGamePageView> {
             )
           ])),
       bottomActionBar: [
-        BackButtonView(HomePageView(_gameSessionClient)),
+        BackButtonView(HomePageView(_gameSessionClient, _userController)),
         JoinButtonView(_gameSessionClient, _textEditingController),
       ],
     );

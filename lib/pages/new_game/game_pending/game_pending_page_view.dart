@@ -10,13 +10,16 @@ import 'package:go_app/pages/game/game_page_view.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
 import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/cancel_button/cancel_button.dart';
 
 class GamePendingPageView extends StatelessWidget {
   final GameSessionClient _gameSessionClient;
+  final UserController _userController;
   final SettingsModel _settings;
 
-  const GamePendingPageView(this._gameSessionClient, this._settings);
+  const GamePendingPageView(
+      this._gameSessionClient, this._userController, this._settings);
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +31,20 @@ class GamePendingPageView extends StatelessWidget {
     final gameIdInformation = AppLocalizations.of(context)!.gameIdInformation;
     final copiedToClipboard = AppLocalizations.of(context)!.copiedToClipboard;
 
+    if (_userController.hasUser) {
+      _gameSessionClient.createSession(_userController.user);
+    }
+
+    if (!_userController.hasUser) {
+      _userController.createGuestUser().then(_gameSessionClient.createSession);
+    }
+
     return StreamBuilder<GameSessionModel>(
         initialData: GameSessionModel.empty(),
         stream: _gameSessionClient.created,
         builder: (_, gameSessionModelSnapshot) {
           final gameSessionId = gameSessionModelSnapshot.data!.id;
           final isGameSessionEmpty = gameSessionModelSnapshot.data!.isEmpty;
-
-          if (isGameSessionEmpty) {
-            _gameSessionClient.createSession();
-          }
 
           if (!isGameSessionEmpty) {
             _gameSessionClient
@@ -51,6 +58,7 @@ class GamePendingPageView extends StatelessWidget {
                   GamePageView(
                       GameSessionController(_gameSessionClient, gameSession,
                           gameSession.players.first),
+                      _userController,
                       _settings));
             });
           }
@@ -102,7 +110,8 @@ class GamePendingPageView extends StatelessWidget {
             bottomActionBar: [
               CancelButtonView(() {
                 _gameSessionClient.terminateSession(gameSessionId);
-                Router.push(context, HomePageView(_gameSessionClient));
+                Router.push(
+                    context, HomePageView(_gameSessionClient, _userController));
               })
             ],
           );

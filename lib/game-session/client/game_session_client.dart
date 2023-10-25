@@ -4,7 +4,9 @@ import 'package:go_app/api/http/http_client.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
+import 'package:go_app/game-session/client/output/create_session_dto.dart';
 import 'package:go_app/game-session/game_session_model.dart';
+import 'package:go_app/user/user_model.dart';
 
 class GameSessionClient {
   final WebSocketClient _webSocketClient;
@@ -14,6 +16,7 @@ class GameSessionClient {
   const GameSessionClient(this._webSocketClient, this._httpClient);
 
   Stream<GameSessionModel> get created {
+    // FIXME: Fix Memory Leak in stream subscriptions
     return _webSocketClient
         .subscribe(GameSessionClientDestination.created)
         .map(_logJson("created"))
@@ -41,8 +44,12 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
-  void createSession() {
-    _webSocketClient.send(_destination.create);
+  void createSession(UserModel user) {
+    if (user.isPresent) {
+      final dto = CreateSessionDto(user.id);
+
+      _webSocketClient.sendJson(_destination.create, dto.toJson());
+    }
   }
 
   void joinSession(String gameSessionId) {
@@ -71,9 +78,7 @@ class GameSessionClient {
   }
 
   Stream<Map<String, dynamic>> messages(String gameSessionId) {
-    return _webSocketClient
-        .subscribe(_destination.updated(gameSessionId))
-        .map(_logJson("messages"));
+    return _webSocketClient.subscribe(_destination.updated(gameSessionId));
   }
 
   static GameSessionModel _toGameSession(Map<String, dynamic> json) {

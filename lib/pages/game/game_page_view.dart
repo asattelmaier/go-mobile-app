@@ -8,14 +8,16 @@ import 'package:go_app/game/game_view.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/layout/default/default_layout.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
 import 'package:go_app/widgets/bottom_action_bar/buttons/pass_button/pass_button_view.dart';
 
 class GamePageView extends StatelessWidget {
   final GameSessionController _gameSessionController;
   final SettingsModel _settings;
+  final UserController _userController;
 
-  GamePageView(this._gameSessionController,
+  GamePageView(this._gameSessionController, this._userController,
       [this._settings = const SettingsModel.empty()]);
 
   @override
@@ -42,8 +44,8 @@ class GamePageView extends StatelessWidget {
                   body: GameView(gameController),
                   bottomActionBar: [
                     if (gameController.isGameOver)
-                      BackButtonView(
-                          HomePageView(_gameSessionController.client)),
+                      BackButtonView(HomePageView(
+                          _gameSessionController.client, _userController)),
                     if (!gameController.isGameOver)
                       PassButtonView(gameController),
                   ],

@@ -3,12 +3,13 @@ import 'package:go_app/api/http/http_client.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_model.dart';
+import 'package:go_app/user/user_model.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'game_session_client_test.mocks.dart';
 
-@GenerateMocks([WebSocketClient, GameSessionModel, HttpClient])
+@GenerateMocks([WebSocketClient, GameSessionModel, HttpClient, UserModel])
 void main() {
   group('created', () {
     test('subscribes to /user/game/session/created', () {
@@ -128,15 +129,32 @@ void main() {
 
   group('createSession', () {
     test('sends a empty message to /game/session/create', () {
+      final user = MockUserModel();
+      final httpClient = MockHttpClient();
+      final webSocketClient = MockWebSocketClient();
+      final path = "/game/session/create";
+      final json = {"playerId": "some-id"};
+      final gameSessionClient = GameSessionClient(webSocketClient, httpClient);
+
+      when(user.isPresent).thenReturn(true);
+      when(user.id).thenReturn("some-id");
+      when(webSocketClient.send(path)).thenReturn(null);
+      gameSessionClient.createSession(user);
+
+      verify(webSocketClient.sendJson(path, json)).called(1);
+    });
+
+    test('sends no message if user is not present', () {
+      final user = MockUserModel();
       final httpClient = MockHttpClient();
       final webSocketClient = MockWebSocketClient();
       final path = "/game/session/create";
       final gameSessionClient = GameSessionClient(webSocketClient, httpClient);
 
-      when(webSocketClient.send(path)).thenReturn(null);
-      gameSessionClient.createSession();
+      when(user.isPresent).thenReturn(false);
+      gameSessionClient.createSession(user);
 
-      verify(webSocketClient.send(path)).called(1);
+      verifyNever(webSocketClient.sendJson(path, any));
     });
   });
 
@@ -189,7 +207,9 @@ void main() {
     test('returns all pending sessions', () async {
       final httpClient = MockHttpClient();
       final webSocketClient = MockWebSocketClient();
-      final response = Future.value([{"id": "some-id", "players": []}]);
+      final response = Future.value([
+        {"id": "some-id", "players": []}
+      ]);
       final gameSessionClient = GameSessionClient(webSocketClient, httpClient);
 
       when(httpClient.get('/game/session/pending')).thenAnswer((_) => response);
