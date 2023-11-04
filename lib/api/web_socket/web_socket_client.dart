@@ -20,7 +20,7 @@ class WebSocketClient {
     final connection = Completer();
     final onConnect = connection.complete;
     final stompClientConfig = StompConfig(
-      url: url.replace(scheme: 'ws').toString(),
+      url: url.toString(),
       onConnect: onConnect,
       onWebSocketError: onWebSocketError,
       onStompError: onStompError,

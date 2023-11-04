@@ -25,7 +25,7 @@ main() async {
   final accessToken = userController.accessToken;
   final authorizationHeader = HttpHeadersBuilder.token(accessToken).build();
   final webSocketClient = await WebSocketClient.create(
-      configuration.backendUrl, authorizationHeader);
+      configuration.websocketUrl, authorizationHeader);
   final gameSessionClient =
       GameSessionClient(webSocketClient, httpClient, userController);
 

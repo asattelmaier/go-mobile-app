@@ -3,7 +3,10 @@ import 'package:go_app/configuration/configurations/production.dart';
 import 'package:go_app/environment/environment.dart';
 
 class Configuration {
-  final Uri backendUrl = Uri(scheme: 'http', host: 'localhost', port: 8080);
+  static const _HOST = 'localhost';
+  static const _PORT = 8080;
+  final Uri backendUrl = Uri(scheme: 'http', host: _HOST, port: _PORT);
+  final Uri websocketUrl = Uri(scheme: 'ws', host: _HOST, port: _PORT);
 
   Configuration();
 
