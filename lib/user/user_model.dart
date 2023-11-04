@@ -14,6 +14,8 @@ class UserModel {
       : this._id = "",
         this._username = "";
 
+  String get username => _username;
+
   bool get isEmpty => _id.isEmpty;
 
   bool get isPresent => !isEmpty;

@@ -1,102 +1,121 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/api/http/http_client.dart';
-import 'package:go_app/api/local_storage/local_storage.dart';
+import 'package:go_app/api/http_headers/http_headers_builder.dart';
+import 'package:go_app/api/key_chain/key_chain.dart';
 import 'package:go_app/user/user_controller.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'user_controller_test.mocks.dart';
 
-@GenerateMocks([LocalStorage, HttpClient])
+@GenerateMocks([KeyChain, HttpClient])
 void main() {
   group("create", () {
-    test("creates an empty user if no user id is stored", () async {
-      final localStorage = MockLocalStorage();
+    test("creates an empty user if no tokens are stored", () async {
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => null);
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => null);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => null);
+      final userController = await UserController.create(keyChain, httpClient);
 
       expect(userController.user.isEmpty, isTrue);
     });
 
-    test("creates a user if user id is stored", () async {
-      final localStorage = MockLocalStorage();
+    test("creates a user if tokens are stored", () async {
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
-      final json = {"id": "some-id", "username": "some-name"};
+      final accessToken = "some-token";
+      final refreshToken = "some-other-token";
+      final headers = HttpHeadersBuilder.token(accessToken).build();
+      final userJson = {"id": "some-id", "username": "some-name"};
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => "some-id");
-      when(httpClient.get("/user/some-id")).thenAnswer((_) async => json);
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => accessToken);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => refreshToken);
+      when(httpClient.get("/user", headers)).thenAnswer((_) async => userJson);
+      final userController = await UserController.create(keyChain, httpClient);
 
       expect(userController.user.id, equals("some-id"));
     });
 
     test("creates an empty user if user request fails", () async {
-      final localStorage = MockLocalStorage();
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
+      final accessToken = "some-token";
+      final refreshToken = "some-other-token";
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => "some-id");
-      when(httpClient.get("/user/some-id")).thenThrow("Some Error");
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => accessToken);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => refreshToken);
+      when(httpClient.get("/user", any)).thenThrow("Some Error");
+      final userController = await UserController.create(keyChain, httpClient);
 
       expect(userController.user.isEmpty, isTrue);
     });
 
     test("removes user from storage if the user request fails", () async {
-      final localStorage = MockLocalStorage();
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
+      final accessToken = "some-token";
+      final refreshToken = "some-other-token";
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => "some-id");
-      when(httpClient.get("/user/some-id")).thenThrow("Some Error");
-      await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => accessToken);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => refreshToken);
+      when(httpClient.get("/user", any)).thenThrow("Some Error");
+      await UserController.create(keyChain, httpClient);
 
-      verify(localStorage.remove("user-id"));
+      verify(keyChain.remove("access-token"));
+      verify(keyChain.remove("refresh-token"));
     });
   });
 
   group("createGuestUser", () {
     test("creates a guest user", () async {
-      final localStorage = MockLocalStorage();
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
-      final json = {"id": "some-id", "username": "some-name"};
+      final accessToken = "some-token";
+      final headers = HttpHeadersBuilder.token(accessToken).build();
+      final tokensJson = {
+        "refreshToken": "some-other-token",
+        "accessToken": accessToken,
+      };
+      final userJson = {"id": "some-id", "username": "some-name"};
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => null);
-      when(httpClient.post("/user/guest")).thenAnswer((_) async => json);
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(httpClient.get("/user", headers)).thenAnswer((_) async => userJson);
+      when(keyChain.get("access-token")).thenAnswer((_) async => null);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => null);
+      when(httpClient.post("/auth/register/guest"))
+          .thenAnswer((_) async => tokensJson);
+      final userController = await UserController.create(keyChain, httpClient);
       final user = await userController.createGuestUser();
 
       expect(user.id, equals("some-id"));
     });
 
-    test("creates an empty user if user request fails", () async {
-      final localStorage = MockLocalStorage();
+    test("creates an empty user if registration fails", () async {
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => null);
-      when(httpClient.post("/user/guest")).thenThrow("Some Error");
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => null);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => null);
+      when(httpClient.post("/auth/register/guest")).thenThrow("Some Error");
+      final userController = await UserController.create(keyChain, httpClient);
       final user = await userController.createGuestUser();
 
       expect(user.isEmpty, isTrue);
     });
 
-    test("stores no user if user request fails", () async {
-      final localStorage = MockLocalStorage();
+    test("stores no token if registration fails", () async {
+      final keyChain = MockKeyChain();
       final httpClient = MockHttpClient();
 
-      when(localStorage.get("user-id")).thenAnswer((_) async => null);
-      when(httpClient.post("/user/guest")).thenThrow("Some Error");
-      final userController =
-          await UserController.create(localStorage, httpClient);
+      when(keyChain.get("access-token")).thenAnswer((_) async => null);
+      when(keyChain.get("refresh-token")).thenAnswer((_) async => null);
+      when(httpClient.post("/auth/register/guest")).thenThrow("Some Error");
+      final userController = await UserController.create(keyChain, httpClient);
       await userController.createGuestUser();
 
-      verifyNever(localStorage.set("user-id", any));
+      verifyNever(keyChain.set("access-token", any));
+      verifyNever(keyChain.set("refresh-token", any));
     });
   });
 }

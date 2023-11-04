@@ -1,19 +1,23 @@
 import 'dart:developer' as developer;
 
 import 'package:go_app/api/http/http_client.dart';
+import 'package:go_app/api/http_headers/http_headers_builder.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
 import 'package:go_app/game-session/client/output/create_session_dto.dart';
 import 'package:go_app/game-session/game_session_model.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/user/user_model.dart';
 
 class GameSessionClient {
   final WebSocketClient _webSocketClient;
   final HttpClient _httpClient;
+  final UserController _userController;
   final _destination = const GameSessionClientDestination();
 
-  const GameSessionClient(this._webSocketClient, this._httpClient);
+  const GameSessionClient(
+      this._webSocketClient, this._httpClient, this._userController);
 
   Stream<GameSessionModel> get created {
     // FIXME: Fix Memory Leak in stream subscriptions
@@ -66,8 +70,10 @@ class GameSessionClient {
 
   Future<List<GameSessionModel>> getPendingSessions() async {
     try {
-      final response = await _httpClient
-          .get<List<dynamic>>(GameSessionClientDestination.pendingSessions);
+      final accessToken = _userController.accessToken;
+      final authorizationHeader = HttpHeadersBuilder.token(accessToken).build();
+      final response = await _httpClient.get<List<dynamic>>(
+          GameSessionClientDestination.pendingSessions, authorizationHeader);
 
       return response.map((json) => _toGameSession(json)).toList();
     } catch (error) {

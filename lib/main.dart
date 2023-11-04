@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:go_app/api/http/http_client.dart';
-import 'package:go_app/api/local_storage/local_storage.dart';
+import 'package:go_app/api/http_headers/http_headers_builder.dart';
+import 'package:go_app/api/key_chain/key_chain.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/environment/environment.dart';
@@ -14,13 +15,19 @@ main() async {
   final environment = Environment();
   final configuration = Configuration.create(environment);
   final url = configuration.backendUrl;
-  final localStorage = LocalStorage();
+  final keyChain = KeyChain();
   final httpClient = HttpClient(url);
-  // TODO: It is not required to connect initially
-  final webSocketClient = await WebSocketClient.connect(url);
-  final gameSessionClient = GameSessionClient(webSocketClient, httpClient);
-  final userController = await UserController.create(localStorage, httpClient);
+  final userController = await UserController.create(keyChain, httpClient);
   final l10n = L10n();
+
+  // TODO: Create login
+  await userController.createGuestUser();
+  final accessToken = userController.accessToken;
+  final authorizationHeader = HttpHeadersBuilder.token(accessToken).build();
+  final webSocketClient = await WebSocketClient.create(
+      configuration.backendUrl, authorizationHeader);
+  final gameSessionClient =
+      GameSessionClient(webSocketClient, httpClient, userController);
 
   runApp(GoApp(gameSessionClient, l10n, userController));
 }

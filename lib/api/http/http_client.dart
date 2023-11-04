@@ -7,8 +7,9 @@ class HttpClient {
 
   HttpClient(this._baseUrl);
 
-  Future<T> get<T>(String path) async {
-    final response = await http.get(_baseUrl.replace(path: path));
+  Future<T> get<T>(String path, [Map<String, String>? headers]) async {
+    final url = _baseUrl.replace(path: path);
+    final response = await http.get(url, headers: headers);
 
     return json.decode(response.body);
   }

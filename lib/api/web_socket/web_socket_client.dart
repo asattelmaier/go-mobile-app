@@ -15,14 +15,17 @@ class WebSocketClient {
 
   WebSocketClient(this._stompClient);
 
-  static Future<WebSocketClient> connect(Uri url) async {
+  static Future<WebSocketClient> create(
+      Uri url, Map<String, String> headers) async {
     final connection = Completer();
     final onConnect = connection.complete;
     final stompClientConfig = StompConfig(
-        url: url.replace(scheme: 'ws').toString(),
-        onConnect: onConnect,
-        onWebSocketError: onWebSocketError,
-        onStompError: onStompError);
+      url: url.replace(scheme: 'ws').toString(),
+      onConnect: onConnect,
+      onWebSocketError: onWebSocketError,
+      onStompError: onStompError,
+      webSocketConnectHeaders: headers,
+    );
     final stompClient = StompClient(config: stompClientConfig);
 
     stompClient.activate();
