@@ -30,6 +30,7 @@ class RegisterButtonView extends StatelessWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
+      onTab: () => null,
     );
   }
 }

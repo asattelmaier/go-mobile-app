@@ -19,6 +19,27 @@ class GameSessionClient {
   const GameSessionClient(
       this._webSocketClient, this._httpClient, this._userController);
 
+  static Future<GameSessionClient> create(WebSocketClient webSocketClient,
+      HttpClient httpClient, UserController userController) async {
+    final gameSessionClient =
+        GameSessionClient(webSocketClient, httpClient, userController);
+
+    await gameSessionClient.connect();
+
+    return gameSessionClient;
+  }
+
+  Future<void> connect() {
+    if (_userController.isUserLoggedIn) {
+      final accessToken = _userController.accessToken;
+      final authorizationHeader = HttpHeadersBuilder.token(accessToken).build();
+
+      return _webSocketClient.connect(authorizationHeader);
+    }
+
+    return Future(() => null);
+  }
+
   Stream<GameSessionModel> get created {
     // FIXME: Fix Memory Leak in stream subscriptions
     return _webSocketClient

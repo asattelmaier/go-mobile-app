@@ -10,37 +10,37 @@ import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 
 class WebSocketClient {
-  final StompClient _stompClient;
+  StompClient? _stompClient;
+  final Uri _url;
   final List<WebSocketSubscription> _subscriptions = [];
 
-  WebSocketClient(this._stompClient);
+  WebSocketClient(this._url);
 
-  static Future<WebSocketClient> create(
-      Uri url, Map<String, String> headers) async {
+  Future<void> connect(Map<String, String> headers) {
     final connection = Completer();
     final onConnect = connection.complete;
     final stompClientConfig = StompConfig(
-      url: url.toString(),
+      url: _url.toString(),
       onConnect: onConnect,
       onWebSocketError: onWebSocketError,
       onStompError: onStompError,
       webSocketConnectHeaders: headers,
     );
-    final stompClient = StompClient(config: stompClientConfig);
 
-    stompClient.activate();
+    _stompClient = StompClient(config: stompClientConfig);
+    _stompClient?.activate();
 
-    return connection.future.then((value) => new WebSocketClient(stompClient));
+    return connection.future;
   }
 
   void send(String destination, [String message = '']) {
     if (message.isEmpty) {
-      _stompClient.send(destination: destination);
+      _stompClient?.send(destination: destination);
       return;
     }
 
     // TODO: Send binary messages instead of string message
-    _stompClient.send(destination: destination, body: message);
+    _stompClient?.send(destination: destination, body: message);
   }
 
   void sendJson(String destination, Object object) {
@@ -51,7 +51,7 @@ class WebSocketClient {
     // ignore: close_sinks
     final subscription = new StreamController<Map<String, dynamic>>();
 
-    final stompSubscription = _stompClient.subscribe(
+    final stompSubscription = _stompClient?.subscribe(
       destination: destination,
       callback: (frame) {
         // TODO: The API should send only binary messages
@@ -65,8 +65,10 @@ class WebSocketClient {
     // Stomp Subscription is not relevant for actual data, the data will be
     // handled by the Stream Subscription, the Stomp Subscription is only
     // relevant for the connection itself and should also be unsubscribed.
-    _subscriptions
-        .add(WebSocketStompSubscription(destination, stompSubscription));
+    if (stompSubscription != null) {
+      _subscriptions
+          .add(WebSocketStompSubscription(destination, stompSubscription));
+    }
 
     return subscription.stream;
   }

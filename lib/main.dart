@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:go_app/api/http/http_client.dart';
-import 'package:go_app/api/http_headers/http_headers_builder.dart';
 import 'package:go_app/api/key_chain/key_chain.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
 import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/environment/environment.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/l10n/l10n.dart';
+import 'package:go_app/pages/home/home_page_view.dart';
 import 'package:go_app/pages/initial/initial_page_view.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
@@ -15,19 +15,14 @@ main() async {
   final environment = Environment();
   final configuration = Configuration.create(environment);
   final url = configuration.backendUrl;
+  final websocketUrl = configuration.websocketUrl;
   final keyChain = KeyChain();
   final httpClient = HttpClient(url);
   final userController = await UserController.create(keyChain, httpClient);
   final l10n = L10n();
-
-  // TODO: Create login
-  await userController.createGuestUser();
-  final accessToken = userController.accessToken;
-  final authorizationHeader = HttpHeadersBuilder.token(accessToken).build();
-  final webSocketClient = await WebSocketClient.create(
-      configuration.websocketUrl, authorizationHeader);
-  final gameSessionClient =
-      GameSessionClient(webSocketClient, httpClient, userController);
+  final webSocketClient = WebSocketClient(websocketUrl);
+  final gameSessionClient = await GameSessionClient.create(
+      webSocketClient, httpClient, userController);
 
   runApp(GoApp(gameSessionClient, l10n, userController));
 }
@@ -52,7 +47,9 @@ class GoApp extends StatelessWidget {
           home: Container(
               color: theme.colorScheme.background,
               child: Stack(children: [
-                InitialPageView(_gameSessionClient, _userController),
+                _userController.isUserLoggedIn
+                    ? HomePageView(_gameSessionClient, _userController)
+                    : InitialPageView(_gameSessionClient, _userController),
               ])),
         );
       },

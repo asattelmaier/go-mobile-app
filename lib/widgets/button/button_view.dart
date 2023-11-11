@@ -5,13 +5,18 @@ class ButtonView extends StatefulWidget {
   final Text text;
   final LinearGradient backgroundGradient;
   final double? height;
+  final Function onTab;
 
-  ButtonView(
-      {required this.text, required this.backgroundGradient, this.height});
+  ButtonView({
+    required this.text,
+    required this.backgroundGradient,
+    required this.onTab,
+    this.height,
+  });
 
   @override
-  _ButtonViewState createState() =>
-      _ButtonViewState(this.text, this.backgroundGradient, this.height);
+  _ButtonViewState createState() => _ButtonViewState(
+      this.text, this.backgroundGradient, this.height, this.onTab);
 }
 
 class _ButtonViewState extends State<ButtonView> {
@@ -19,8 +24,10 @@ class _ButtonViewState extends State<ButtonView> {
   final Text _text;
   final LinearGradient _backgroundGradient;
   final double? _height;
+  final Function _onTab;
 
-  _ButtonViewState(this._text, this._backgroundGradient, this._height);
+  _ButtonViewState(
+      this._text, this._backgroundGradient, this._height, this._onTab);
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +56,7 @@ class _ButtonViewState extends State<ButtonView> {
         setState(() {
           isPressed = false;
         });
+        _onTab();
       },
       onTapCancel: () {
         setState(() {

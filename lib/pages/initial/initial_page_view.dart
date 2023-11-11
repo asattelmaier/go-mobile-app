@@ -35,7 +35,7 @@ class InitialPageView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    PlayAsGuestButtonView(),
+                    PlayAsGuestButtonView(_gameSessionClient, _userController),
                     SizedBox(height: theme.gutter * 10),
                     RegisterButtonView(),
                     SizedBox(height: theme.gutter * 10),

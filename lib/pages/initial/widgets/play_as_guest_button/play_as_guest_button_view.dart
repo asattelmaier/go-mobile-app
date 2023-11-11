@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/game-session/client/game_session_client.dart';
+import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
+import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/button/button_view.dart';
 
 class PlayAsGuestButtonView extends StatelessWidget {
+  final GameSessionClient _gameSessionClient;
+  final UserController _userController;
+
+  const PlayAsGuestButtonView(this._gameSessionClient, this._userController);
+
   @override
   Widget build(BuildContext context) {
     final theme = GoTheme.of(context);
@@ -11,7 +20,7 @@ class PlayAsGuestButtonView extends StatelessWidget {
     return ButtonView(
       text: Text(
         AppLocalizations.of(context)!.playAsGuest,
-        style: TextStyle/**/(
+        style: TextStyle(
           color: Colors.white,
           fontSize: 30,
           fontFamily: theme.fontFamily,
@@ -30,6 +39,12 @@ class PlayAsGuestButtonView extends StatelessWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
+      onTab: () async {
+        await _userController.createGuestUser();
+        await _gameSessionClient.connect();
+
+        Router.push(context, HomePageView(_gameSessionClient, _userController));
+      },
     );
   }
 }

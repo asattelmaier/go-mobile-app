@@ -31,11 +31,11 @@ class GamePendingPageView extends StatelessWidget {
     final gameIdInformation = AppLocalizations.of(context)!.gameIdInformation;
     final copiedToClipboard = AppLocalizations.of(context)!.copiedToClipboard;
 
-    if (_userController.hasUser) {
+    if (_userController.isUserLoggedIn) {
       _gameSessionClient.createSession(_userController.user);
     }
 
-    if (!_userController.hasUser) {
+    if (!_userController.isUserLoggedIn) {
       _userController.createGuestUser().then(_gameSessionClient.createSession);
     }
 

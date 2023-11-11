@@ -33,14 +33,14 @@ class UserController {
         keyChain, httpClient, TokensModel.empty(), UserModel.empty());
   }
 
-  bool get hasUser => !_user.isEmpty;
+  bool get isUserLoggedIn => !_user.isEmpty;
 
   UserModel get user => _user;
 
   String get accessToken => _tokens.accessToken;
 
   Future<UserModel> createGuestUser() async {
-    if (hasUser) {
+    if (isUserLoggedIn) {
       return _user;
     }
 
