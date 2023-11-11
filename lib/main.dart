@@ -7,7 +7,7 @@ import 'package:go_app/configuration/configuration.dart';
 import 'package:go_app/environment/environment.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/l10n/l10n.dart';
-import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/pages/initial/initial_page_view.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
 
@@ -52,7 +52,7 @@ class GoApp extends StatelessWidget {
           home: Container(
               color: theme.colorScheme.background,
               child: Stack(children: [
-                HomePageView(_gameSessionClient, _userController),
+                InitialPageView(_gameSessionClient, _userController),
               ])),
         );
       },

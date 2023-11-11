@@ -1,4 +1,7 @@
 {
+  "playAsGuest": "Play as Guest",
+  "register": "Register",
+  "logIn": "Log in",
   "newGame": "New Game",
   "joinGame": "Join Game",
   "createGame": "Create Game",

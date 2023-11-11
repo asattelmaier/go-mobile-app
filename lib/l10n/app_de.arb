@@ -1,4 +1,7 @@
 {
+  "playAsGuest": "Spiele als Gast",
+  "register": "Registrieren",
+  "logIn": "Anmelden",
   "newGame": "Neues Spiel",
   "joinGame": "Spiel beitreten",
   "createGame": "Spiel erstellen",

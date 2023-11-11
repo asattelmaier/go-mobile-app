@@ -7,6 +7,8 @@ class GoTheme extends InheritedWidget {
 
   final double fontSizeSmall = 12;
 
+  final String fontFamily = "Fredoka";
+
   Color get boardColor => Color.fromRGBO(217, 145, 82, 1);
 
   Color get blackStoneColor => colorScheme.secondary;
@@ -16,10 +18,10 @@ class GoTheme extends InheritedWidget {
   ColorScheme get colorScheme => ColorScheme(
       primary: Color.fromRGBO(107, 191, 23, 1),
       primaryContainer: Color.fromRGBO(79, 135, 28, 1.0),
-      secondary: Color.fromRGBO(76, 79, 89, 1),
+      secondary: Color.fromRGBO(90, 186, 183, 1),
       secondaryContainer: Color.fromRGBO(132, 139, 149, 1.0),
       surface: Color.fromRGBO(76, 79, 89, 1.0),
-      background: Color.fromRGBO(242, 242, 240, 1.0),
+      background: Color.fromRGBO(255, 250, 227, 1.0),
       error: Colors.red,
       onPrimary: Color.fromRGBO(242, 242, 240, 1.0),
       onSecondary: Color.fromRGBO(242, 242, 240, 1.0),
@@ -35,7 +37,7 @@ class GoTheme extends InheritedWidget {
             style: TextButton.styleFrom(primary: colorScheme.primary)),
       );
 
-  const GoTheme({
+  GoTheme({
     Key? key,
     required Widget child,
   }) : super(key: key, child: child);
