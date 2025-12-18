@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide Router;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 
 class JoinButtonView extends StatelessWidget {

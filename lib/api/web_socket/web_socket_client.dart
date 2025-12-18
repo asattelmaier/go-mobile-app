@@ -5,9 +5,7 @@ import 'dart:developer';
 import 'package:go_app/api/web_socket/subscriptions/web_socket_stomp_subscription.dart';
 import 'package:go_app/api/web_socket/subscriptions/web_socket_stream_subscription.dart';
 import 'package:go_app/api/web_socket/subscriptions/web_socket_subscription.dart';
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class WebSocketClient {
   StompClient? _stompClient;

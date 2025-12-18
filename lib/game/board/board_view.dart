@@ -61,7 +61,7 @@ class BoardView extends StatelessWidget {
         children: _createLines(Flexible(
             child: Container(
           width: theme.borderWidth,
-          color: theme.colorScheme.background,
+          color: theme.colorScheme.surface,
         ))),
       );
 
@@ -69,7 +69,7 @@ class BoardView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          color: theme.colorScheme.background,
+          color: theme.colorScheme.surface,
           height: theme.borderWidth,
         ))),
       );

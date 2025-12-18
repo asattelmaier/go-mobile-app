@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/layout/default/default_layout.dart';

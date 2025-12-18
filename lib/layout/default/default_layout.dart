@@ -17,7 +17,7 @@ class DefaultLayout extends StatelessWidget {
     final theme = GoTheme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.backgroundColor,
       body: SafeArea(child: body),
       bottomNavigationBar: _bottomActionBar,
     );

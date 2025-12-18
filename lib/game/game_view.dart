@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/game/board/board_controller.dart';
 import 'package:go_app/game/board/board_view.dart';
 import 'package:go_app/game/end_game/end_game_controller.dart';

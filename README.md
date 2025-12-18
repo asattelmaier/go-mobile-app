@@ -7,6 +7,13 @@ The app uses the socket backend of [Go Haskell](https://github.com/asattelmaier/
   <img width="400" src="https://drive.google.com/uc?export=view&id=1BN-Cqetaqpz7Q6Mqm8tbUQ0sUHUOtzYy" alt="Go Mobile App">
 </p>
 
+</p>
+
+## Prerequisites
+
+* Flutter 3.13 or higher (Dart 3.1+)
+* Java 17+ (for Android builds)
+
 ## Run
 
 Generate mockito and json serializable files.

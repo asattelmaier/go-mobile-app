@@ -45,7 +45,7 @@ class GoApp extends StatelessWidget {
           localizationsDelegates: _l10n.localizationDelegates,
           supportedLocales: _l10n.supportedLocales,
           home: Container(
-              color: theme.colorScheme.background,
+              color: theme.backgroundColor,
               child: Stack(children: [
                 _userController.isUserLoggedIn
                     ? HomePageView(_gameSessionClient, _userController)

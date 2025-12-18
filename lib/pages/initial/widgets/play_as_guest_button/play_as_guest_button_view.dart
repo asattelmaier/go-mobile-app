@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide Router;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
 import 'package:go_app/router/router.dart';

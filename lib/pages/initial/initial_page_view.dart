@@ -22,7 +22,7 @@ class InitialPageView extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.topCenter,
-            child: Image.asset("lib/pages/home/assets/top_image.jpg"),
+            child: Image.asset("lib/pages/initial/assets/top_image.jpg"),
           ),
           Padding(
             padding: EdgeInsets.only(

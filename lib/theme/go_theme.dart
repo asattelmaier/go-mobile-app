@@ -9,11 +9,13 @@ class GoTheme extends InheritedWidget {
 
   final String fontFamily = "Fredoka";
 
+  Color get backgroundColor => Color.fromRGBO(255, 250, 227, 1.0);
+
   Color get boardColor => Color.fromRGBO(217, 145, 82, 1);
 
   Color get blackStoneColor => colorScheme.secondary;
 
-  Color get whiteStoneColor => colorScheme.background;
+  Color get whiteStoneColor => backgroundColor;
 
   ColorScheme get colorScheme => ColorScheme(
       primary: Color.fromRGBO(107, 191, 23, 1),
@@ -21,20 +23,19 @@ class GoTheme extends InheritedWidget {
       secondary: Color.fromRGBO(90, 186, 183, 1),
       secondaryContainer: Color.fromRGBO(132, 139, 149, 1.0),
       surface: Color.fromRGBO(76, 79, 89, 1.0),
-      background: Color.fromRGBO(255, 250, 227, 1.0),
       error: Colors.red,
       onPrimary: Color.fromRGBO(242, 242, 240, 1.0),
       onSecondary: Color.fromRGBO(242, 242, 240, 1.0),
       onSurface: Color.fromRGBO(76, 79, 89, 1),
-      onBackground: Color.fromRGBO(76, 79, 89, 1),
       onError: Color.fromRGBO(242, 242, 240, 1.0),
       brightness: Brightness.light);
 
   ThemeData get themeData => ThemeData(
         colorScheme: colorScheme,
-        bottomAppBarColor: colorScheme.secondary,
+        scaffoldBackgroundColor: backgroundColor,
+        bottomAppBarTheme: BottomAppBarThemeData(color: colorScheme.secondary),
         textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(primary: colorScheme.primary)),
+            style: TextButton.styleFrom(foregroundColor: colorScheme.primary)),
       );
 
   GoTheme({

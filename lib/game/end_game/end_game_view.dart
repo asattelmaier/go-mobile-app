@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_app/game/end_game/end_game_controller.dart';
 import 'package:go_app/game/end_game/winner/winner_controller.dart';
 import 'package:go_app/game/end_game/winner/winner_view.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 
 class EndGameView extends StatelessWidget {
   final EndGameController _controller;

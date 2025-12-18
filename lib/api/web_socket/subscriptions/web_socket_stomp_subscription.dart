@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:go_app/api/web_socket/subscriptions/web_socket_subscription.dart';
-import 'package:stomp_dart_client/stomp_handler.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class WebSocketStompSubscription implements WebSocketSubscription {
   final String _destination;
