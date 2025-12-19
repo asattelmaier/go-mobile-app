@@ -18,16 +18,19 @@ class GoTheme extends InheritedWidget {
   Color get whiteStoneColor => backgroundColor;
 
   ColorScheme get colorScheme => ColorScheme(
-      primary: Color.fromRGBO(107, 191, 23, 1),
-      primaryContainer: Color.fromRGBO(79, 135, 28, 1.0),
-      secondary: Color.fromRGBO(90, 186, 183, 1),
-      secondaryContainer: Color.fromRGBO(132, 139, 149, 1.0),
-      surface: Color.fromRGBO(76, 79, 89, 1.0),
-      error: Colors.red,
-      onPrimary: Color.fromRGBO(242, 242, 240, 1.0),
-      onSecondary: Color.fromRGBO(242, 242, 240, 1.0),
-      onSurface: Color.fromRGBO(76, 79, 89, 1),
-      onError: Color.fromRGBO(242, 242, 240, 1.0),
+      primary: Color(0xFFFFBF4D),
+      primaryContainer: Color(0xFFF57C00),
+      secondary: Color(0xFF26A69A),
+      tertiary: Color(0xFFF19154),
+      secondaryContainer: Color(0xFF00796B),
+      surface: Color(0xFFFFF8E1),
+      background: Color(0xFFFFF8E1),
+      error: Color(0xFFD32F2F),
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: Color(0xFF5D4037),
+      onBackground: Color(0xFF5D4037),
+      onError: Colors.white,
       brightness: Brightness.light);
 
   ThemeData get themeData => ThemeData(
