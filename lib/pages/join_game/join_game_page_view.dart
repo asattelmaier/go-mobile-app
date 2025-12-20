@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart' hide Router;
-import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
 import 'package:go_app/game-session/game_session_model.dart';
-import 'package:go_app/layout/default/default_layout.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/game/game_page_view.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/pages/join_game/widgets/active_game_list.dart';
+import 'package:go_app/pages/join_game/widgets/game_code_input.dart';
+import 'package:go_app/pages/join_game/widgets/join_game_footer.dart';
 import 'package:go_app/router/router.dart';
-import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/join_button/join_button_view.dart';
+import 'package:go_app/widgets/background/home_background.dart';
+import 'package:go_app/widgets/clay_text/clay_headline.dart';
+import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
 class JoinGamePageView extends StatefulWidget {
   final GameSessionClient _gameSessionClient;
@@ -34,65 +36,79 @@ class _JoinGamePageView extends State<JoinGamePageView> {
   @override
   void initState() {
     super.initState();
+    _fetchGameSessions();
+  }
 
-    _gameSessionClient.getPendingSessions().then((gameSessions) => setState(() {
+  void _fetchGameSessions() {
+    _gameSessionClient.getPendingSessions().then((gameSessions) {
+      if (mounted) {
+        setState(() {
           _gameSessions = gameSessions;
-        }));
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     _gameSessionClient.joined.listen((GameSessionModel gameSession) {
-      Router.push(
-          context,
-          GamePageView(
-              GameSessionController(
-                  _gameSessionClient, gameSession, gameSession.players.last),
-              _userController));
+      if (gameSession.players.isNotEmpty) {
+        Router.push(
+            context,
+            GamePageView(
+                GameSessionController(
+                    _gameSessionClient, gameSession, gameSession.players.last),
+                _userController));
+      }
     });
 
-    return DefaultLayout(
-      body: Padding(
-          padding: EdgeInsets.all(GoTheme.of(context).gutter * 6),
-          child: Row(children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(
-                          bottom: GoTheme.of(context).gutter * 6),
-                      child: _sessionIdInputField(context)),
-                  Expanded(child: _gameSessionsListView)
-                ],
+    return Scaffold(
+      body: Stack(
+        children: [
+          HomeBackground(),
+          Positioned.fill(
+            child: SafeArea(
+              child: SizedBox(
+                width: double.infinity,
+                child: PageLayoutGrid(
+                  topFlex: 0,
+                  middleFlex: 1,
+                  header: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: ClayHeadline(l10n.joinGame),
+                  ),
+                  content: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: GameCodeInput(controller: _textEditingController),
+                      ),
+                      SizedBox(height: 20),
+                      ActiveGameList(
+                        gameSessions: _gameSessions,
+                        gameSessionClient: _gameSessionClient,
+                      ),
+                    ],
+                  ),
+                  footer: JoinGameFooter(
+                    onTapBack: () {
+                      Router.push(context,
+                          HomePageView(_gameSessionClient, _userController));
+                    },
+                    onTapJoin: () {
+                      if (_textEditingController.text.isNotEmpty) {
+                        _gameSessionClient
+                            .joinSession(_textEditingController.text);
+                      }
+                    },
+                  ),
+                ),
               ),
-            )
-          ])),
-      bottomActionBar: [
-        BackButtonView(HomePageView(_gameSessionClient, _userController)),
-        JoinButtonView(_gameSessionClient, _textEditingController),
-      ],
-    );
-  }
-
-  Widget _sessionIdInputField(BuildContext context) {
-    return TextField(
-      controller: _textEditingController,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          hintText: AppLocalizations.of(context)!.enterGameSessionId),
-    );
-  }
-
-  Widget get _gameSessionsListView {
-    return ListView.separated(
-      itemCount: _gameSessions.length,
-      separatorBuilder: (BuildContext context, int index) => Divider(
-        thickness: 1.0,
-      ),
-      itemBuilder: (BuildContext context, int index) => ListTile(
-        title: Text(_gameSessions[index].id),
-        onTap: () => _gameSessionClient.joinSession(_gameSessions[index].id),
+            ),
+          ),
+        ],
       ),
     );
   }

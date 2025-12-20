@@ -5,11 +5,10 @@ import 'package:go_app/game/board/intersection/intersection_view.dart';
 import 'package:go_app/theme/go_theme.dart';
 
 class BoardView extends StatelessWidget {
-  // TODO: Create Theme for border width and colors
+  // TODO(theme): Centralize border width and colors in GoTheme.
   final BoardController _controller;
-  final double _width;
 
-  const BoardView(this._controller, this._width);
+  const BoardView(this._controller);
 
   @override
   Widget build(BuildContext context) {
@@ -19,24 +18,27 @@ class BoardView extends StatelessWidget {
       return Container();
     }
 
-    return Container(
-      width: _width,
-      height: _width,
-      child: Container(
-        color: theme.boardColor,
-        child: Padding(
-            padding: EdgeInsets.all(theme.gutter * 2),
-            child: Stack(children: [
-              _createGrid(theme),
-              _intersections,
-            ])),
-      ),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      final size = constraints.maxWidth;
+      
+      return Container(
+        // The container fills the LayoutBuilder parent (which is the ClayCard inner padding)
+        child: Container(
+          child: Padding(
+              padding: EdgeInsets.all(theme.gutter * 2),
+              child: Stack(children: [
+                _createGrid(theme, size - (theme.gutter * 4)), // Adjust size for padding
+                _intersections,
+              ])),
+        ),
+      );
+    });
   }
 
-  Widget _createGrid(GoTheme theme) => Center(
+  // TODO(rendering): Refactor grid rendering to support rounded edges and advanced shadow effects (Claymorphism).
+  Widget _createGrid(GoTheme theme, double gridSize) => Center(
       child: Padding(
-          padding: EdgeInsets.all(_width / _controller.size / 2),
+          padding: EdgeInsets.all(gridSize / _controller.size / 2),
           child: Stack(
             children: [
               _createVerticalLines(theme),
@@ -60,8 +62,23 @@ class BoardView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          width: theme.borderWidth,
-          color: theme.colorScheme.surface,
+          width: 4.0,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.tertiary,
+            borderRadius: BorderRadius.circular(2.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withOpacity(0.5),
+                offset: Offset(-1, -1),
+                blurRadius: 1,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: Offset(1, 1),
+                blurRadius: 1,
+              ),
+            ],
+          ),
         ))),
       );
 
@@ -69,8 +86,23 @@ class BoardView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: _createLines(Flexible(
             child: Container(
-          color: theme.colorScheme.surface,
-          height: theme.borderWidth,
+          height: 4.0,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.tertiary,
+            borderRadius: BorderRadius.circular(2.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withOpacity(0.5),
+                offset: Offset(-1, -1),
+                blurRadius: 1,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: Offset(1, 1),
+                blurRadius: 1,
+              ),
+            ],
+          ),
         ))),
       );
 

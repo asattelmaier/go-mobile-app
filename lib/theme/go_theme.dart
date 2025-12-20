@@ -13,11 +13,11 @@ class GoTheme extends InheritedWidget {
 
   Color get backgroundColor => Color(0xFFFFD99B);
 
-  Color get boardColor => Color.fromRGBO(217, 145, 82, 1);
+  final Color boardColor = const Color(0xFFFFD99B); // Same as background for Clay on Clay
 
   Color get blackStoneColor => colorScheme.secondary;
 
-  Color get whiteStoneColor => backgroundColor;
+  Color get whiteStoneColor => colorScheme.primary;
 
   ColorScheme get colorScheme => ColorScheme(
       primary: Color(0xFFFFBF4D),

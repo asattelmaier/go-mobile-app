@@ -22,6 +22,8 @@ class GameSessionController {
 
   String get sessionId => _gameSession.id;
 
+  GameSessionModel get session => _gameSession;
+
   ValueStream<Map<String, dynamic>> get messages {
     return _gameSessionClient.messages(_gameSession.id).shareValue();
   }

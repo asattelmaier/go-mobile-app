@@ -52,7 +52,6 @@ class _ClayTreePainter extends CustomPainter with ClayPaintingMixin {
       canvas: canvas,
       path: path,
       color: color,
-      pressedProgress: 0.0
     );
 
     // Draw Branch Carvings

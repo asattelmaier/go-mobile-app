@@ -41,42 +41,47 @@ mixin ClayPaintingMixin {
     required Path path,
     required Color color,
     double pressedProgress = 0.0,
+    bool hasDropShadow = true,
   }) {
-    final t = pressedProgress;
-    final inverseT = 1.0 - t;
+    final tOuter = pressedProgress;
+    final tInner = pressedProgress;
+    final inverseTOuter = 1.0 - tOuter;
 
     // --- 1. Calculate Animated Parameters ---
     
-    // Drop Shadow
-    final dropOffset = Offset.lerp(_kDropShadowOffsetRest, _kDropShadowOffsetPressed, t)!; 
+    // Drop Shadow (Outer Physics)
+    final dropOffset = Offset.lerp(_kDropShadowOffsetRest, _kDropShadowOffsetPressed, tOuter)!; 
     final dropBlur = _kDropShadowBlur;
     
-    // Highlight (Top-Left)
-    final highlightOpacity = ui.lerpDouble(_kHighlightOpacityRest, _kHighlightOpacityPressed, t)!;
-    final highlightOffset = Offset.lerp(_kHighlightOffsetRest, _kHighlightOffsetPressed, t)!;
-    final highlightBlur = ui.lerpDouble(_kHighlightBlurRest, _kHighlightBlurPressed, t)!;
+    // Highlight (Top-Left) (Inner Physics)
+    final highlightOpacity = ui.lerpDouble(_kHighlightOpacityRest, _kHighlightOpacityPressed, tInner)!;
+    final highlightOffset = Offset.lerp(_kHighlightOffsetRest, _kHighlightOffsetPressed, tInner)!;
+    final highlightBlur = ui.lerpDouble(_kHighlightBlurRest, _kHighlightBlurPressed, tInner)!;
 
-    // Inner Shadow (Bottom-Right)
-    final shadowOffset = Offset.lerp(_kInnerShadowOffsetRest, _kInnerShadowOffsetPressed, t)!;
-    final shadowBlur = ui.lerpDouble(_kInnerShadowBlurRest, _kInnerShadowBlurPressed, t)!;
+    // Inner Shadow (Bottom-Right) (Inner Physics)
+    final shadowOffset = Offset.lerp(_kInnerShadowOffsetRest, _kInnerShadowOffsetPressed, tInner)!;
+    final shadowBlur = ui.lerpDouble(_kInnerShadowBlurRest, _kInnerShadowBlurPressed, tInner)!;
 
     // Colors
     final dropShadowColor = _getDropShadowColor(color)
-        .withOpacity(_kDropShadowOpacityBase * inverseT + 0.4 * t); 
+        .withOpacity(_kDropShadowOpacityBase * inverseTOuter + 0.4 * tOuter); 
     
     final innerShadowColor = _getInnerShadowColor(color);
 
     // --- 2. Render Pipeline ---
 
     // A. Drop Shadow
-    _drawDropShadow(
-      canvas, 
-      path, 
-      dropShadowColor, 
-      offset: dropOffset, 
-      blur: dropBlur, 
-      scale: _kDropShadowScale
-    );
+    // A. Drop Shadow
+    if (hasDropShadow) {
+      _drawDropShadow(
+        canvas,
+        path,
+        dropShadowColor,
+        offset: dropOffset,
+        blur: dropBlur,
+        scale: _kDropShadowScale,
+      );
+    }
 
     // B. Body
     canvas.drawPath(path, Paint()..color = color);

@@ -6,11 +6,11 @@ import 'package:go_app/game/game_controller.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/game_view.dart';
 import 'package:go_app/game/settings/settings_model.dart';
-import 'package:go_app/layout/default/default_layout.dart';
-import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/pages/game/widgets/game_footer.dart';
+import 'package:go_app/pages/game/widgets/game_header.dart';
 import 'package:go_app/user/user_controller.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/pass_button/pass_button_view.dart';
+import 'package:go_app/widgets/background/home_background.dart';
+import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
 class GamePageView extends StatelessWidget {
   final GameSessionController _gameSessionController;
@@ -40,18 +40,32 @@ class GamePageView extends StatelessWidget {
                 gameController.create(_settings);
               }
 
-              return DefaultLayout(
-                  body: GameView(gameController),
-                  bottomActionBar: [
-                    if (gameController.isGameOver)
-                      BackButtonView(HomePageView(
-                          _gameSessionController.client, _userController)),
-                    if (!gameController.isGameOver)
-                      PassButtonView(gameController),
+              return Scaffold(
+                body: Stack(
+                  children: [
+                    HomeBackground(),
+                    Positioned.fill(
+                      child: SafeArea(
+                        child: PageLayoutGrid(
+                          topFlex: 1,
+                          middleFlex: 10,
+                          includeBottomSpacer: false, // Let footer handle it
+                          header: GameHeader(
+                            gameSessionController: _gameSessionController,
+                            gameController: gameController,
+                          ),
+                          content: GameView(gameController),
+                          footer: GameFooter(
+                            gameController: gameController,
+                            gameSessionClient: _gameSessionController.client,
+                            userController: _userController,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
-                  bottomActionBarAlignment: gameController.isGameOver
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.end);
+                ),
+              );
             }));
   }
 }

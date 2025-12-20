@@ -7,6 +7,8 @@ class ClayCard extends StatelessWidget {
   final double width;
   final double height;
   final double borderRadius;
+  final bool isPressed;
+  final bool hasDropShadow;
 
   const ClayCard({
     Key? key,
@@ -15,19 +17,23 @@ class ClayCard extends StatelessWidget {
     this.width = double.infinity,
     this.height = double.infinity,
     this.borderRadius = 20.0,
+    this.isPressed = false,
+    this.hasDropShadow = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: CustomPaint(
-        painter: _ClayCardPainter(
-          color: color,
-          borderRadius: borderRadius,
-        ),
-        child: Center(child: child),
+    return CustomPaint(
+      painter: _ClayCardPainter(
+        color: color,
+        borderRadius: borderRadius,
+        hasDropShadow: hasDropShadow,
+        isPressed: isPressed,
+      ),
+      child: Container(
+        width: width,
+        height: height,
+        child: child,
       ),
     );
   }
@@ -36,10 +42,14 @@ class ClayCard extends StatelessWidget {
 class _ClayCardPainter extends CustomPainter with ClayPaintingMixin {
   final Color color;
   final double borderRadius;
+  final bool hasDropShadow;
+  final bool isPressed;
 
   _ClayCardPainter({
     required this.color,
     required this.borderRadius,
+    required this.hasDropShadow,
+    this.isPressed = false,
   });
 
   @override
@@ -51,11 +61,16 @@ class _ClayCardPainter extends CustomPainter with ClayPaintingMixin {
       canvas: canvas,
       path: Path()..addRRect(rrect),
       color: color,
+      pressedProgress: isPressed ? 1.0 : 0.0,
+      hasDropShadow: hasDropShadow,
     );
   }
 
   @override
   bool shouldRepaint(covariant _ClayCardPainter oldDelegate) {
-    return color != oldDelegate.color || borderRadius != oldDelegate.borderRadius;
+    return color != oldDelegate.color ||
+        borderRadius != oldDelegate.borderRadius ||
+        isPressed != oldDelegate.isPressed ||
+        hasDropShadow != oldDelegate.hasDropShadow;
   }
 }
