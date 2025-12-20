@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart' hide Router;
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
@@ -30,6 +31,9 @@ class _JoinGamePageView extends State<JoinGamePageView> {
   final UserController _userController;
   final _textEditingController = TextEditingController();
   List<GameSessionModel> _gameSessions = [];
+  Timer? _pollTimer;
+  StreamSubscription? _joinedSubscription;
+  static const int _pollIntervalSeconds = 5;
 
   _JoinGamePageView(this._gameSessionClient, this._userController);
 
@@ -37,6 +41,36 @@ class _JoinGamePageView extends State<JoinGamePageView> {
   void initState() {
     super.initState();
     _fetchGameSessions();
+    _startPolling();
+    _subscribeToJoinedGame();
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    _joinedSubscription?.cancel();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  void _startPolling() {
+    _pollTimer = Timer.periodic(const Duration(seconds: _pollIntervalSeconds), (timer) {
+      _fetchGameSessions();
+    });
+  }
+
+  void _subscribeToJoinedGame() {
+    _joinedSubscription =
+        _gameSessionClient.joined.listen((GameSessionModel gameSession) {
+      if (gameSession.players.isNotEmpty) {
+        Router.push(
+            context,
+            GamePageView(
+                GameSessionController(
+                    _gameSessionClient, gameSession, gameSession.players.last),
+                _userController));
+      }
+    });
   }
 
   void _fetchGameSessions() {
@@ -52,17 +86,6 @@ class _JoinGamePageView extends State<JoinGamePageView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
-    _gameSessionClient.joined.listen((GameSessionModel gameSession) {
-      if (gameSession.players.isNotEmpty) {
-        Router.push(
-            context,
-            GamePageView(
-                GameSessionController(
-                    _gameSessionClient, gameSession, gameSession.players.last),
-                _userController));
-      }
-    });
 
     return Scaffold(
       body: Stack(
