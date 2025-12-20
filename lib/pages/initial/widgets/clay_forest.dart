@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_app/pages/home/widgets/clay_tree.dart';
+import 'package:go_app/widgets/clay_forest/clay_tree.dart';
+import 'package:go_app/widgets/clay_forest/tree_configuration.dart';
 
 class ClayForest extends StatelessWidget {
   const ClayForest({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class ClayForest extends StatelessWidget {
       required double height,
       required Color color,
       bool branches = true,
+      int seed = 0,
     }) {
       return Positioned(
         left: left,
@@ -25,6 +27,7 @@ class ClayForest extends StatelessWidget {
           height: height,
           foliageColor: color,
           showBranches: branches,
+          configuration: TreeConfiguration.fromSeed(seed, treeHeight: height),
         ),
       );
     }
@@ -58,31 +61,31 @@ class ClayForest extends StatelessWidget {
               children: [
                 
                 // --- Group 1: Left Cluster ---
-                _tree(left: 50, bottom: 40, width: 35, height: 90, color: c3),
-                _tree(left: 20, bottom: 20, width: 50, height: 60, color: c2),
+                _tree(left: 50, bottom: 40, width: 35, height: 90, color: c3, seed: 101),
+                _tree(left: 20, bottom: 20, width: 50, height: 60, color: c2, seed: 102),
                 
                 // --- Group 2: Center-Left ---
-                _tree(left: 90, bottom: 0, width: 55, height: 75, color: c1),
-                _tree(left: 60, bottom: 0, width: 45, height: 85, color: c3),
+                _tree(left: 90, bottom: 0, width: 55, height: 75, color: c1, seed: 103),
+                _tree(left: 60, bottom: 0, width: 45, height: 85, color: c3, seed: 104),
                 
                 // --- Group 3: Center Mid ---
-                _tree(left: 140, bottom: 10, width: 60, height: 70, color: c3), // "Tree 5"
-                _tree(left: 120, bottom: 0, width: 40, height: 95, color: c2),  // "Tree 6"
+                _tree(left: 140, bottom: 10, width: 60, height: 70, color: c3, seed: 105), // "Tree 5"
+                _tree(left: 120, bottom: 0, width: 40, height: 95, color: c2, seed: 106),  // "Tree 6"
                 
                 // --- Group 4: Center-Right ---
-                _tree(left: 170, bottom: 35, width: 30, height: 80, color: c3), // "Tree 8"
-                _tree(left: 170, bottom: 0, width: 55, height: 65, color: c1),  // "Tree 7"
-                _tree(left: 195, bottom: 20, width: 65, height: 60, color: c2), // "Tree 9"
+                _tree(left: 170, bottom: 35, width: 30, height: 80, color: c3, seed: 107), // "Tree 8"
+                _tree(left: 170, bottom: 0, width: 55, height: 65, color: c1, seed: 108),  // "Tree 7"
+                _tree(left: 195, bottom: 20, width: 65, height: 60, color: c2, seed: 109), // "Tree 9"
 
                 // --- Group 5: Far Right ---
-                _tree(left: 270, bottom: 20, width: 40, height: 85, color: c3), // "Tree 12"
-                _tree(left: 245, bottom: 15, width: 55, height: 70, color: c1), // "Tree 11"
-                _tree(left: 220, bottom: 25, width: 45, height: 90, color: c2), // "Tree 10"
+                _tree(left: 270, bottom: 20, width: 40, height: 85, color: c3, seed: 110), // "Tree 12"
+                _tree(left: 245, bottom: 15, width: 55, height: 70, color: c1, seed: 111), // "Tree 11"
+                _tree(left: 220, bottom: 25, width: 45, height: 90, color: c2, seed: 112), // "Tree 10"
 
                 // --- BUSHES (Foreground) ---
-                _tree(left: -20, bottom: -100, width: 120, height: 140, color: c1, branches: false),
-                _tree(left: 100, bottom: -110, width: 120, height: 140, color: c2, branches: false),
-                _tree(left: 190, bottom: -110, width: 140, height: 160, color: c3, branches: false),
+                _tree(left: -20, bottom: -100, width: 120, height: 140, color: c1, branches: false, seed: 113),
+                _tree(left: 100, bottom: -110, width: 120, height: 140, color: c2, branches: false, seed: 114),
+                _tree(left: 190, bottom: -110, width: 140, height: 160, color: c3, branches: false, seed: 115),
               ],
             ),
           ),

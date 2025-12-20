@@ -11,6 +11,11 @@ import 'package:go_app/user/user_model.dart';
 class UserController {
   static const _KEY_CHAIN_REFRESH_TOKEN_KEY = "refresh-token";
   static const _KEY_CHAIN_ACCESS_TOKEN_KEY = "access-token";
+  
+  // Persistent Guest Tokens
+  static const _KEY_CHAIN_GUEST_REFRESH_TOKEN_KEY = "guest-refresh-token";
+  static const _KEY_CHAIN_GUEST_ACCESS_TOKEN_KEY = "guest-access-token";
+
   final KeyChain _keyChain;
   final HttpClient _httpClient;
   TokensModel _tokens;
@@ -44,12 +49,37 @@ class UserController {
       return _user;
     }
 
+    // 1. Try to reuse existing guest
+    final guestAccess = await _keyChain.get(_KEY_CHAIN_GUEST_ACCESS_TOKEN_KEY);
+    final guestRefresh = await _keyChain.get(_KEY_CHAIN_GUEST_REFRESH_TOKEN_KEY);
+
+    if (guestAccess != null && guestRefresh != null) {
+      final guestTokens = TokensModel(guestRefresh, guestAccess);
+      final guestUser = await _requestUser(_httpClient, guestTokens);
+      
+      if (!guestUser.isEmpty) {
+         // Found valid existing guest! Use it.
+         await _keyChain.set(_KEY_CHAIN_ACCESS_TOKEN_KEY, guestTokens.accessToken);
+         await _keyChain.set(_KEY_CHAIN_REFRESH_TOKEN_KEY, guestTokens.refreshToken); 
+         _tokens = guestTokens;
+         _user = guestUser;
+         return _user;
+      }
+    }
+
+    // 2. Otherwise create new guest
     try {
       final response = await _httpClient.post("/auth/register/guest");
       final tokens = TokensModel.fromDto(TokensDto.fromJson(response));
 
+      // Make active
       await _keyChain.set(_KEY_CHAIN_ACCESS_TOKEN_KEY, tokens.accessToken);
       await _keyChain.set(_KEY_CHAIN_REFRESH_TOKEN_KEY, tokens.refreshToken);
+      
+      // Persist as Guest (redundant backup for future reuse)
+      await _keyChain.set(_KEY_CHAIN_GUEST_ACCESS_TOKEN_KEY, tokens.accessToken);
+      await _keyChain.set(_KEY_CHAIN_GUEST_REFRESH_TOKEN_KEY, tokens.refreshToken);
+
       _tokens = tokens;
       _user = await _requestUser(_httpClient, tokens);
 

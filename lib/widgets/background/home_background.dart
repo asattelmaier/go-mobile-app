@@ -31,5 +31,3 @@ class HomeBackground extends StatelessWidget {
     );
   }
 }
-
-

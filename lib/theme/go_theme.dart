@@ -9,7 +9,7 @@ class GoTheme extends InheritedWidget {
 
   final String fontFamily = "Fredoka";
 
-  Color get backgroundColor => Color.fromRGBO(255, 250, 227, 1.0);
+  Color get backgroundColor => Color(0xFFFFD99B);
 
   Color get boardColor => Color.fromRGBO(217, 145, 82, 1);
 
@@ -23,8 +23,8 @@ class GoTheme extends InheritedWidget {
       secondary: Color(0xFF26A69A),
       tertiary: Color(0xFFF19154),
       secondaryContainer: Color(0xFF00796B),
-      surface: Color(0xFFFFF8E1),
-      background: Color(0xFFFFF8E1),
+      surface: Color(0xFFFFD99B),
+      background: Color(0xFFFFD99B),
       error: Color(0xFFD32F2F),
       onPrimary: Colors.white,
       onSecondary: Colors.white,

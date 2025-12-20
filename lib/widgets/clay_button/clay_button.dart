@@ -82,7 +82,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
       color: widget.textColor ?? Colors.white,
       shadows: [
         Shadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withValues(alpha: 0.1),
           offset: Offset(1, 1),
           blurRadius: 2,
         ),

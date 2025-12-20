@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class Environment {
   static const String _ENVIRONMENT_KEY = 'ENV';
@@ -7,7 +7,7 @@ class Environment {
 
   const Environment();
 
-  bool get isAndroid => Platform.isAndroid;
+  bool get isAndroid => defaultTargetPlatform == TargetPlatform.android;
 
   bool get isDevelopment => _env == Environment._DEVELOPMENT;
 

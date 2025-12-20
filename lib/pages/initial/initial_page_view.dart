@@ -5,10 +5,13 @@ import 'package:go_app/pages/home/home_page_view.dart';
 import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
-import 'package:go_app/pages/home/widgets/clay_button.dart';
-import 'package:go_app/pages/home/widgets/home_background.dart';
-import 'package:go_app/pages/home/widgets/clay_text.dart';
-import 'package:go_app/pages/home/widgets/clay_forest.dart';
+import 'package:go_app/widgets/background/home_background.dart';
+import 'package:go_app/widgets/clay_button/clay_button.dart';
+import 'package:go_app/pages/initial/widgets/clay_forest.dart';
+import 'package:go_app/widgets/clay_text/clay_text.dart';
+import 'package:go_app/widgets/layout/page_layout_grid.dart';
+
+import 'package:go_app/utils/rect_tweens.dart';
 
 class InitialPageView extends StatelessWidget {
   final GameSessionClient _gameSessionClient;
@@ -29,21 +32,28 @@ class InitialPageView extends StatelessWidget {
 
           Align(
             alignment: Alignment(0.0, -0.3),
-            child: ClayForest(),
+            child: Hero(
+              tag: 'hero_forest',
+              createRectTween: (b, e) => BouncyRectTween(begin: b, end: e),
+              child: ClayForest(),
+            ),
           ),
 
           Positioned.fill(
             child: SafeArea(
               child: SizedBox(
                 width: double.infinity,
-                child: Column(
-                  children: [
-                     Spacer(flex: 1),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ClayText(
+                child: PageLayoutGrid(
+                  topFlex: 1,
+                  middleFlex: 6,
+                  header: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Hero(
+                        tag: 'hero_logo_g',
+                        createRectTween: (b, e) =>
+                            BouncyRectTween(begin: b, end: e),
+                        child: ClayText(
                           text: "G",
                           baseColor: theme.colorScheme.primary,
                           style: TextStyle(
@@ -53,7 +63,12 @@ class InitialPageView extends StatelessWidget {
                             height: 1.0,
                           ),
                         ),
-                        ClayText(
+                      ),
+                      Hero(
+                        tag: 'hero_logo_o',
+                        createRectTween: (b, e) =>
+                            BouncyRectTween(begin: b, end: e),
+                        child: ClayText(
                           text: "O",
                           baseColor: theme.colorScheme.secondary,
                           style: TextStyle(
@@ -63,52 +78,46 @@ class InitialPageView extends StatelessWidget {
                             height: 1.0,
                           ),
                         ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20),
-
-                    Spacer(flex: 6),
-
-                    SizedBox(height: 20),
-
-                    ClayButton(
-                      text: l10n.playAsGuest,
-                      color: theme.colorScheme.secondary,
-                      textColor: Colors.white,
-                      width: 240,
-                      height: 60,
-                      onTap: () async {
-                        await _userController.createGuestUser();
-                        await _gameSessionClient.connect();
-                        Router.push(context, HomePageView(_gameSessionClient, _userController));
-                      },
-                    ),
-                    SizedBox(height: 20),
-
-                    ClayButton(
-                      text: l10n.logIn,
-                      color: theme.colorScheme.primary,
-                      textColor: Colors.white,
-                      width: 240,
-                      height: 60,
-                      onTap: () {
-                      },
-                    ),
-                    SizedBox(height: 20),
-
-                    ClayButton(
-                      text: l10n.register,
-                      color: theme.colorScheme.tertiary,
-                      textColor: Colors.white,
-                      width: 240,
-                      height: 60,
-                      onTap: () {
-                      },
-                    ),
-
-                    Spacer(flex: 1),
-                  ],
+                      ),
+                    ],
+                  ),
+                  footer: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClayButton(
+                        text: l10n.playAsGuest,
+                        color: theme.colorScheme.secondary,
+                        textColor: Colors.white,
+                        width: 240,
+                        height: 60,
+                        onTap: () async {
+                          await _userController.createGuestUser();
+                          await _gameSessionClient.connect();
+                          Router.push(context, HomePageView(_gameSessionClient, _userController));
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ClayButton(
+                        text: l10n.logIn,
+                        color: theme.colorScheme.primary,
+                        textColor: Colors.white,
+                        width: 240,
+                        height: 60,
+                        onTap: () {
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ClayButton(
+                        text: l10n.register,
+                        color: theme.colorScheme.tertiary,
+                        textColor: Colors.white,
+                        width: 240,
+                        height: 60,
+                        onTap: () {
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
