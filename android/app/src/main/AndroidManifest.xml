@@ -39,5 +39,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- TODO: Enable Impeller again once the crash on Moto G84 is resolved.
+             See: https://github.com/flutter/flutter/issues/136060 -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
     </application>
 </manifest>
