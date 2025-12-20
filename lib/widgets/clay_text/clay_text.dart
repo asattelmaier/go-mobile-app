@@ -20,7 +20,10 @@ class ClayText extends StatelessWidget {
         // 1. Invisible Layout Guide
         Text(
           text,
-          style: style.copyWith(color: Colors.transparent),
+          style: style.copyWith(
+            color: Colors.transparent, 
+            decoration: TextDecoration.none,
+          ),
         ),
 
         // 2. All-in-One Renderer

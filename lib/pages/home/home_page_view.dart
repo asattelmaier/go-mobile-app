@@ -4,8 +4,8 @@ import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/widgets/background/home_background.dart';
 import 'package:go_app/widgets/clay_button/clay_button.dart';
 import 'package:go_app/pages/home/widgets/clay_forest_header.dart';
-import 'package:go_app/widgets/clay_text/clay_text.dart';
 import 'package:go_app/widgets/layout/page_layout_grid.dart';
+import 'package:go_app/widgets/logo/clay_go_logo.dart';
 import 'package:go_app/pages/join_game/join_game_page_view.dart';
 import 'package:go_app/pages/new_game/create_game/create_game_page_view.dart';
 import 'package:go_app/router/router.dart';
@@ -46,47 +46,13 @@ class HomePageView extends StatelessWidget {
                 child: PageLayoutGrid(
                   topFlex: 5,
                   middleFlex: 2,
-                  header: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Hero(
-                        tag: 'hero_logo_g',
-                        createRectTween: (b, e) =>
-                            BouncyRectTween(begin: b, end: e),
-                        child: ClayText(
-                          text: "G",
-                          baseColor: theme.colorScheme.primary,
-                          style: TextStyle(
-                            fontSize: size.height * 0.22,
-                            fontFamily: theme.fontFamily,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                      Hero(
-                        tag: 'hero_logo_o',
-                        createRectTween: (b, e) =>
-                            BouncyRectTween(begin: b, end: e),
-                        child: ClayText(
-                          text: "O",
-                          baseColor: theme.colorScheme.secondary,
-                          style: TextStyle(
-                            fontSize: size.height * 0.22,
-                            fontFamily: theme.fontFamily,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  header: const ClayGoLogo(),
                   footer: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ClayButton(
                         text: l10n.newGame,
-                        color: theme.colorScheme.primary,
+                        color: theme.colorScheme.secondary,
                         textColor: Colors.white,
                         width: 240,
                         height: 60,
@@ -101,7 +67,7 @@ class HomePageView extends StatelessWidget {
                       SizedBox(height: 20),
                       ClayButton(
                         text: l10n.joinGame,
-                        color: theme.colorScheme.secondary,
+                        color: theme.colorScheme.primary,
                         textColor: Colors.white,
                         width: 240,
                         height: 60,

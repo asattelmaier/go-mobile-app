@@ -8,8 +8,8 @@ import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/background/home_background.dart';
 import 'package:go_app/widgets/clay_button/clay_button.dart';
 import 'package:go_app/pages/initial/widgets/clay_forest.dart';
-import 'package:go_app/widgets/clay_text/clay_text.dart';
 import 'package:go_app/widgets/layout/page_layout_grid.dart';
+import 'package:go_app/widgets/logo/clay_go_logo.dart';
 
 import 'package:go_app/utils/rect_tweens.dart';
 
@@ -46,41 +46,7 @@ class InitialPageView extends StatelessWidget {
                 child: PageLayoutGrid(
                   topFlex: 1,
                   middleFlex: 6,
-                  header: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Hero(
-                        tag: 'hero_logo_g',
-                        createRectTween: (b, e) =>
-                            BouncyRectTween(begin: b, end: e),
-                        child: ClayText(
-                          text: "G",
-                          baseColor: theme.colorScheme.primary,
-                          style: TextStyle(
-                            fontSize: size.height * 0.22,
-                            fontFamily: theme.fontFamily,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                      Hero(
-                        tag: 'hero_logo_o',
-                        createRectTween: (b, e) =>
-                            BouncyRectTween(begin: b, end: e),
-                        child: ClayText(
-                          text: "O",
-                          baseColor: theme.colorScheme.secondary,
-                          style: TextStyle(
-                            fontSize: size.height * 0.22,
-                            fontFamily: theme.fontFamily,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  header: const ClayGoLogo(),
                   footer: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

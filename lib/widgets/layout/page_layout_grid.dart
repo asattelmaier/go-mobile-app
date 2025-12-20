@@ -20,14 +20,14 @@ class PageLayoutGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Spacer(flex: topFlex),
+        if (topFlex > 0) Spacer(flex: topFlex),
         header,
         Expanded(
           flex: middleFlex,
           child: content ?? const SizedBox.shrink(),
         ),
         footer,
-        const Spacer(flex: 1),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.1),
       ],
     );
   }

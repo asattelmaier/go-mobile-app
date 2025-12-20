@@ -40,5 +40,6 @@
       "score": {}
     }
   },
-  "logOut": "Logout"
+  "logOut": "Logout",
+  "options": "Options"
 }

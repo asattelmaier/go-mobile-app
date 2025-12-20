@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:go_app/l10n/generated/app_localizations.dart';
+import 'package:flutter/material.dart' hide Router;
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/settings/settings_model.dart';
-import 'package:go_app/layout/default/default_layout.dart';
+import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/pages/new_game/game_pending/game_pending_page_view.dart';
+import 'package:go_app/router/router.dart';
+import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/back_button/back_button.dart';
-import 'package:go_app/widgets/bottom_action_bar/buttons/create_game_button/create_game_button_view.dart';
+import 'package:go_app/widgets/background/home_background.dart';
+import 'package:go_app/widgets/clay_button/clay_button.dart';
+import 'package:go_app/widgets/clay_text/clay_text.dart';
+import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
 class CreateGamePageView extends StatefulWidget {
   final GameSessionClient _gameSessionClient;
@@ -21,82 +25,173 @@ class CreateGamePageView extends StatefulWidget {
 
 class _CreateGamePageView extends State<CreateGamePageView> {
   final UserController _userController;
-  final _formKey = GlobalKey<FormState>();
   final GameSessionClient _gameSessionClient;
+  
   int _boardSize = 9;
   bool _isSuicideAllowed = false;
-  final List<DropdownMenuItem<int>> _boardSizes = [
-    DropdownMenuItem<int>(
-      value: 9,
-      child: Text("9x9"),
-    ),
-    DropdownMenuItem<int>(
-      value: 13,
-      child: Text("13x13"),
-    ),
-    DropdownMenuItem<int>(
-      value: 19,
-      child: Text("19x19"),
-    ),
-  ];
 
   _CreateGamePageView(this._gameSessionClient, this._userController);
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      body: Form(
-          key: _formKey,
-          child: Column(children: [
-            ListTile(
-              title: DropdownButton<int>(
-                value: _boardSize,
-                iconSize: 24,
-                elevation: 16,
-                onChanged: (int? boardSize) {
-                  setState(() {
-                    _boardSize = boardSize!;
-                  });
-                },
-                items: _boardSizes,
-                isExpanded: true,
+    final l10n = AppLocalizations.of(context)!;
+    final theme = GoTheme.of(context);
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          HomeBackground(),
+          Positioned.fill(
+            child: SafeArea(
+              child: SizedBox(
+                width: double.infinity,
+                child: PageLayoutGrid(
+                  topFlex: 0,
+                  middleFlex: 1,
+                  header: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      l10n.options,
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontFamily: theme.fontFamily,
+                        fontWeight: FontWeight.w900,
+                        color: theme.colorScheme.onSurface,
+                        shadows: [
+                          Shadow(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            offset: Offset(2, 2),
+                            blurRadius: 0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  content: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Board Size Section
+                      Text(
+                        l10n.boardSize,
+                        style: TextStyle(
+                          fontFamily: theme.fontFamily,
+                          fontSize: 24,
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildBoardSizeButton(9, theme),
+                          SizedBox(width: 12),
+                          _buildBoardSizeButton(13, theme),
+                          SizedBox(width: 12),
+                          _buildBoardSizeButton(19, theme),
+                        ],
+                      ),
+                      SizedBox(height: 32),
+                      
+                      // Suicide Rule Section
+                      Text(
+                        l10n.isSuicideAllowed,
+                        style: TextStyle(
+                          fontFamily: theme.fontFamily,
+                          fontSize: 24,
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildSuicideButton(true, l10n.yes, theme),
+                          SizedBox(width: 12),
+                          _buildSuicideButton(false, l10n.no, theme),
+                        ],
+                      ),
+                    ],
+                  ),
+                  footer: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClayButton(
+                        text: l10n.createGame,
+                        color: theme.colorScheme.primary,
+                        textColor: Colors.white,
+                        width: 240,
+                        height: 60,
+                        onTap: _onCreateGame,
+                      ),
+                      SizedBox(height: 20),
+                      ClayButton(
+                        text: l10n.back,
+                        color: theme.colorScheme.tertiary,
+                        textColor: Colors.white,
+                        width: 240,
+                        height: 60,
+                        onTap: () {
+                          Router.push(
+                            context,
+                            HomePageView(_gameSessionClient, _userController),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              subtitle: Text(AppLocalizations.of(context)!.boardSize),
             ),
-            ListTile(
-              title: DropdownButton<bool>(
-                value: _isSuicideAllowed,
-                iconSize: 24,
-                elevation: 16,
-                onChanged: (bool? isSuicideAllowed) {
-                  setState(() {
-                    _isSuicideAllowed = isSuicideAllowed!;
-                  });
-                },
-                items: _createSuicideAllowedChoices(context),
-                isExpanded: true,
-              ),
-              subtitle: Text(AppLocalizations.of(context)!.isSuicideAllowed),
-            ),
-          ])),
-      bottomActionBar: [
-        BackButtonView(HomePageView(_gameSessionClient, _userController)),
-        CreateGameButton(_gameSessionClient, _userController,
-            SettingsModel(_boardSize, _isSuicideAllowed))
-      ],
+          ),
+        ],
+      ),
     );
   }
 
-  List<DropdownMenuItem<bool>> _createSuicideAllowedChoices(
-          BuildContext context) =>
-      [
-        DropdownMenuItem<bool>(
-          value: true,
-          child: Text(AppLocalizations.of(context)!.yes),
-        ),
-        DropdownMenuItem<bool>(
-          value: false,
-          child: Text(AppLocalizations.of(context)!.no),
-        )
-      ];
+  Widget _buildBoardSizeButton(int size, GoTheme theme) {
+    final isSelected = _boardSize == size;
+    return ClayButton(
+      text: "${size}x$size",
+      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+      textColor: isSelected ? Colors.white : theme.colorScheme.onSurface,
+      width: 80,
+      height: 50,
+      onTap: () {
+        setState(() {
+          _boardSize = size;
+        });
+      },
+      // Using a slightly different style for unselected if needed, 
+      // but standard ClayButton handles color well.
+    );
+  }
+
+  Widget _buildSuicideButton(bool value, String label, GoTheme theme) {
+    final isSelected = _isSuicideAllowed == value;
+    return ClayButton(
+      text: label,
+      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+      textColor: isSelected ? Colors.white : theme.colorScheme.onSurface,
+      width: 100,
+      height: 50,
+      onTap: () {
+        setState(() {
+          _isSuicideAllowed = value;
+        });
+      },
+    );
+  }
+
+  void _onCreateGame() {
+      Router.push(
+          context,
+          GamePendingPageView(
+              _gameSessionClient, 
+              _userController, 
+              SettingsModel(_boardSize, _isSuicideAllowed)
+          )
+      );
+  }
 }
