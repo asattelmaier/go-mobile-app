@@ -41,5 +41,13 @@
     }
   },
   "logOut": "Abmelden",
-  "options": "Optionen"
+  "options": "Optionen",
+  "lobby": "Warteraum",
+  "invite": "Einladen",
+  "shareGameId": "Teile deine Game ID mit deinem Freund",
+  "share": "Teilen",
+  "you": "Du",
+  "opponent": "Gegner",
+  "ready": "Bereit",
+  "waiting": "Warten ..."
 }

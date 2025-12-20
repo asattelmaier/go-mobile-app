@@ -14,7 +14,10 @@ class PageLayoutGrid extends StatelessWidget {
     required this.footer,
     required this.topFlex,
     required this.middleFlex,
+    this.includeBottomSpacer = true,
   }) : super(key: key);
+
+  final bool includeBottomSpacer;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,8 @@ class PageLayoutGrid extends StatelessWidget {
           child: content ?? const SizedBox.shrink(),
         ),
         footer,
-        SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+        if (includeBottomSpacer)
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
       ],
     );
   }

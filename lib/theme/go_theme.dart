@@ -6,6 +6,8 @@ class GoTheme extends InheritedWidget {
   final double gutter = 4;
 
   final double fontSizeSmall = 12;
+  final double fontSizeHeadline = 48;
+  final double fontSizeSubHeadline = 24;
 
   final String fontFamily = "Fredoka";
 

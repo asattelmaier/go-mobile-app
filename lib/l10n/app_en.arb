@@ -41,5 +41,13 @@
     }
   },
   "logOut": "Logout",
-  "options": "Options"
+  "options": "Options",
+  "lobby": "Lobby",
+  "invite": "Invite",
+  "shareGameId": "Share your Game ID with a friend",
+  "share": "Share",
+  "you": "You",
+  "opponent": "Opponent",
+  "ready": "Ready",
+  "waiting": "Waiting..."
 }

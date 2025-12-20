@@ -3,12 +3,14 @@ import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
-import 'package:go_app/pages/new_game/game_pending/game_pending_page_view.dart';
+import 'package:go_app/pages/new_game/lobby/lobby_page_view.dart';
 import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/background/home_background.dart';
 import 'package:go_app/widgets/clay_button/clay_button.dart';
+import 'package:go_app/widgets/clay_text/clay_headline.dart';
+import 'package:go_app/widgets/clay_text/clay_sub_headline.dart';
 import 'package:go_app/widgets/clay_text/clay_text.dart';
 import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
@@ -50,36 +52,13 @@ class _CreateGamePageView extends State<CreateGamePageView> {
                   middleFlex: 1,
                   header: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      l10n.options,
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontFamily: theme.fontFamily,
-                        fontWeight: FontWeight.w900,
-                        color: theme.colorScheme.onSurface,
-                        shadows: [
-                          Shadow(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            offset: Offset(2, 2),
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: ClayHeadline(l10n.options),
                   ),
                   content: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Board Size Section
-                      Text(
-                        l10n.boardSize,
-                        style: TextStyle(
-                          fontFamily: theme.fontFamily,
-                          fontSize: 24,
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      ClaySubHeadline(l10n.boardSize),
                       SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -94,15 +73,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
                       SizedBox(height: 32),
                       
                       // Suicide Rule Section
-                      Text(
-                        l10n.isSuicideAllowed,
-                        style: TextStyle(
-                          fontFamily: theme.fontFamily,
-                          fontSize: 24,
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      ClaySubHeadline(l10n.isSuicideAllowed),
                       SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +158,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
   void _onCreateGame() {
       Router.push(
           context,
-          GamePendingPageView(
+          LobbyPageView(
               _gameSessionClient, 
               _userController, 
               SettingsModel(_boardSize, _isSuicideAllowed)
