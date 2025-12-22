@@ -153,7 +153,7 @@ void main() {
       final httpClient = MockHttpClient();
       final webSocketClient = MockWebSocketClient();
       final path = "/game/session/create";
-      final json = {"playerId": "some-id"};
+      final json = {"playerId": "some-id", "difficulty": null};
       final gameSessionClient =
           GameSessionClient(webSocketClient, httpClient, userController);
 

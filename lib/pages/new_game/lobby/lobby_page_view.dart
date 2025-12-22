@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
 import 'package:go_app/game-session/game_session_model.dart';
+import 'package:go_app/game/bot/bot_difficulty.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/game/game_page_view.dart';
@@ -21,9 +22,11 @@ class LobbyPageView extends StatelessWidget {
   final GameSessionClient _gameSessionClient;
   final UserController _userController;
   final SettingsModel _settings;
+  final BotDifficulty? _botDifficulty;
 
   const LobbyPageView(
-      this._gameSessionClient, this._userController, this._settings);
+      this._gameSessionClient, this._userController, this._settings,
+      [this._botDifficulty]);
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +34,12 @@ class LobbyPageView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     if (_userController.isUserLoggedIn) {
-      _gameSessionClient.createSession(_userController.user);
+      _gameSessionClient.createSession(_userController.user, _botDifficulty);
     }
 
     if (!_userController.isUserLoggedIn) {
-      _userController.createGuestUser().then(_gameSessionClient.createSession);
+      _userController.createGuestUser().then(
+          (user) => _gameSessionClient.createSession(user, _botDifficulty));
     }
 
     return StreamBuilder<GameSessionModel>(
@@ -45,7 +49,19 @@ class LobbyPageView extends StatelessWidget {
           final gameSessionId = gameSessionModelSnapshot.data!.id;
           final isGameSessionEmpty = gameSessionModelSnapshot.data!.isEmpty;
 
-          if (!isGameSessionEmpty) {
+          if (gameSessionModelSnapshot.data!.isRunning) {
+             final gameSession = gameSessionModelSnapshot.data!;
+             WidgetsBinding.instance.addPostFrameCallback((_) {
+               Router.push(
+                  context,
+                  GamePageView(
+                      GameSessionController(_gameSessionClient, gameSession,
+                          gameSession.players.firstWhere((p) => p.id == _userController.user.id, orElse: () => gameSession.players.first)),
+                      _userController,
+                      _settings));
+             });
+             return Container(color: Colors.white, child: Center(child: CircularProgressIndicator()));
+          } else if (!isGameSessionEmpty) {
             _gameSessionClient
                 .playerJoined(gameSessionId)
                 .listen((GameSessionModel gameSession) {

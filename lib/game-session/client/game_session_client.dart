@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:go_app/api/http/http_client.dart';
 import 'package:go_app/api/http_headers/http_headers_builder.dart';
 import 'package:go_app/api/web_socket/web_socket_client.dart';
+import 'package:go_app/game/bot/bot_difficulty.dart';
 import 'package:go_app/game-session/client/game_session_client_destination.dart';
 import 'package:go_app/game-session/client/input/game_session_dto.dart';
 import 'package:go_app/game-session/client/output/create_session_dto.dart';
@@ -69,11 +70,12 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
-  void createSession(UserModel user) {
+  void createSession(UserModel user, [BotDifficulty? difficulty]) {
     if (user.isPresent) {
-      final dto = CreateSessionDto(user.id);
-
-      _webSocketClient.sendJson(_destination.create, dto.toJson());
+      final dto = CreateSessionDto(user.id, difficulty?.toDtoValue());
+      final json = dto.toJson();
+      developer.log("Sending CreateSessionDto: $json");
+      _webSocketClient.sendJson(_destination.create, json);
     }
   }
 

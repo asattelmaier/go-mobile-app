@@ -49,5 +49,10 @@
   "you": "Du",
   "opponent": "Gegner",
   "ready": "Bereit",
-  "waiting": "Warten ..."
+  "waiting": "Warten ...",
+  "playAgainstBot": "Gegen Bot spielen",
+  "difficulty": "Schwierigkeit",
+  "easy": "Einfach",
+  "medium": "Mittel",
+  "hard": "Schwer"
 }

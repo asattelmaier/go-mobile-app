@@ -7,8 +7,9 @@ part 'player_dto.g.dart';
 class PlayerDto {
   final String id;
   final PlayerColor color;
+  final bool isBot;
 
-  const PlayerDto(this.id, this.color);
+  const PlayerDto(this.id, this.color, [this.isBot = false]);
 
   factory PlayerDto.fromJson(Map<String, dynamic> json) =>
       _$PlayerDtoFromJson(json);

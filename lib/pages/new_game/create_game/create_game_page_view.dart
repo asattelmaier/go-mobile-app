@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Router;
 import 'package:go_app/game-session/client/game_session_client.dart';
+import 'package:go_app/game/bot/bot_difficulty.dart';
 import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
@@ -11,7 +12,7 @@ import 'package:go_app/widgets/background/home_background.dart';
 import 'package:go_app/widgets/clay_button/clay_button.dart';
 import 'package:go_app/widgets/clay_text/clay_headline.dart';
 import 'package:go_app/widgets/clay_text/clay_sub_headline.dart';
-import 'package:go_app/widgets/clay_text/clay_text.dart';
+
 import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
 class CreateGamePageView extends StatefulWidget {
@@ -28,9 +29,11 @@ class CreateGamePageView extends StatefulWidget {
 class _CreateGamePageView extends State<CreateGamePageView> {
   final UserController _userController;
   final GameSessionClient _gameSessionClient;
-  
+
   int _boardSize = 9;
   bool _isSuicideAllowed = false;
+  bool _playAgainstBot = false;
+  BotDifficulty _botDifficulty = BotDifficulty.easy;
 
   _CreateGamePageView(this._gameSessionClient, this._userController);
 
@@ -71,7 +74,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
                         ],
                       ),
                       SizedBox(height: 32),
-                      
+
                       // Suicide Rule Section
                       ClaySubHeadline(l10n.isSuicideAllowed),
                       SizedBox(height: 16),
@@ -83,6 +86,37 @@ class _CreateGamePageView extends State<CreateGamePageView> {
                           _buildSuicideButton(false, l10n.no, theme),
                         ],
                       ),
+                      SizedBox(height: 32),
+
+                      // Bot Mode Section
+                      ClaySubHeadline(l10n.playAgainstBot),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildBooleanButton(_playAgainstBot, true, l10n.yes,
+                              theme, (val) => setState(() => _playAgainstBot = val)),
+                          SizedBox(width: 12),
+                          _buildBooleanButton(_playAgainstBot, false, l10n.no,
+                              theme, (val) => setState(() => _playAgainstBot = val)),
+                        ],
+                      ),
+
+                      if (_playAgainstBot) ...[
+                        SizedBox(height: 32),
+                        ClaySubHeadline(l10n.difficulty),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildDifficultyButton(BotDifficulty.easy, theme),
+                            SizedBox(width: 12),
+                            _buildDifficultyButton(BotDifficulty.medium, theme),
+                            SizedBox(width: 12),
+                            _buildDifficultyButton(BotDifficulty.hard, theme),
+                          ],
+                        )
+                      ]
                     ],
                   ),
                   footer: Column(
@@ -134,8 +168,6 @@ class _CreateGamePageView extends State<CreateGamePageView> {
           _boardSize = size;
         });
       },
-      // Using a slightly different style for unselected if needed, 
-      // but standard ClayButton handles color well.
     );
   }
 
@@ -155,14 +187,44 @@ class _CreateGamePageView extends State<CreateGamePageView> {
     );
   }
 
+  Widget _buildBooleanButton(bool groupValue, bool value, String label,
+      GoTheme theme, Function(bool) onChanged) {
+    final isSelected = groupValue == value;
+    return ClayButton(
+      text: label,
+      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+      textColor: isSelected ? Colors.white : theme.colorScheme.onSurface,
+      width: 100,
+      height: 50,
+      onTap: () {
+        onChanged(value);
+      },
+    );
+  }
+
+  Widget _buildDifficultyButton(BotDifficulty difficulty, GoTheme theme) {
+    final isSelected = _botDifficulty == difficulty;
+    return ClayButton(
+      text: difficulty.localizedName(context),
+      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+      textColor: isSelected ? Colors.white : theme.colorScheme.onSurface,
+      width: 80,
+      height: 50,
+      onTap: () {
+        setState(() {
+          _botDifficulty = difficulty;
+        });
+      },
+    );
+  }
+
   void _onCreateGame() {
-      Router.push(
-          context,
-          LobbyPageView(
-              _gameSessionClient, 
-              _userController, 
-              SettingsModel(_boardSize, _isSuicideAllowed)
-          )
-      );
+    Router.push(
+        context,
+        LobbyPageView(
+            _gameSessionClient,
+            _userController,
+            SettingsModel(_boardSize, _isSuicideAllowed),
+            _playAgainstBot ? _botDifficulty : null));
   }
 }
