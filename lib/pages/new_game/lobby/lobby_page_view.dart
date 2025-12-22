@@ -34,12 +34,12 @@ class LobbyPageView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     if (_userController.isUserLoggedIn) {
-      _gameSessionClient.createSession(_userController.user, _botDifficulty);
+      _gameSessionClient.createSession(_userController.user, _botDifficulty, _settings.boardSize);
     }
 
     if (!_userController.isUserLoggedIn) {
       _userController.createGuestUser().then(
-          (user) => _gameSessionClient.createSession(user, _botDifficulty));
+          (user) => _gameSessionClient.createSession(user, _botDifficulty, _settings.boardSize));
     }
 
     return StreamBuilder<GameSessionModel>(

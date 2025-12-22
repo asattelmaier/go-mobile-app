@@ -70,9 +70,9 @@ class GameSessionClient {
         .map(_toGameSession);
   }
 
-  void createSession(UserModel user, [BotDifficulty? difficulty]) {
+  void createSession(UserModel user, [BotDifficulty? difficulty, int? boardSize]) {
     if (user.isPresent) {
-      final dto = CreateSessionDto(user.id, difficulty?.toDtoValue());
+      final dto = CreateSessionDto(user.id, difficulty?.toDtoValue(), boardSize);
       final json = dto.toJson();
       developer.log("Sending CreateSessionDto: $json");
       _webSocketClient.sendJson(_destination.create, json);
