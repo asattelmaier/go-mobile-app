@@ -31,7 +31,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
   final GameSessionClient _gameSessionClient;
 
   int _boardSize = 9;
-  bool _isSuicideAllowed = false;
+
   bool _playAgainstBot = false;
   BotDifficulty _botDifficulty = BotDifficulty.easy;
 
@@ -75,18 +75,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
                       ),
                       SizedBox(height: 32),
 
-                      // Suicide Rule Section
-                      ClaySubHeadline(l10n.isSuicideAllowed),
-                      SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildSuicideButton(true, l10n.yes, theme),
-                          SizedBox(width: 12),
-                          _buildSuicideButton(false, l10n.no, theme),
-                        ],
-                      ),
-                      SizedBox(height: 32),
+
 
                       // Bot Mode Section
                       ClaySubHeadline(l10n.playAgainstBot),
@@ -171,21 +160,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
     );
   }
 
-  Widget _buildSuicideButton(bool value, String label, GoTheme theme) {
-    final isSelected = _isSuicideAllowed == value;
-    return ClayButton(
-      text: label,
-      color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
-      textColor: isSelected ? Colors.white : theme.colorScheme.onSurface,
-      width: 100,
-      height: 50,
-      onTap: () {
-        setState(() {
-          _isSuicideAllowed = value;
-        });
-      },
-    );
-  }
+
 
   Widget _buildBooleanButton(bool groupValue, bool value, String label,
       GoTheme theme, Function(bool) onChanged) {
@@ -224,7 +199,7 @@ class _CreateGamePageView extends State<CreateGamePageView> {
         LobbyPageView(
             _gameSessionClient,
             _userController,
-            SettingsModel(_boardSize, _isSuicideAllowed),
+            SettingsModel(_boardSize),
             _playAgainstBot ? _botDifficulty : null));
   }
 }

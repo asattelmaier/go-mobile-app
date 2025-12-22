@@ -98,7 +98,7 @@ class LobbyPageView extends StatelessWidget {
                               ClayHeadline(l10n.lobby),
                               SizedBox(height: 8),
                               Text(
-                                "${_settings.boardSize}x${_settings.boardSize} • ${l10n.isSuicideAllowed}: ${_settings.isSuicideAllowed ? l10n.yes : l10n.no}",
+                                "${_settings.boardSize}x${_settings.boardSize}",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: theme.fontFamily,

@@ -5,13 +5,11 @@ part 'settings_dto.g.dart';
 @JsonSerializable()
 class SettingsDto {
   final int boardSize;
-  final bool isSuicideAllowed;
 
-  const SettingsDto(this.boardSize, this.isSuicideAllowed);
+  const SettingsDto(this.boardSize);
 
   const SettingsDto.empty()
-      : this.boardSize = 0,
-        this.isSuicideAllowed = false;
+      : this.boardSize = 0;
 
   factory SettingsDto.fromJson(Map<String, dynamic> json) =>
       _$SettingsDtoFromJson(json);

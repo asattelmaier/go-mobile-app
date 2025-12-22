@@ -30,7 +30,7 @@ void main() {
       final isSizeFive = predicate<CreateDto>((createGame) {
         return createGame.command.settings.boardSize == 5;
       });
-      final settings = SettingsModel(5, false);
+      final settings = SettingsModel(5);
       final client = createGameClient(gameSessionController);
 
       client.create(settings);
