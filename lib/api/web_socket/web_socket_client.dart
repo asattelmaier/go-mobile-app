@@ -22,7 +22,7 @@ class WebSocketClient {
       onConnect: onConnect,
       onWebSocketError: onWebSocketError,
       onStompError: onStompError,
-      webSocketConnectHeaders: headers,
+      stompConnectHeaders: headers,
     );
 
     _stompClient = StompClient(config: stompClientConfig);
