@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/game/board/intersection/state/state_model.dart';
 import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
-import 'package:go_app/game/client/common/state_dto.dart';
+import 'package:session_server_client/api.dart'; // IntersectionDtoStateEnum
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'state_model_test.mocks.dart';
@@ -34,7 +34,7 @@ void main() {
 
   group('fromDto', () {
     test('returns a black stone if dto is black', () {
-      final dto = StateDto.Black;
+      final dto = IntersectionDtoStateEnum.black;
 
       final state = StateModel.fromDto(dto);
 
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('returns a white stone if dto is white', () {
-      final dto = StateDto.White;
+      final dto = IntersectionDtoStateEnum.white;
 
       final state = StateModel.fromDto(dto);
 
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('returns a empty state if dto is empty', () {
-      final dto = StateDto.Empty;
+      final dto = IntersectionDtoStateEnum.empty;
 
       final state = StateModel.fromDto(dto);
 
@@ -67,7 +67,7 @@ void main() {
       when(stone.isWhite).thenReturn(false);
       final dto = state.toDto();
 
-      expect(dto, StateDto.Black);
+      expect(dto, IntersectionDtoStateEnum.black);
     });
 
     test('creates an white dto if stone is white', () {
@@ -78,7 +78,7 @@ void main() {
       when(stone.isWhite).thenReturn(true);
       final dto = state.toDto();
 
-      expect(dto, StateDto.White);
+      expect(dto, IntersectionDtoStateEnum.white);
     });
 
     test('creates an empty dto if state is empty', () {
@@ -89,7 +89,7 @@ void main() {
       when(stone.isBlack).thenReturn(false);
       final dto = state.toDto();
 
-      expect(dto, StateDto.Empty);
+      expect(dto, IntersectionDtoStateEnum.empty);
     });
   });
 }

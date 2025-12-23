@@ -1,5 +1,5 @@
-import 'package:go_app/game-session/client/input/game_session_dto.dart';
 import 'package:go_app/game-session/player/session_player_model.dart';
+import 'package:session_server_client/api.dart';
 
 class GameSessionModel {
   final String id;
@@ -7,12 +7,12 @@ class GameSessionModel {
 
   const GameSessionModel(this.id, this.players);
 
-  factory GameSessionModel.fromDto(GameSessionDto dto) {
-    final players = dto.players.map((player) {
+  factory GameSessionModel.fromDto(SessionDto dto) {
+    final players = (dto.players ?? []).map((player) {
       return SessionPlayerModel.fromDto(player);
     }).toList();
 
-    return GameSessionModel(dto.id, players);
+    return GameSessionModel(dto.id ?? "", players);
   }
 
   const GameSessionModel.empty()

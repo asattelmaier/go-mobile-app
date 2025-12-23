@@ -36,9 +36,12 @@ class _LobbyPageViewState extends State<LobbyPageView> {
   bool _hasNavigated = false;
   bool _sessionCreated = false;
 
+  late final Stream<GameSessionModel> _createdStream;
+
   @override
   void initState() {
     super.initState();
+    _createdStream = widget._gameSessionClient.created;
     _createSession();
   }
 
@@ -47,11 +50,13 @@ class _LobbyPageViewState extends State<LobbyPageView> {
     _sessionCreated = true;
 
     if (widget._userController.isUserLoggedIn) {
-      widget._gameSessionClient.createSession(
-          widget._userController.user, widget._botDifficulty, widget._settings.boardSize);
+      widget._gameSessionClient.createSession(widget._userController.user,
+          widget._botDifficulty, widget._settings.boardSize);
     } else {
-      widget._userController.createGuestUser().then((user) => widget._gameSessionClient
-          .createSession(user, widget._botDifficulty, widget._settings.boardSize));
+      widget._userController.createGuestUser().then((user) => widget
+          ._gameSessionClient
+          .createSession(
+              user, widget._botDifficulty, widget._settings.boardSize));
     }
   }
 
@@ -62,7 +67,7 @@ class _LobbyPageViewState extends State<LobbyPageView> {
 
     return StreamBuilder<GameSessionModel>(
         initialData: GameSessionModel.empty(),
-        stream: widget._gameSessionClient.created,
+        stream: _createdStream,
         builder: (_, gameSessionModelSnapshot) {
           final gameSessionId = gameSessionModelSnapshot.data!.id;
           final gameSession = gameSessionModelSnapshot.data!;
@@ -79,8 +84,8 @@ class _LobbyPageViewState extends State<LobbyPageView> {
                           gameSession.players.firstWhere(
                               (p) => p.id == widget._userController.user.id,
                               orElse: () => gameSession.players.first)),
-                      widget._userController,
-                      widget._settings));
+                      widget._gameSessionClient,
+                      widget._userController));
             });
           }
 

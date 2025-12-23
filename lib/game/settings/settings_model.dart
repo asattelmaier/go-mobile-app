@@ -1,4 +1,4 @@
-import 'package:go_app/game/client/common/settings_dto.dart';
+import 'package:session_server_client/api.dart';
 
 class SettingsModel {
   final int boardSize;
@@ -9,7 +9,7 @@ class SettingsModel {
       : this.boardSize = 0;
 
   factory SettingsModel.fromDto(SettingsDto dto) =>
-      SettingsModel(dto.boardSize);
+      SettingsModel(dto.boardSize ?? 19);
 
-  SettingsDto toDto() => SettingsDto(boardSize);
+  SettingsDto toDto() => SettingsDto(boardSize: boardSize);
 }

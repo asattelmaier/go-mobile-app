@@ -1,8 +1,7 @@
-import 'package:go_app/game-session/client/input/player_dto.dart';
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game/player/player_color.dart';
 
 class PlayerModel {
-  // TODO: Check why an unknown player can be created, this actually makes no sense.
   static const String unknownId = "unknown";
   final String id;
   final PlayerColor color;
@@ -11,11 +10,16 @@ class PlayerModel {
   const PlayerModel(this.id, this.color, [this.isBot = false]);
 
   factory PlayerModel.fromDto(PlayerDto dto) {
-    return PlayerModel(dto.id, dto.color, dto.isBot);
+    final color = PlayerColor.values.firstWhere(
+        (e) => e.name.toUpperCase() == (dto.color ?? "").toUpperCase(),
+        orElse: () => PlayerColor.Empty);
+
+    return PlayerModel(dto.id ?? unknownId, color, dto.isBot ?? false);
   }
 
   PlayerDto toDto() {
-    return PlayerDto(id, color, isBot);
+    return PlayerDto(
+        id: id, color: color.name.toUpperCase(), isBot: isBot);
   }
 
   bool get isBlack => color == PlayerColor.Black;

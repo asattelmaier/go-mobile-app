@@ -1,4 +1,4 @@
-import 'package:go_app/game/client/common/state_dto.dart';
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game/player/player_color.dart';
 import 'package:go_app/game/board/intersection/state/stone/stone_model.dart';
 
@@ -11,12 +11,12 @@ class StateModel {
 
   bool get isEmpty => !stone.isBlack && !stone.isWhite;
 
-  factory StateModel.fromDto(StateDto dto) {
+  factory StateModel.fromDto(IntersectionDtoStateEnum dto) {
     switch (dto) {
-      case StateDto.Black:
+      case IntersectionDtoStateEnum.black:
         return StateModel(StoneModel(PlayerColor.Black));
 
-      case StateDto.White:
+      case IntersectionDtoStateEnum.white:
         return StateModel(StoneModel(PlayerColor.White));
 
       default:
@@ -24,15 +24,15 @@ class StateModel {
     }
   }
 
-  StateDto toDto() {
+  IntersectionDtoStateEnum toDto() {
     if (stone.isWhite) {
-      return StateDto.White;
+      return IntersectionDtoStateEnum.white;
     }
 
     if (stone.isBlack) {
-      return StateDto.Black;
+      return IntersectionDtoStateEnum.black;
     }
 
-    return StateDto.Empty;
+    return IntersectionDtoStateEnum.empty;
   }
 }

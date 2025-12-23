@@ -52,3 +52,6 @@ lib/l10n/generated/
 
 # Private Keys and Certificates
 secrets/
+
+# Generated Client
+packages/session_server_client/

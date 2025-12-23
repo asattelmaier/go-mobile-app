@@ -4,7 +4,7 @@ import 'package:go_app/game/client/game_client.dart';
 import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
 import 'package:go_app/game/player/player_model.dart';
-import 'package:go_app/game/settings/settings_model.dart';
+
 import 'package:go_app/game-session/player/session_player_model.dart';
 
 class GameController {
@@ -21,7 +21,7 @@ class GameController {
 
   bool get isGameOver => _game.isGameEnded;
 
-  bool get shouldCreateGame => !isPlaying && !_game.isGameEnded && isPlayersTurn;
+
 
   EndGameModel get endGame => _endGame;
 
@@ -29,9 +29,7 @@ class GameController {
 
   PlayerModel get activePlayer => _game.activePlayer;
 
-  void create(SettingsModel settings) {
-    _client.create(settings);
-  }
+
 
   void play(LocationModel location) {
     if (!isGameOver && isPlayersTurn) {

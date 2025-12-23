@@ -517,6 +517,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  session_server_client:
+    dependency: "direct main"
+    description:
+      path: "packages/session_server_client"
+      relative: true
+    source: path
+    version: "0.0.1"
   shelf:
     dependency: transitive
     description:

@@ -1,4 +1,4 @@
-import 'package:go_app/user/input/tokens_dto.dart';
+import 'package:session_server_client/api.dart';
 
 class TokensModel {
   final String _refreshToken;
@@ -6,10 +6,11 @@ class TokensModel {
 
   const TokensModel(this._refreshToken, this._accessToken);
 
+  // TODO: Define mandatory fields in the client definition. Currently many fields are nullable in the generated DTOs.
   factory TokensModel.fromDto(TokensDto dto) =>
-      TokensModel(dto.refreshToken, dto.accessToken);
+      TokensModel(dto.refreshToken ?? "", dto.accessToken ?? "");
 
-  TokensDto toDto() => TokensDto(_refreshToken, _accessToken);
+  TokensDto toDto() => TokensDto(refreshToken: _refreshToken, accessToken: _accessToken);
 
   const TokensModel.empty()
       : this._refreshToken = "",

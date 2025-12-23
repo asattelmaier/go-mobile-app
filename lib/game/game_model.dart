@@ -1,5 +1,5 @@
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game/board/board_model.dart';
-import 'package:go_app/game/client/common/game_dto.dart';
 import 'package:go_app/game/player/player_color.dart';
 import 'package:go_app/game/player/player_model.dart';
 import 'package:go_app/game/positions/positions_model.dart';
@@ -37,14 +37,14 @@ class GameModel {
   }
 
   factory GameModel.fromDto(GameDto dto) => GameModel(
-      SettingsModel.fromDto(dto.settings),
-      PlayerModel.fromDto(dto.activePlayer),
-      PlayerModel.fromDto(dto.passivePlayer),
+      SettingsModel.fromDto(dto.settings!),
+      PlayerModel.fromDto(dto.activePlayer!),
+      PlayerModel.fromDto(dto.passivePlayer!),
       PositionsModel.fromDto(dto.positions),
-      dto.isGameEnded);
+      dto.isGameEnded ?? false);
 
-  GameDto toDto() => GameDto(settings.toDto(), activePlayer.toDto(),
-      passivePlayer.toDto(), positions.toDto(), isGameEnded);
+  GameDto toDto() => GameDto(settings: settings.toDto(), activePlayer: activePlayer.toDto(),
+      passivePlayer: passivePlayer.toDto(), positions: positions.toDto(), isGameEnded: isGameEnded);
 
   BoardModel get board => positions.board;
 }

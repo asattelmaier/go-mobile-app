@@ -1,4 +1,4 @@
-import 'package:go_app/game/client/input/end_game_dto.dart';
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game/end_game/winner/winner_model.dart';
 
 class EndGameModel {
@@ -23,5 +23,5 @@ class EndGameModel {
   }
 
   factory EndGameModel.fromDto(EndGameDto dto) =>
-      EndGameModel(dto.score, WinnerModel.fromDto(dto.winner));
+      EndGameModel(dto.score ?? 0.0, WinnerModel.fromDto(dto.winner));
 }

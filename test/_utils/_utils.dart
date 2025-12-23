@@ -1,20 +1,15 @@
-import 'package:go_app/game/client/common/game_dto.dart';
-import 'package:go_app/game/client/common/intersection_dto.dart';
-import 'package:go_app/game/client/common/location_dto.dart';
-import 'package:go_app/game-session/client/input/player_dto.dart';
-import 'package:go_app/game/player/player_color.dart';
-import 'package:go_app/game/client/common/settings_dto.dart';
-import 'package:go_app/game/client/common/state_dto.dart';
+import 'package:session_server_client/api.dart';
 
 GameDto createGame([int rows = 0]) {
   return GameDto(
-      const SettingsDto.empty(),
-      const PlayerDto("black", PlayerColor.Black),
-      const PlayerDto("white", PlayerColor.White),
-      [
-    List.generate(
-        rows,
-        (x) => List.generate(
-            rows, (y) => IntersectionDto(LocationDto(x, y), StateDto.Empty)))
-  ], false);
+      settings: SettingsDto(boardSize: rows),
+      activePlayer: PlayerDto(id: "black", color: "BLACK"),
+      passivePlayer: PlayerDto(id: "white", color: "WHITE"),
+      positions: [
+        BoardStateDto(rows: List.generate(
+            rows,
+            (x) => IntersectionRowDto(cols: List.generate(
+                rows, (y) => IntersectionDto(location: LocationDto(x: x, y: y), state: IntersectionDtoStateEnum.empty)))))
+      ],
+      isGameEnded: false);
 }

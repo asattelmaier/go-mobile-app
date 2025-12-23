@@ -1,77 +1,36 @@
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
-import 'package:go_app/game/board/intersection/location/location_model.dart';
-import 'package:go_app/game/client/common/game_dto.dart';
-import 'package:go_app/game/client/input/end_game_dto.dart';
-import 'package:go_app/game/client/output/create_command_dto.dart';
-import 'package:go_app/game/client/output/create_dto.dart';
-import 'package:go_app/game/client/output/pass_command_dto.dart';
-import 'package:go_app/game/client/output/pass_dto.dart';
-import 'package:go_app/game/client/output/play_command_dto.dart';
-import 'package:go_app/game/client/output/play_dto.dart';
 import 'package:go_app/game/end_game/end_game_model.dart';
 import 'package:go_app/game/game_model.dart';
-import 'package:go_app/game/settings/settings_model.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:go_app/game/board/intersection/location/location_model.dart';
 
 class GameClient {
-  final GameSessionController _gameSessionController;
-  
-  late final ValueStream<GameModel> game;
-  late final ValueStream<EndGameModel> endGame;
+  final GameSessionController _controller;
 
-  GameClient(this._gameSessionController) {
-    game = _gameSessionController.messages
-        .where(_isGameDto)
-        .map(_toGameDto)
-        .map(GameModel.fromDto)
-        .shareValue();
+  GameClient(this._controller);
 
-    endGame = _gameSessionController.messages
-        .where(_isEndGameDto)
-        .map(_toEndGameDto)
-        .map(EndGameModel.fromDto)
-        .shareValue();
-  }
+  Stream<GameModel> get game => _controller.gameUpdates
+      .map((dto) => GameModel.fromDto(dto));
 
-  void create(SettingsModel settings) {
-    final command = CreateCommandDto(settings.toDto());
-    final create = CreateDto(command);
-    _gameSessionController.updateSession(create);
-  }
+  Stream<EndGameModel> get endGame => _controller.gameEnded
+      .map((dto) => EndGameModel.fromDto(dto));
+
 
   void play(LocationModel location, GameModel game) {
-    final command = PlayCommandDto(location.toDto());
-    final play = PlayDto(command, game.toDto());
-    _gameSessionController.updateSession(play);
-  }
-
-  void pass(GameModel game) {
-    final command = PassCommandDto();
-    final pass = PassDto(command, game.toDto());
-    _gameSessionController.updateSession(pass);
-  }
-
-  bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);
-
-  GameDto _toGameDto(Map<String, dynamic> json) {
-    try {
-      return GameDto.fromJson(json);
-    } catch (e, stack) {
-      print("GAME_CLIENT ERROR: Failed to parse GameDto: $e");
-      print(stack);
-      rethrow;
+    if (_controller.currentPlayer.color == game.activePlayer.color) {
+      final move = DeviceMove(
+          type: DeviceMoveTypeEnum.PLAY,
+          x: location.x,
+          y: location.y);
+      _controller.sendMove(move);
     }
   }
 
-  bool _isEndGameDto(Map<String, dynamic> json) => EndGameDto.isEndGameDto(json);
-
-  EndGameDto _toEndGameDto(Map<String, dynamic> json) {
-    try {
-      return EndGameDto.fromJson(json);
-    } catch (e, stack) {
-      print("GAME_CLIENT ERROR: Failed to parse EndGameDto: $e");
-      print(stack);
-      rethrow;
+  void pass(GameModel game) {
+    if (_controller.currentPlayer.color == game.activePlayer.color) {
+      final move = DeviceMove(
+          type: DeviceMoveTypeEnum.PASS);
+      _controller.sendMove(move);
     }
   }
 }

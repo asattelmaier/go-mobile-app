@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
+import 'package:session_server_client/api.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_app/game-session/client/game_session_client.dart';
@@ -26,7 +27,8 @@ void main() {
       final gameSession = MockGameSessionModel();
       final currentPlayer = MockSessionPlayerModel();
       when(gameSession.id).thenReturn("some-id");
-      when(client.messages("some-id")).thenAnswer((_) => Stream<Map<String, dynamic>>.value(<String, dynamic>{}).shareValueSeeded(<String, dynamic>{}));
+      when(client.gameUpdates("some-id")).thenAnswer((_) => Stream<GameDto>.value(GameDto()).shareValueSeeded(GameDto()));
+      when(client.gameEnded("some-id")).thenAnswer((_) => Stream<EndGameDto>.value(EndGameDto(score: 0.0, winner: [])).shareValueSeeded(EndGameDto(score: 0.0, winner: [])));
       final controller = GameSessionController(client, gameSession, currentPlayer);
 
       when(gameSession.id).thenReturn("some-id");

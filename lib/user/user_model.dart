@@ -1,4 +1,4 @@
-import 'package:go_app/user/input/user_dto.dart';
+import 'package:session_server_client/api.dart';
 
 class UserModel {
   final String _id;
@@ -6,9 +6,9 @@ class UserModel {
 
   const UserModel(this._id, this._username);
 
-  factory UserModel.fromDto(UserDto dto) => UserModel(dto.id, dto.username);
+  factory UserModel.fromDto(UserDto dto) => UserModel(dto.id ?? "", dto.username ?? "");
 
-  UserDto toDto() => UserDto(_id, _username);
+  UserDto toDto() => UserDto(id: _id, username: _username);
 
   const UserModel.empty()
       : this._id = "",

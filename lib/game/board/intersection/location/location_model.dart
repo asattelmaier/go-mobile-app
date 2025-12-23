@@ -1,4 +1,4 @@
-import 'package:go_app/game/client/common/location_dto.dart';
+import 'package:session_server_client/api.dart';
 
 class LocationModel {
   final int x;
@@ -6,7 +6,7 @@ class LocationModel {
 
   const LocationModel(this.x, this.y);
 
-  factory LocationModel.fromDto(LocationDto dto) => LocationModel(dto.x, dto.y);
+  factory LocationModel.fromDto(LocationDto dto) => LocationModel(dto.x!, dto.y!);
 
-  LocationDto toDto() => LocationDto(x, y);
+  LocationDto toDto() => LocationDto(x: x, y: y);
 }

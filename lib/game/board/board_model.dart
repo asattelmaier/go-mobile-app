@@ -1,5 +1,5 @@
+import 'package:session_server_client/api.dart';
 import 'package:go_app/game/board/intersection/intersection_model.dart';
-import 'package:go_app/game/client/common/intersection_dto.dart';
 
 class BoardModel {
   final List<List<IntersectionModel>> intersections;
@@ -8,12 +8,12 @@ class BoardModel {
 
   const BoardModel.empty() : this.intersections = const [];
 
-  factory BoardModel.fromDto(List<List<IntersectionDto>> dto) => BoardModel(dto
-      .map((e) => e.map((e) => IntersectionModel.fromDto(e)).toList())
+  factory BoardModel.fromDto(BoardStateDto dto) => BoardModel(dto.rows
+      .map((row) => row.cols.map((col) => IntersectionModel.fromDto(col)).toList())
       .toList());
 
-  List<List<IntersectionDto>> toDto() =>
-      intersections.map((e) => e.map((e) => e.toDto()).toList()).toList();
+  BoardStateDto toDto() =>
+      BoardStateDto(rows: intersections.map((row) => IntersectionRowDto(cols: row.map((col) => col.toDto()).toList())).toList());
 
   int get size => intersections.length;
 

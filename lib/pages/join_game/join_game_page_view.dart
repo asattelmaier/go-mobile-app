@@ -70,6 +70,7 @@ class _JoinGamePageView extends State<JoinGamePageView> {
             GamePageView(
                 GameSessionController(widget._gameSessionClient, gameSession,
                     gameSession.players.last),
+                widget._gameSessionClient,
                 widget._userController));
       }
     });
