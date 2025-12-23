@@ -10,6 +10,7 @@ import 'package:go_app/game-session/client/output/create_session_dto.dart';
 import 'package:go_app/game-session/game_session_model.dart';
 import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/user/user_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 class GameSessionClient {
   final WebSocketClient _webSocketClient;
@@ -107,7 +108,14 @@ class GameSessionClient {
   }
 
   Stream<Map<String, dynamic>> messages(String gameSessionId) {
-    return _webSocketClient.subscribe(_destination.updated(gameSessionId));
+    return MergeStream([
+      _webSocketClient
+          .subscribe(_destination.updated(gameSessionId))
+          .map(_logJson("updated")),
+      _webSocketClient
+          .subscribe(_destination.endgame(gameSessionId))
+          .map(_logJson("endgame")),
+    ]);
   }
 
   static GameSessionModel _toGameSession(Map<String, dynamic> json) {
@@ -116,7 +124,7 @@ class GameSessionClient {
 
   Map<String, dynamic> Function(Map<String, dynamic>) _logJson(String context) {
     return (Map<String, dynamic> json) {
-      developer.log('$context: ${json.toString()}');
+      developer.log('$context: $json', name: 'GameSessionClient');
       return json;
     };
   }
@@ -127,6 +135,7 @@ class GameSessionClient {
       _destination.terminated(gameSessionId),
       _destination.update(gameSessionId),
       _destination.updated(gameSessionId),
+      _destination.endgame(gameSessionId),
       _destination.join(gameSessionId),
       _destination.playerJoined(gameSessionId)
     ]);

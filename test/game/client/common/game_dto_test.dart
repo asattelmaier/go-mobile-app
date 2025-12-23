@@ -5,8 +5,8 @@ void main() {
   group('isGameDto', () {
     test('returns true if JSON is a GameDto', () {
       Map<String, dynamic> json = {
-        "activePlayer": 'Black',
-        "passivePlayer": 'White',
+        "activePlayer": {},
+        "passivePlayer": {},
         "positions": []
       };
 
@@ -25,8 +25,8 @@ void main() {
 
     test('returns false if JSON is not a GameDto', () {
       Map<String, dynamic> json = {
-        "activePlayer": 'Black',
-        "passivePlayer": 'White',
+        "activePlayer": {},
+        "passivePlayer": {},
         "test": []
       };
 

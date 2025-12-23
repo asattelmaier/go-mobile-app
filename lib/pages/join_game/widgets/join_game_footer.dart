@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart' hide Router;
-import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/l10n/generated/app_localizations.dart';
-import 'package:go_app/pages/home/home_page_view.dart';
-import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
-import 'package:go_app/user/user_controller.dart';
 import 'package:go_app/widgets/clay_button/clay_button.dart';
 
 class JoinGameFooter extends StatelessWidget {

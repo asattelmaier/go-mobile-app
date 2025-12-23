@@ -14,66 +14,64 @@ import 'package:go_app/game/settings/settings_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameClient {
-  final ValueStream<Map<String, dynamic>> _messages;
   final GameSessionController _gameSessionController;
+  
+  late final ValueStream<GameModel> game;
+  late final ValueStream<EndGameModel> endGame;
 
-  GameClient(this._gameSessionController)
-      : this._messages = _gameSessionController.messages;
-
-  ValueStream<GameModel> get game {
-    return _messages
+  GameClient(this._gameSessionController) {
+    game = _gameSessionController.messages
         .where(_isGameDto)
         .map(_toGameDto)
-        .map(_toGame)
-        .publishValue()
-          ..connect();
-  }
+        .map(GameModel.fromDto)
+        .shareValue();
 
-  ValueStream<EndGameModel> get endGame {
-    return _messages
+    endGame = _gameSessionController.messages
         .where(_isEndGameDto)
         .map(_toEndGameDto)
-        .map(_toEndGame)
-        .publishValue()
-          ..connect();
+        .map(EndGameModel.fromDto)
+        .shareValue();
   }
 
-  create(SettingsModel settings) {
+  void create(SettingsModel settings) {
     final command = CreateCommandDto(settings.toDto());
     final create = CreateDto(command);
-
     _gameSessionController.updateSession(create);
   }
 
-  play(LocationModel location, GameModel game) {
+  void play(LocationModel location, GameModel game) {
     final command = PlayCommandDto(location.toDto());
     final play = PlayDto(command, game.toDto());
-
     _gameSessionController.updateSession(play);
   }
 
-  pass(GameModel game) {
+  void pass(GameModel game) {
     final command = PassCommandDto();
     final pass = PassDto(command, game.toDto());
-
     _gameSessionController.updateSession(pass);
   }
 
   bool _isGameDto(Map<String, dynamic> json) => GameDto.isGameDto(json);
 
   GameDto _toGameDto(Map<String, dynamic> json) {
-    return GameDto.fromJson(json);
+    try {
+      return GameDto.fromJson(json);
+    } catch (e, stack) {
+      print("GAME_CLIENT ERROR: Failed to parse GameDto: $e");
+      print(stack);
+      rethrow;
+    }
   }
 
-  GameModel _toGame(GameDto dto) => GameModel.fromDto(dto);
-
-  bool _isEndGameDto(Map<String, dynamic> json) {
-    return EndGameDto.isEndGameDto(json);
-  }
+  bool _isEndGameDto(Map<String, dynamic> json) => EndGameDto.isEndGameDto(json);
 
   EndGameDto _toEndGameDto(Map<String, dynamic> json) {
-    return EndGameDto.fromJson(json);
+    try {
+      return EndGameDto.fromJson(json);
+    } catch (e, stack) {
+      print("GAME_CLIENT ERROR: Failed to parse EndGameDto: $e");
+      print(stack);
+      rethrow;
+    }
   }
-
-  EndGameModel _toEndGame(EndGameDto dto) => EndGameModel.fromDto(dto);
 }

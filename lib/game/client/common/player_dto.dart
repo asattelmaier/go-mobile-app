@@ -1,4 +1,0 @@
-enum PlayerDto {
-  Black,
-  White
-}

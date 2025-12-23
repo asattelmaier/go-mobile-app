@@ -12,18 +12,20 @@ class GameModel {
   final PositionsModel positions;
   final bool isPlaying;
   final int created;
+  final bool isGameEnded;
 
-  GameModel(
-      this.settings, this.activePlayer, this.passivePlayer, this.positions)
-      : this.isPlaying = true,
+  GameModel(this.settings, this.activePlayer, this.passivePlayer,
+      this.positions, [this.isGameEnded = false])
+      : this.isPlaying = !isGameEnded,
         this.created = DateTime.now().millisecondsSinceEpoch;
 
   const GameModel.empty()
       : this.settings = const SettingsModel.empty(),
-        this.activePlayer = const PlayerModel(PlayerColor.Black),
-        this.passivePlayer = const PlayerModel(PlayerColor.White),
+        this.activePlayer = const PlayerModel(PlayerModel.unknownId, PlayerColor.Black),
+        this.passivePlayer = const PlayerModel(PlayerModel.unknownId, PlayerColor.White),
         this.positions = const PositionsModel.empty(),
         this.isPlaying = false,
+        this.isGameEnded = false,
         this.created = 0;
 
   factory GameModel.fromNullable(GameModel? game) {
@@ -38,10 +40,11 @@ class GameModel {
       SettingsModel.fromDto(dto.settings),
       PlayerModel.fromDto(dto.activePlayer),
       PlayerModel.fromDto(dto.passivePlayer),
-      PositionsModel.fromDto(dto.positions));
+      PositionsModel.fromDto(dto.positions),
+      dto.isGameEnded);
 
   GameDto toDto() => GameDto(settings.toDto(), activePlayer.toDto(),
-      passivePlayer.toDto(), positions.toDto());
+      passivePlayer.toDto(), positions.toDto(), isGameEnded);
 
   BoardModel get board => positions.board;
 }

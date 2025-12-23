@@ -19,9 +19,9 @@ class GameController {
 
   bool get isPlayersTurn => player.color == _game.activePlayer.color;
 
-  bool get isGameOver => endGame.created > _game.created;
+  bool get isGameOver => _game.isGameEnded;
 
-  bool get shouldCreateGame => !isPlaying && isPlayersTurn;
+  bool get shouldCreateGame => !isPlaying && !_game.isGameEnded && isPlayersTurn;
 
   EndGameModel get endGame => _endGame;
 

@@ -3,14 +3,14 @@ import 'package:go_app/game/end_game/winner/winner_model.dart';
 
 class EndGameModel {
   final WinnerModel winner;
-  final int score;
+  final double score;
   final int created;
 
   EndGameModel(this.score, this.winner)
       : this.created = DateTime.now().millisecondsSinceEpoch;
 
   const EndGameModel.empty()
-      : this.score = 0,
+      : this.score = 0.0,
         this.winner = const WinnerModel.empty(),
         this.created = 0;
 

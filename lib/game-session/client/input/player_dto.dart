@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'player_dto.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class PlayerDto {
   final String id;
   final PlayerColor color;
@@ -13,4 +13,6 @@ class PlayerDto {
 
   factory PlayerDto.fromJson(Map<String, dynamic> json) =>
       _$PlayerDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PlayerDtoToJson(this);
 }

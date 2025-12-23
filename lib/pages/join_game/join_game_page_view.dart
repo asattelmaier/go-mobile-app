@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart' hide Router;
+
 import 'package:go_app/game-session/client/game_session_client.dart';
 import 'package:go_app/game-session/game_session_controller.dart';
 import 'package:go_app/game-session/game_session_model.dart';
@@ -23,19 +24,17 @@ class JoinGamePageView extends StatefulWidget {
 
   @override
   State<JoinGamePageView> createState() =>
-      _JoinGamePageView(_gameSessionClient, _userController);
+      _JoinGamePageView();
 }
 
 class _JoinGamePageView extends State<JoinGamePageView> {
-  final GameSessionClient _gameSessionClient;
-  final UserController _userController;
   final _textEditingController = TextEditingController();
   List<GameSessionModel> _gameSessions = [];
   Timer? _pollTimer;
   StreamSubscription? _joinedSubscription;
   static const int _pollIntervalSeconds = 5;
 
-  _JoinGamePageView(this._gameSessionClient, this._userController);
+
 
   @override
   void initState() {
@@ -59,22 +58,25 @@ class _JoinGamePageView extends State<JoinGamePageView> {
     });
   }
 
+  bool _hasNavigated = false;
+
   void _subscribeToJoinedGame() {
     _joinedSubscription =
-        _gameSessionClient.joined.listen((GameSessionModel gameSession) {
-      if (gameSession.players.isNotEmpty) {
+        widget._gameSessionClient.joined.listen((GameSessionModel gameSession) {
+      if (gameSession.players.isNotEmpty && !_hasNavigated) {
+        _hasNavigated = true;
         Router.push(
             context,
             GamePageView(
-                GameSessionController(
-                    _gameSessionClient, gameSession, gameSession.players.last),
-                _userController));
+                GameSessionController(widget._gameSessionClient, gameSession,
+                    gameSession.players.last),
+                widget._userController));
       }
     });
   }
 
   void _fetchGameSessions() {
-    _gameSessionClient.getPendingSessions().then((gameSessions) {
+    widget._gameSessionClient.getPendingSessions().then((gameSessions) {
       if (mounted) {
         setState(() {
           _gameSessions = gameSessions;
@@ -111,18 +113,18 @@ class _JoinGamePageView extends State<JoinGamePageView> {
                       SizedBox(height: 20),
                       ActiveGameList(
                         gameSessions: _gameSessions,
-                        gameSessionClient: _gameSessionClient,
+                        gameSessionClient: widget._gameSessionClient,
                       ),
                     ],
                   ),
                   footer: JoinGameFooter(
                     onTapBack: () {
                       Router.push(context,
-                          HomePageView(_gameSessionClient, _userController));
+                          HomePageView(widget._gameSessionClient, widget._userController));
                     },
                     onTapJoin: () {
                       if (_textEditingController.text.isNotEmpty) {
-                        _gameSessionClient
+                        widget._gameSessionClient
                             .joinSession(_textEditingController.text);
                       }
                     },

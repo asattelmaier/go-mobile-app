@@ -1,4 +1,4 @@
-import 'package:go_app/game/client/common/player_dto.dart';
+import 'package:go_app/game-session/client/input/player_dto.dart';
 import 'package:go_app/game/player/player_model.dart';
 
 class WinnerModel {

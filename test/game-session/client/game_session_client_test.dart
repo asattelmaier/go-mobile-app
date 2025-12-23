@@ -215,20 +215,25 @@ void main() {
   });
 
   group('messages', () {
-    test('returns messages /game/session/some-id/updated', () async {
+    test('returns messages /game/session/some-id/updated and /endgame', () async {
       final userController = MockUserController();
       final httpClient = MockHttpClient();
       final webSocketClient = MockWebSocketClient();
-      final subscription = "/game/session/some-id/updated";
-      final json = {"some": "message"};
+      final updatedSubscription = "/game/session/some-id/updated";
+      final endgameSubscription = "/game/session/some-id/endgame";
+      final updatedJson = {"some": "message"};
+      final endgameJson = {"end": "game"};
       final gameSessionClient =
           GameSessionClient(webSocketClient, httpClient, userController);
 
-      when(webSocketClient.subscribe(subscription))
-          .thenAnswer((_) => Stream.value(json));
-      final message = await gameSessionClient.messages("some-id").first;
+      when(webSocketClient.subscribe(updatedSubscription))
+          .thenAnswer((_) => Stream.value(updatedJson));
+      when(webSocketClient.subscribe(endgameSubscription))
+          .thenAnswer((_) => Stream.value(endgameJson));
 
-      expect(message, json);
+      final messages = await gameSessionClient.messages("some-id").take(2).toList();
+
+      expect(messages, containsAll([updatedJson, endgameJson]));
     });
   });
 
@@ -276,6 +281,7 @@ void main() {
         "/game/session/some-id/terminated",
         "/game/session/some-id/update",
         "/game/session/some-id/updated",
+        "/game/session/some-id/endgame",
         "/game/session/some-id/join",
         "/game/session/some-id/player-joined",
       ];

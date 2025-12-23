@@ -41,8 +41,8 @@ void main() {
       when(game.activePlayer).thenReturn(activePlayer);
       when(activePlayer.color).thenReturn(PlayerColor.Black);
       when(player.color).thenReturn(PlayerColor.Black);
-      when(game.created).thenReturn(2);
       when(endGame.created).thenReturn(0);
+      when(game.isGameEnded).thenReturn(false);
       when(client.play(location, game)).thenReturn(null);
       controller.play(location);
 
@@ -61,8 +61,9 @@ void main() {
       when(game.activePlayer).thenReturn(activePlayer);
       when(activePlayer.color).thenReturn(PlayerColor.Black);
       when(player.color).thenReturn(PlayerColor.Black);
-      when(game.created).thenReturn(1);
+      when(player.color).thenReturn(PlayerColor.Black);
       when(endGame.created).thenReturn(2);
+      when(game.isGameEnded).thenReturn(true);
       when(client.play(location, game)).thenReturn(null);
       controller.play(location);
 
@@ -81,8 +82,8 @@ void main() {
       when(game.activePlayer).thenReturn(activePlayer);
       when(activePlayer.color).thenReturn(PlayerColor.White);
       when(player.color).thenReturn(PlayerColor.Black);
-      when(game.created).thenReturn(2);
       when(endGame.created).thenReturn(0);
+      when(game.isGameEnded).thenReturn(false);
       when(client.play(location, game)).thenReturn(null);
       controller.play(location);
 
@@ -125,29 +126,27 @@ void main() {
   });
 
   group('isGameOver', () {
-    test('game is over if the end game is created after the game', () {
+    test('game is over if game.isGameEnded is true', () {
       final client = MockGameClient();
       final player = MockGameSessionPlayerModel();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
       final controller = GameController(client, player, game, endGame);
 
-      when(game.created).thenReturn(1);
-      when(endGame.created).thenReturn(2);
+      when(game.isGameEnded).thenReturn(true);
       final isGameOver = controller.isGameOver;
 
       expect(isGameOver, true);
     });
 
-    test('game is running if the game is created after the end game', () {
+    test('game is running if game.isGameEnded is false', () {
       final client = MockGameClient();
       final player = MockGameSessionPlayerModel();
       final game = MockGameModel();
       final endGame = MockEndGameModel();
       final controller = GameController(client, player, game, endGame);
 
-      when(game.created).thenReturn(2);
-      when(endGame.created).thenReturn(1);
+      when(game.isGameEnded).thenReturn(false);
       final isGameOver = controller.isGameOver;
 
       expect(isGameOver, false);
@@ -164,6 +163,7 @@ void main() {
       final controller = GameController(client, player, game, endGame);
 
       when(game.isPlaying).thenReturn(false);
+      when(game.isGameEnded).thenReturn(false);
       when(player.color).thenReturn(PlayerColor.Black);
       when(game.activePlayer).thenReturn(activePlayer);
       when(activePlayer.color).thenReturn(PlayerColor.Black);
@@ -198,7 +198,26 @@ void main() {
       final controller = GameController(client, player, game, endGame);
 
       when(game.isPlaying).thenReturn(false);
+      when(game.isGameEnded).thenReturn(false);
       when(player.color).thenReturn(PlayerColor.White);
+      when(game.activePlayer).thenReturn(activePlayer);
+      when(activePlayer.color).thenReturn(PlayerColor.Black);
+      final shouldCreateGame = controller.shouldCreateGame;
+
+      expect(shouldCreateGame, false);
+    });
+
+    test('should not create game because game is ended', () {
+      final client = MockGameClient();
+      final player = MockGameSessionPlayerModel();
+      final activePlayer = MockPlayerModel();
+      final game = MockGameModel();
+      final endGame = MockEndGameModel();
+      final controller = GameController(client, player, game, endGame);
+
+      when(game.isPlaying).thenReturn(false);
+      when(game.isGameEnded).thenReturn(true);
+      when(player.color).thenReturn(PlayerColor.Black);
       when(game.activePlayer).thenReturn(activePlayer);
       when(activePlayer.color).thenReturn(PlayerColor.Black);
       final shouldCreateGame = controller.shouldCreateGame;

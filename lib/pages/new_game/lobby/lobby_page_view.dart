@@ -18,7 +18,7 @@ import 'package:go_app/widgets/clay_text/clay_headline.dart';
 import 'package:go_app/widgets/clay_text/clay_sub_headline.dart';
 import 'package:go_app/widgets/layout/page_layout_grid.dart';
 
-class LobbyPageView extends StatelessWidget {
+class LobbyPageView extends StatefulWidget {
   final GameSessionClient _gameSessionClient;
   final UserController _userController;
   final SettingsModel _settings;
@@ -29,54 +29,61 @@ class LobbyPageView extends StatelessWidget {
       [this._botDifficulty]);
 
   @override
+  State<LobbyPageView> createState() => _LobbyPageViewState();
+}
+
+class _LobbyPageViewState extends State<LobbyPageView> {
+  bool _hasNavigated = false;
+  bool _sessionCreated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _createSession();
+  }
+
+  void _createSession() {
+    if (_sessionCreated) return;
+    _sessionCreated = true;
+
+    if (widget._userController.isUserLoggedIn) {
+      widget._gameSessionClient.createSession(
+          widget._userController.user, widget._botDifficulty, widget._settings.boardSize);
+    } else {
+      widget._userController.createGuestUser().then((user) => widget._gameSessionClient
+          .createSession(user, widget._botDifficulty, widget._settings.boardSize));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = GoTheme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    if (_userController.isUserLoggedIn) {
-      _gameSessionClient.createSession(_userController.user, _botDifficulty, _settings.boardSize);
-    }
-
-    if (!_userController.isUserLoggedIn) {
-      _userController.createGuestUser().then(
-          (user) => _gameSessionClient.createSession(user, _botDifficulty, _settings.boardSize));
-    }
-
     return StreamBuilder<GameSessionModel>(
         initialData: GameSessionModel.empty(),
-        stream: _gameSessionClient.created,
+        stream: widget._gameSessionClient.created,
         builder: (_, gameSessionModelSnapshot) {
           final gameSessionId = gameSessionModelSnapshot.data!.id;
-          final isGameSessionEmpty = gameSessionModelSnapshot.data!.isEmpty;
+          final gameSession = gameSessionModelSnapshot.data!;
 
-          if (gameSessionModelSnapshot.data!.isRunning) {
-             final gameSession = gameSessionModelSnapshot.data!;
-             WidgetsBinding.instance.addPostFrameCallback((_) {
-               Router.push(
-                  context,
-                  GamePageView(
-                      GameSessionController(_gameSessionClient, gameSession,
-                          gameSession.players.firstWhere((p) => p.id == _userController.user.id, orElse: () => gameSession.players.first)),
-                      _userController,
-                      _settings));
-             });
-             return Container(color: Colors.white, child: Center(child: CircularProgressIndicator()));
-          } else if (!isGameSessionEmpty) {
-            _gameSessionClient
-                .playerJoined(gameSessionId)
-                .listen((GameSessionModel gameSession) {
-              _gameSessionClient.terminated(gameSession.id).listen((_) {
-                _gameSessionClient.dispose(gameSession.id);
-              });
+          if (gameSession.isRunning && !_hasNavigated) {
+            _hasNavigated = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               Router.push(
                   context,
                   GamePageView(
-                      GameSessionController(_gameSessionClient, gameSession,
-                          gameSession.players.first),
-                      _userController,
-                      _settings));
+                      GameSessionController(
+                          widget._gameSessionClient,
+                          gameSession,
+                          gameSession.players.firstWhere(
+                              (p) => p.id == widget._userController.user.id,
+                              orElse: () => gameSession.players.first)),
+                      widget._userController,
+                      widget._settings));
             });
           }
+
 
           return Scaffold(
             body: Stack(
@@ -98,7 +105,7 @@ class LobbyPageView extends StatelessWidget {
                               ClayHeadline(l10n.lobby),
                               SizedBox(height: 8),
                               Text(
-                                "${_settings.boardSize}x${_settings.boardSize}",
+                                "${widget._settings.boardSize}x${widget._settings.boardSize}",
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontFamily: theme.fontFamily,
@@ -180,8 +187,8 @@ class LobbyPageView extends StatelessWidget {
                             // Player Status List
                             _buildPlayerStatusRow(
                                 l10n.you,
-                                _userController.user.isPresent
-                                    ? _userController.user.username
+                                widget._userController.user.isPresent
+                                    ? widget._userController.user.username
                                     : "Guest",
                                 true,
                                 l10n.ready,
@@ -198,11 +205,11 @@ class LobbyPageView extends StatelessWidget {
                               height: 60,
                               onTap: () {
                                 if (gameSessionId.isNotEmpty) {
-                                  _gameSessionClient
+                                  widget._gameSessionClient
                                       .terminateSession(gameSessionId);
                                 }
                                 Router.push(context,
-                                    HomePageView(_gameSessionClient, _userController));
+                                    HomePageView(widget._gameSessionClient, widget._userController));
                               },
                             ),
                             SizedBox(height: 40),
