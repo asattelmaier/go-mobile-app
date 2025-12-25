@@ -13,4 +13,7 @@ class IntersectionController {
   }
 
   StateModel get state => _intersection.state;
+
+  int get x => _intersection.location.x;
+  int get y => _intersection.location.y;
 }

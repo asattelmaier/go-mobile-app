@@ -9,7 +9,8 @@ set -e
 SERVER_URL="${1:-http://127.0.0.1:8080}"
 API_DOCS_PATH="/v3/api-docs"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-API_FILE="$SCRIPT_DIR/../api/session-server-api.json"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
+API_FILE="$PROJECT_ROOT/api/session-server-api.json"
 
 echo "=== Update API Spec ==="
 

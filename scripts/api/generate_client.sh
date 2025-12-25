@@ -6,8 +6,9 @@ set -e
 
 # Configuration
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTPUT_DIR="$SCRIPT_DIR/../packages/session_server_client"
-API_FILE="$SCRIPT_DIR/../api/session-server-api.json"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
+OUTPUT_DIR="$PROJECT_ROOT/packages/session_server_client"
+API_FILE="$PROJECT_ROOT/api/session-server-api.json"
 
 echo "=== Session Server Client Generator ==="
 echo "Target: $OUTPUT_DIR"
