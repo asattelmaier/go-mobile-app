@@ -32,7 +32,6 @@
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -55,3 +54,14 @@ secrets/
 
 # Generated Client
 packages/session_server_client/
+
+# Chrome User Data
+.chrome_home/
+
+# Test Driver Tools (Downloader artifacts)
+test_driver/tools/
+
+# Private Keys
+*.pem
+*.key
+test_logs/

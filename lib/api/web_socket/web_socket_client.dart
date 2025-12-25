@@ -12,32 +12,55 @@ class WebSocketClient {
   final Uri _url;
   final List<WebSocketSubscription> _subscriptions = [];
 
+  Completer<void> _connectionCompleter = Completer<void>();
+
   WebSocketClient(this._url);
 
   Future<void> connect(Map<String, String> headers) {
-    final connection = Completer();
-    final onConnect = connection.complete;
-    final stompClientConfig = StompConfig(
-      url: _url.toString(),
-      onConnect: onConnect,
-      onWebSocketError: onWebSocketError,
-      onStompError: onStompError,
-      stompConnectHeaders: headers,
+    if (_stompClient != null && _stompClient!.connected) {
+       log('WebSocketClient: Already connected');
+    }
+
+    // Reset completer if it was already completed (re-connection scenario)
+    if (_connectionCompleter.isCompleted) {
+      _connectionCompleter = Completer<void>();
+    }
+
+    _stompClient = StompClient(
+      config: StompConfig(
+        url: _url.toString(), // Keep _url.toString() as per original
+        onConnect: (frame) {
+          log('WebSocketClient: Connected!');
+          if (!_connectionCompleter.isCompleted) {
+            _connectionCompleter.complete();
+          }
+        },
+        onWebSocketError: (dynamic error) =>
+            log('WebSocketClient: Error: $error'),
+        onStompError: onStompError, 
+        stompConnectHeaders: headers,
+        webSocketConnectHeaders: headers,
+      ),
     );
 
-    _stompClient = StompClient(config: stompClientConfig);
-    _stompClient?.activate();
-
-    return connection.future;
+    _stompClient!.activate();
+    return _connectionCompleter.future;
   }
 
   void send(String destination, [String message = '']) {
+    if (_stompClient == null) {
+       log('WebSocketClient: ERROR - _stompClient is null, cannot send!');
+       return;
+    }
+    if (!_stompClient!.connected) {
+       log('WebSocketClient: ERROR - _stompClient is not connected, cannot send!');
+    }
+    
     if (message.isEmpty) {
       _stompClient?.send(destination: destination);
       return;
     }
 
-    // TODO: Send binary messages instead of string message
     _stompClient?.send(destination: destination, body: message);
   }
 
@@ -52,10 +75,10 @@ class WebSocketClient {
     final stompSubscription = _stompClient?.subscribe(
       destination: destination,
       callback: (frame) {
-        // TODO: The API should send only binary messages
-        final body = frame.body ?? String.fromCharCodes(frame.binaryBody ?? []);
-
-        subscription.add(jsonDecode(body));
+        if (frame.body != null) {
+          final json = jsonDecode(frame.body!);
+          subscription.add(json);
+        }
       },
     );
 
@@ -68,6 +91,10 @@ class WebSocketClient {
           .add(WebSocketStompSubscription(destination, stompSubscription));
     }
 
+    subscription.onCancel = () {
+      stompSubscription?.call();
+    };
+
     return subscription.stream;
   }
 
@@ -76,6 +103,14 @@ class WebSocketClient {
         .where((subscription) =>
             destinations.any((destination) => subscription.has(destination)))
         .map((subscription) => subscription.close()));
+  }
+
+  void disconnect() {
+    for (var sub in _subscriptions) {
+      sub.close();
+    }
+    _subscriptions.clear();
+    _stompClient?.deactivate();
   }
 
   static void onWebSocketError(dynamic message) {

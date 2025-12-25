@@ -42,6 +42,10 @@ class GameSessionClient {
     return Future(() => null);
   }
 
+  void disconnect() {
+    _webSocketClient.disconnect();
+  }
+
   Stream<GameSessionModel> get created {
     return _webSocketClient
         .subscribe(GameSessionClientDestination.created)

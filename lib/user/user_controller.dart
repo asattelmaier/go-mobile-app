@@ -127,4 +127,13 @@ class UserController {
       return UserModel.empty();
     }
   }
+  Future<void> clearSession() async {
+    await _keyChain.remove(_KEY_CHAIN_ACCESS_TOKEN_KEY);
+    await _keyChain.remove(_KEY_CHAIN_REFRESH_TOKEN_KEY);
+    await _keyChain.remove(_KEY_CHAIN_GUEST_ACCESS_TOKEN_KEY);
+    await _keyChain.remove(_KEY_CHAIN_GUEST_REFRESH_TOKEN_KEY);
+    _tokens = TokensModel.empty();
+    _user = UserModel.empty();
+    _apiClient.defaultHeaderMap.remove('Authorization');
+  }
 }

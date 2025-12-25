@@ -12,6 +12,7 @@ class IntersectionView extends StatelessWidget {
   @override
   Widget build(_) => Flexible(
         child: GestureDetector(
+            key: Key('intersection_${_controller.x}_${_controller.y}'),
             onTap: () {
               _controller.play();
             },

@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   generate-client:
@@ -14,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate Client
-        run: ./scripts/generate_client.sh
+        run: ./scripts/api/generate_client.sh
 
       - name: Upload Client Artifact
         uses: actions/upload-artifact@v4
@@ -49,8 +50,15 @@ jobs:
       - name: Build Setup (Skip Gen)
         run: ./scripts/build.sh --skip-gen
 
-      - name: Test app
-        run: flutter test
+      - name: Run Integration Tests
+        run: ./scripts/test/run_integration.sh
+      
+      - name: Upload Test Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-logs
+          path: test_logs/**
 
   buildAndroidApp:
     needs: test-app

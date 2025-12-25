@@ -1,0 +1,65 @@
+# Use stable to match user's local version (approx 3.38.5)
+FROM ghcr.io/cirruslabs/flutter:stable
+
+# Install Chrome and dependencies for "flutter drive"
+# The base image usually has Chrome, but checking dependencies is good.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    unzip \
+    lib32stdc++6 \
+    python3 \
+    gnupg \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Google Chrome Stable
+RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Matching Chromedriver
+RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}') \
+    && echo "Installed Chrome Version: $CHROME_VERSION" \
+    && curl -fLO "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" \
+    && unzip chromedriver-linux64.zip \
+    && mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver \
+    && chmod +x /usr/local/bin/chromedriver \
+    && rm chromedriver-linux64.zip
+
+# Create a shim/wrapper for Chrome to force flags in Docker
+# This serves as the "executable" flutter drive --d chrome calls.
+RUN cat <<'EOF' > /usr/local/bin/chrome-wrapper
+#!/bin/bash
+exec /usr/bin/google-chrome \
+  "$@" \
+  --no-sandbox \
+  --disable-dev-shm-usage \
+  --headless=new \
+  --disable-gpu \
+  --window-size=1280,1024 \
+  --remote-allow-origins=* \
+  --remote-debugging-address=0.0.0.0 \
+  --enable-unsafe-swiftshader \
+  --disable-search-engine-choice-screen \
+  --enable-logging=stderr --v=1 \
+  --no-first-run \
+  --no-default-browser-check
+EOF
+RUN chmod +x /usr/local/bin/chrome-wrapper
+
+# Tell Flutter to use our wrapper
+ENV CHROME_EXECUTABLE=/usr/local/bin/chrome-wrapper
+
+# Set working directory
+WORKDIR /app
+
+ENV FLUTTER_WEB_HOSTNAME=127.0.0.1
+
+# We run tests on mounted source code to ensure tests run against the latest local changes.
+
+# Helper script for running tests
+COPY scripts/test/run_tests_in_container.sh /usr/local/bin/run_tests.sh
+RUN chmod +x /usr/local/bin/run_tests.sh
+
+# Entrypoint
+CMD ["/usr/local/bin/run_tests.sh"]

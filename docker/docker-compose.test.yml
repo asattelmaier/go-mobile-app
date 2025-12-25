@@ -1,0 +1,75 @@
+services:
+  backend:
+    image: asattelmaier/go-session-server:latest
+    volumes:
+      - type: bind
+        source: ./dummy-credentials.json
+        target: /credentials.json
+    ports:
+      - "8080:8080"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/credentials.json
+      - FIRESTORE_EMULATOR_ENABLED=true
+      - FIRESTORE_EMULATOR_HOST_PORT=firestore-emulator:9000
+      - FIRESTORE_EMULATOR_PROJECT_ID=local-project
+      - SECURITY_GUEST_PASSWORD=guest-password
+      - SECURITY_JWT_ACCESS_TOKEN_EXPIRATION=86400000
+      - SECURITY_JWT_REFRESH_TOKEN_EXPIRATION=604800000
+      - SECURITY_JWT_SECRET_KEY=8Gr0MjVACbywAYACtN6o0wl4FKIG4s3F2iOGwMA1BQLKXh5ScLIuun0PgZnZ94vm
+      - SPRING_PROFILES_ACTIVE=dev
+      - CORS_ALLOWED_ORIGINS=*
+      - GNUGO_HOST=gnugo
+    depends_on:
+      - firestore-emulator
+      - gnugo
+    networks:
+      - test-net
+
+  firestore-emulator:
+    image: asattelmaier/firestore-emulator:latest
+    volumes:
+      - type: bind
+        source: ./dummy-credentials.json
+        target: /opt/firestore-emulator/credentials.json
+    ports:
+      - "9000:9000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/firestore-emulator/credentials.json
+      - PORT=9000
+      - PROJECT_ID=local-project
+    networks:
+      - test-net
+
+  gnugo:
+    image: asattelmaier/gnugo:latest
+    ports:
+      - "8001:8001"
+    networks:
+      - test-net
+
+  app-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.test
+    container_name: docker-app-test
+    shm_size: 2gb
+    # SECURITY NOTE: These privileges are REQUIRED for Chrome to run inside Docker (Sandboxing).
+    # RISK: They reduce container isolation.
+    # SCOPE: ACCEPTABLE for isolated CI/Test environments.
+    # NEVER use these settings in production!
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ..:/app
+
+    environment:
+      - BACKEND_HOST=backend
+    depends_on:
+      - backend
+    networks:
+      - test-net
+
+networks:
+  test-net:

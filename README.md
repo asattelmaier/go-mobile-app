@@ -34,12 +34,29 @@ flutter run
 ```
 
 ## Configuration
-
 To target a specific environment provide a `ENV` via `--dart-define`.
 Currently only `development` is supported.
 
 ```bash
 flutter run --dart-define=ENV=development
+```
+
+## Testing
+
+The project includes robust scripts for running integration tests in various modes.
+
+### Integration Tests (Headless)
+Runs the full integration test suite on the host machine, connecting to a Dockerized headless Chrome instance. This is the recommended way to run tests in CI or locally.
+
+```bash
+./scripts/test/run_integration.sh
+```
+
+### Local Debugging (Visible UI)
+Runs tests with a visible Chrome window for debugging purposes. Requires local `google-chrome` installation.
+
+```bash
+./scripts/test/run_local_debug.sh
 ```
 
 ## Session Server Client
@@ -50,16 +67,16 @@ The application communicates with the `go-session-server` using a generated Dart
 The client is located in [`packages/session_server_client`](packages/session_server_client) and is a local dependency.
 
 ### Scripts
-Two scripts are provided in `scripts/` to manage the API client:
+Scripts are organized in `scripts/api/` to manage the API client:
 
 *   **Update API Spec**: Fetches the latest OpenApi spec from a running backend and formats it.
     ```bash
-    ./scripts/update_api_spec.sh [BACKEND_URL]
+    ./scripts/api/update_spec.sh [BACKEND_URL]
     # Default: http://127.0.0.1:8080
     ```
 
 *   **Generate Client**: Regenerates the `session_server_client` package based on `api/session-server-api.json`.
     ```bash
-    ./scripts/generate_client.sh
+    ./scripts/api/generate_client.sh
     ```
     This script uses `openapi-generator-cli` (Docker required) and automatically syncs the client version with the API spec.

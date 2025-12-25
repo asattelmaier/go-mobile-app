@@ -12,7 +12,7 @@ import 'package:go_app/user/user_controller.dart';
 import 'package:session_server_client/api.dart'; // ApiClient
 
 main() async {
-  final dependencies = await AppDependencies.initialize();
+  final dependencies = await AppDependencies.create();
   runApp(GoApp(dependencies));
 }
 
@@ -20,24 +20,34 @@ class AppDependencies {
   final GameSessionClient gameSessionClient;
   final UserController userController;
   final L10n l10n;
+  final ApiClient apiClient;
 
-  AppDependencies._(this.gameSessionClient, this.userController, this.l10n);
+  AppDependencies._(
+      this.gameSessionClient, this.userController, this.l10n, this.apiClient);
 
-  static Future<AppDependencies> initialize() async {
-    final environment = Environment();
-    final configuration = Configuration.create(environment);
-    final url = configuration.backendUrl;
-    final websocketUrl = configuration.websocketUrl;
-    final keyChain = KeyChain();
-    final apiClient =
-        ApiClient(basePath: url.toString().replaceAll(RegExp(r'/$'), ''));
-    final userController = await UserController.create(keyChain, apiClient);
-    final l10n = L10n();
-    final webSocketClient = WebSocketClient(websocketUrl);
+  factory AppDependencies.of(BuildContext context) {
+    // Optional: if we used InheritedWidget/Provider, but for now just static access is removed.
+    // For this refactor, we just focus on creating.
+    throw UnimplementedError();
+  }
+
+  static Future<AppDependencies> create() async {
+    final config = Configuration.create(Environment());
+    final apiClient = ApiClient(
+        basePath: config.backendUrl.toString().replaceAll(RegExp(r'/$'), ''));
+
+    final userController = await UserController.create(KeyChain(), apiClient);
+
     final gameSessionClient = await GameSessionClient.create(
-        webSocketClient, apiClient, userController);
+        WebSocketClient(config.websocketUrl), apiClient, userController);
 
-    return AppDependencies._(gameSessionClient, userController, l10n);
+    return AppDependencies._(
+        gameSessionClient, userController, L10n(), apiClient);
+  }
+
+  void dispose() {
+    gameSessionClient.disconnect();
+    apiClient.client.close();
   }
 }
 

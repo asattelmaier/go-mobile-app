@@ -8,6 +8,7 @@ import 'package:go_app/game/settings/settings_model.dart';
 import 'package:go_app/l10n/generated/app_localizations.dart';
 import 'package:go_app/pages/game/game_page_view.dart';
 import 'package:go_app/pages/home/home_page_view.dart';
+import 'package:go_app/pages/new_game/lobby/lobby_controller.dart';
 import 'package:go_app/router/router.dart';
 import 'package:go_app/theme/go_theme.dart';
 import 'package:go_app/user/user_controller.dart';
@@ -33,31 +34,36 @@ class LobbyPageView extends StatefulWidget {
 }
 
 class _LobbyPageViewState extends State<LobbyPageView> {
-  bool _hasNavigated = false;
-  bool _sessionCreated = false;
-
-  late final Stream<GameSessionModel> _createdStream;
+  late final LobbyController _controller;
 
   @override
   void initState() {
     super.initState();
-    _createdStream = widget._gameSessionClient.created;
-    _createSession();
+    _controller = LobbyController(widget._gameSessionClient,
+        widget._userController, widget._settings, widget._botDifficulty);
+    _controller.init();
+
+    // Listen for navigation events
+    _controller.navigationStream.listen((session) {
+      if (!mounted) return;
+      Router.push(
+          context,
+          GamePageView(
+              GameSessionController(
+                  widget._gameSessionClient,
+                  session,
+                  session.players.firstWhere(
+                      (p) => p.id == widget._userController.user.id,
+                      orElse: () => session.players.first)),
+              widget._gameSessionClient,
+              widget._userController));
+    });
   }
 
-  void _createSession() {
-    if (_sessionCreated) return;
-    _sessionCreated = true;
-
-    if (widget._userController.isUserLoggedIn) {
-      widget._gameSessionClient.createSession(widget._userController.user,
-          widget._botDifficulty, widget._settings.boardSize);
-    } else {
-      widget._userController.createGuestUser().then((user) => widget
-          ._gameSessionClient
-          .createSession(
-              user, widget._botDifficulty, widget._settings.boardSize));
-    }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,28 +73,9 @@ class _LobbyPageViewState extends State<LobbyPageView> {
 
     return StreamBuilder<GameSessionModel>(
         initialData: GameSessionModel.empty(),
-        stream: _createdStream,
+        stream: _controller.sessionStream,
         builder: (_, gameSessionModelSnapshot) {
-          final gameSessionId = gameSessionModelSnapshot.data!.id;
-          final gameSession = gameSessionModelSnapshot.data!;
-
-          if (gameSession.isRunning && !_hasNavigated) {
-            _hasNavigated = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Router.push(
-                  context,
-                  GamePageView(
-                      GameSessionController(
-                          widget._gameSessionClient,
-                          gameSession,
-                          gameSession.players.firstWhere(
-                              (p) => p.id == widget._userController.user.id,
-                              orElse: () => gameSession.players.first)),
-                      widget._gameSessionClient,
-                      widget._userController));
-            });
-          }
-
+          final gameSessionId = gameSessionModelSnapshot.data?.id ?? "";
 
           return Scaffold(
             body: Stack(
@@ -101,7 +88,8 @@ class _LobbyPageViewState extends State<LobbyPageView> {
                       child: PageLayoutGrid(
                         topFlex: 0,
                         middleFlex: 1,
-                        includeBottomSpacer: false, // Allow full height for scrolling
+                        includeBottomSpacer:
+                            false, // Allow full height for scrolling
                         header: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Column(
@@ -128,99 +116,100 @@ class _LobbyPageViewState extends State<LobbyPageView> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                            ClaySubHeadline(l10n.invite),
-                            SizedBox(height: 16),
-                            Text(
-                                l10n.shareGameId,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: theme.fontFamily,
-                                  fontSize: 16,
-                                  color: theme.colorScheme.onSurface,
+                                ClaySubHeadline(l10n.invite),
+                                SizedBox(height: 16),
+                                Text(
+                                  l10n.shareGameId,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: theme.fontFamily,
+                                    fontSize: 16,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
                                 ),
-                              ),
-                             SizedBox(height: 16),
-                            // Invite Card
-                            ClayCard(
-                              width: 320,
-                              height: 160,
-                              color: theme.colorScheme.surface,
-                              borderRadius: 24,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                    child: Text(
-                                      gameSessionId.isEmpty
-                                          ? "..."
-                                          : gameSessionId,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontFamily: theme.fontFamily,
-                                        fontSize: 28, // Slightly reduced from 32
-                                        fontWeight: FontWeight.w900,
-                                        color: theme.colorScheme.primary,
-                                        letterSpacing: 2.0,
+                                SizedBox(height: 16),
+                                // Invite Card
+                                ClayCard(
+                                  width: 320,
+                                  height: 160,
+                                  color: theme.colorScheme.surface,
+                                  borderRadius: 24,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: Text(
+                                          gameSessionId.isEmpty
+                                              ? "..."
+                                              : gameSessionId,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontFamily: theme.fontFamily,
+                                            fontSize:
+                                                28, // Slightly reduced from 32
+                                            fontWeight: FontWeight.w900,
+                                            color: theme.colorScheme.primary,
+                                            letterSpacing: 2.0,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(height: 20),
+                                      ClayButton(
+                                        text: l10n.share,
+                                        color: theme.colorScheme.secondary,
+                                        textColor: Colors.white,
+                                        width: 140,
+                                        height: 45,
+                                        onTap: () {
+                                          Clipboard.setData(ClipboardData(
+                                              text: gameSessionId));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content:
+                                                Text(l10n.copiedToClipboard),
+                                          ));
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 20),
-                                  ClayButton(
-                                    text: l10n.share,
-                                    color: theme.colorScheme.secondary,
-                                    textColor: Colors.white,
-                                    width: 140,
-                                    height: 45,
-                                    onTap: () {
-                                      Clipboard.setData(
-                                          ClipboardData(text: gameSessionId));
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text(l10n.copiedToClipboard),
-                                      ));
-                                    },
-                                    // icon: Icons.share, // Add icon if available in ClayButton
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 40),
+                                ),
+                                SizedBox(height: 40),
 
-                            // Player Status List
-                            _buildPlayerStatusRow(
-                                l10n.you,
-                                widget._userController.user.isPresent
-                                    ? widget._userController.user.username
-                                    : "Guest",
-                                true,
-                                l10n.ready,
-                                theme),
-                            SizedBox(height: 16),
-                            _buildPlayerStatusRow(l10n.opponent,
-                                l10n.waiting, false, l10n.waiting, theme),
-                            SizedBox(height: 40),
-                            ClayButton(
-                              text: l10n.cancel,
-                              color: theme.colorScheme.tertiary,
-                              textColor: Colors.white,
-                              width: 240,
-                              height: 60,
-                              onTap: () {
-                                if (gameSessionId.isNotEmpty) {
-                                  widget._gameSessionClient
-                                      .terminateSession(gameSessionId);
-                                }
-                                Router.push(context,
-                                    HomePageView(widget._gameSessionClient, widget._userController));
-                              },
+                                // Player Status List
+                                _buildPlayerStatusRow(
+                                    l10n.you,
+                                    widget._userController.user.isPresent
+                                        ? widget._userController.user.username
+                                        : "Guest",
+                                    true,
+                                    l10n.ready,
+                                    theme),
+                                SizedBox(height: 16),
+                                _buildPlayerStatusRow(l10n.opponent,
+                                    l10n.waiting, false, l10n.waiting, theme),
+                                SizedBox(height: 40),
+                                ClayButton(
+                                  text: l10n.cancel,
+                                  color: theme.colorScheme.tertiary,
+                                  textColor: Colors.white,
+                                  width: 240,
+                                  height: 60,
+                                  onTap: () {
+                                    _controller.cancelSession(gameSessionId);
+                                    Router.push(
+                                        context,
+                                        HomePageView(widget._gameSessionClient,
+                                            widget._userController));
+                                  },
+                                ),
+                                SizedBox(height: 40),
+                              ],
                             ),
-                            SizedBox(height: 40),
-                          ],
-                        ),
-                        ),
+                          ),
                         ),
                         footer: const SizedBox.shrink(),
                       ),
