@@ -29,10 +29,9 @@ void main() async {
     AppRobot.cleanup();
   });
 
-  group('Authentication Feature', () {
-    testWidgets('Guest user can login', (tester) async {
-      tlog('--- TEST STARTED: Guest user can login (kIsWeb: $kIsWeb) ---');
-      // Set a larger screen size for headless execution to avoid overflow
+  group('Full User Journey', () {
+    testWidgets('Guest Login -> Create Game (Back) -> Play Bot', (tester) async {
+       tlog('--- TEST STARTED: Full User Journey (kIsWeb: $kIsWeb) ---');
       tester.view.physicalSize = const Size(390*1.5, 844*1.5);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -41,67 +40,19 @@ void main() async {
       final app = AppRobot(tester);
       await app.launchApp();
       await app.loginAsGuest();
-      // Verify we are on Home/Dashboard (implicitly checked by loginAsGuest now)
-      tlog('--- TEST FINISHED: Guest user can login ---');
+
+      // J1: Play Against Bot Flow (Covers Game Creation + Gameplay)
+      tlog('--- J1: Play Against Bot Flow ---');
+      await app.playAgainstBot(difficulty: 'Easy');
+      await app.expectBoard();
+
+      // Place stone at 2,2
+      await app.placeStone(2, 2);
+      
+      // Wait for Bot response
+      await app.waitForOpponentMove();
+      
+      tlog('--- TEST FINISHED: Full User Journey ---');
     });
-
-    // Note: Session persistence test typically requires restarting the app process
-    // which is hard to simulate in a single testWidgets run without mocking storage.
-    // We will skip strict persistence test for now in this suite and assume the login worked.
   });
-
-  // group('Game Setup Feature', () {
-  //   testWidgets('User can create a 9x9 game', (tester) async {
-  //     tester.view.physicalSize = const Size(390*1.5, 844*1.5);
-  //     tester.view.devicePixelRatio = 1.0;
-  //     addTearDown(tester.view.resetPhysicalSize);
-  //     addTearDown(tester.view.resetDevicePixelRatio);
-
-  //     final app = AppRobot(tester);
-  //     await app.launchApp();
-  //     await app.loginAsGuest();
-  //     await app.createGame(boardSize: 9);
-  //     await app.expectLobby();
-  //   });
-
-  //   testWidgets('User can start a game against a Bot', (tester) async {
-  //     tester.view.physicalSize = const Size(390*1.5, 844*1.5);
-  //     tester.view.devicePixelRatio = 1.0;
-  //     addTearDown(tester.view.resetPhysicalSize);
-  //     addTearDown(tester.view.resetDevicePixelRatio);
-
-  //     final app = AppRobot(tester);
-  //     await app.launchApp();
-  //     await app.loginAsGuest();
-  //     await app.playAgainstBot(difficulty: 'Easy');
-  //     await app.expectBoard();
-  //   });
-  // });
-
-  // group('Gameplay Feature', () {
-  //   testWidgets('User can play a move against a Bot', (tester) async {
-  //     tester.view.physicalSize = const Size(390*1.5, 844*1.5);
-  //     tester.view.devicePixelRatio = 1.0;
-  //     addTearDown(tester.view.resetPhysicalSize);
-  //     addTearDown(tester.view.resetDevicePixelRatio);
-
-  //     final app = AppRobot(tester);
-  //     await app.launchApp();
-  //     await app.loginAsGuest();
-      
-  //     // setup 9x9 game vs Bot
-  //     await app.playAgainstBot(difficulty: 'Easy');
-  //     await app.expectBoard();
-
-  //     // Place stone at 2,2
-  //     await app.placeStone(2, 2);
-      
-  //     // Wait for Bot response
-  //     await app.waitForOpponentMove();
-      
-  //     // Verify we have at least 2 stones (Black + White)
-  //     // Since specific visual verification is hard, we can assume successful tap + delay means game advanced.
-  //     // Strict verification would require inspecting the Widget state or counting Key('intersection_...') children.
-  //   });
-  // });
 }

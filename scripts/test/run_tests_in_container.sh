@@ -83,7 +83,7 @@ stdbuf -oL -eL flutter drive \
   --web-browser-flag "--disable-dev-shm-usage" \
   --web-browser-flag "--disable-extensions" \
   --web-browser-flag "--window-size=1920,1080" \
-  -v 2>&1 | tee "$FLUTTER_LOG" &
+  2>&1 | tee "$FLUTTER_LOG" &
 FLUTTER_PID=$!
 
 wait $FLUTTER_PID

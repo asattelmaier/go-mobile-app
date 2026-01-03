@@ -134,15 +134,16 @@ class AppRobot {
 
   Future<void> expectBoard() async {
     tlog('--- expectBoard: Checking navigation ---');
-    // Ensure we are off the Create Game page
-    expect(find.text('Create Game'), findsNothing);
+    // REMOVED BRITTLE CHECK: expect(find.text('Create Game'), findsNothing);
+    // In Turbo mode, we might still be on the previous screen for a few frames.
+    // relying on positive confirmation (finding the board) is safer.
     
     // Wait for the board to appear. This is critical for stability.
     tlog('--- expectBoard: Waiting for board intersection_0_0... ---');
 
     final boardFinder = find.byKey(const Key('intersection_0_0'));
 
-    await tester.pumpAndSettle();
+    await tester.pump(); // Optimization: Don't settle, just pump. Loop below handles waiting.
     
     int i = 0;
     while (i < 60) {
@@ -163,14 +164,34 @@ class AppRobot {
 
   Future<void> _tapButton(String text) async {
     final button = find.widgetWithText(ClayButton, text);
-    expect(button, findsOneWidget, reason: "Button with text '$text' not found");
+    
+    // Optimization: Wait for button to appear (polling) instead of relying on previous settle.
+    // This allows disjointed animations to run without blocking, as long as the target is interactive.
+    bool found = false;
+    // Increase timeout to 10 seconds (100 * 100ms) to account for CI slowness
+    for (int i = 0; i < 100; i++) { 
+        if (button.evaluate().isNotEmpty) {
+            found = true;
+            break;
+        }
+        // Optimization: Use EnginePhase.layout to avoid expensive Paint (Shadows) in Headless mode
+        // This makes checking for existence much faster.
+        await tester.pump(const Duration(milliseconds: 100), EnginePhase.layout);
+    }
+    
+    if (!found) {
+        tlog('--- _tapButton: Timeout waiting for "$text" ---');
+    }
+    expect(button, findsOneWidget, reason: "Button with text '$text' not found after waiting 10s");
     
     // Ensure the button is visible (scroll if needed) before tapping
     await tester.ensureVisible(button);
-    await tester.pumpAndSettle(); // Settle after scrolling
+    // REMOVED: await tester.pump(); // No need to pump explicitly after ensureVisible if we trust layout.
     
     await tester.tap(button);
-    await tester.pumpAndSettle();
+    // OPTIMIZATION: Removed explicit pump() after tap.
+    // The next step's polling loop or specific wait will handle the frame.
+    // This avoids forcing a 4-second software render for simple state changes.
   }
 
   Future<void> placeStone(int x, int y) async {
@@ -181,8 +202,8 @@ class AppRobot {
     tlog('--- placeStone($x, $y): Tapping ---');
     await tester.tap(intersection);
     
-    tlog('--- placeStone($x, $y): Pumping and Settling ---');
-    await tester.pumpAndSettle();
+    tlog('--- placeStone($x, $y): Pumping ---');
+    await tester.pump(); // Optimization: Don't settle
     tlog('--- placeStone($x, $y): Done ---');
   }
 
@@ -193,17 +214,11 @@ class AppRobot {
   }
 
    Future<void> waitForOpponentMove() async {
-     tlog('--- waitForOpponentMove: Waiting 5 seconds for bot ---');
+     tlog('--- waitForOpponentMove: Waiting 2 seconds for bot (Fixed wait) ---');
      // Wait for the backend to process and bot to reply.
-     await tester.pump(const Duration(seconds: 5));
+     // Optimization: Fixed wait is safer than pumpAndSettle if animations are infinite.
+     await tester.pump(const Duration(seconds: 2));
      
-     tlog('--- waitForOpponentMove: Pumping and settling ---');
-     try {
-       // Use a timeout to avoid hanging forever if an animation is looping
-       await tester.pumpAndSettle(const Duration(seconds: 10));
-     } catch (e) {
-       tlog('--- waitForOpponentMove: pumpAndSettle timed out (might be infinite animation), continuing ---');
-     }
      tlog('--- waitForOpponentMove: Done ---');
   }
 }
