@@ -1,18 +1,28 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flutter/material.dart';
-import 'package:go_app/main.dart'; // Import to ensure main is accessible if needed, but we launch via robot pumpWidget
+import 'package:flutter/foundation.dart';
+import 'package:go_app/main.dart';
 import 'robots/app_robot.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-void main() {
+import 'utils/test_logger.dart';
+
+void main() async {
   // FIX: Mock Secure Storage to prevent DBus/Keyring hangs in Headless CI
   FlutterSecureStorage.setMockInitialValues({});
   
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  
+  tearDownAll(() {
+    // Report logs back to the Host Driver (Release Mode support)
+    binding.reportData = {
+      'testLog': testLogs.join('\n'),
+    };
+  });
 
-  print('--- TEST: main() entry point reached ---');
+  tlog('--- TEST: main() entry point reached ---');
 
   // Register cleanup globally for all tests in this file
   tearDown(() {
@@ -21,6 +31,7 @@ void main() {
 
   group('Authentication Feature', () {
     testWidgets('Guest user can login', (tester) async {
+      tlog('--- TEST STARTED: Guest user can login (kIsWeb: $kIsWeb) ---');
       // Set a larger screen size for headless execution to avoid overflow
       tester.view.physicalSize = const Size(390*1.5, 844*1.5);
       tester.view.devicePixelRatio = 1.0;
@@ -31,6 +42,7 @@ void main() {
       await app.launchApp();
       await app.loginAsGuest();
       // Verify we are on Home/Dashboard (implicitly checked by loginAsGuest now)
+      tlog('--- TEST FINISHED: Guest user can login ---');
     });
 
     // Note: Session persistence test typically requires restarting the app process
